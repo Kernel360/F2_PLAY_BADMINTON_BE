@@ -40,3 +40,4 @@ out/
 .vscode/
 docker-compose.yaml
 application-secret.properties
+data/
