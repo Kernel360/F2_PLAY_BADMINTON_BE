@@ -1,13 +1,13 @@
-package com.final2.odiya;
+package com.final2.badminton;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class OdiyaApplication {
+public class BadmintonApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(OdiyaApplication.class, args);
+		SpringApplication.run(BadmintonApplication.class, args);
 	}
 
 }
