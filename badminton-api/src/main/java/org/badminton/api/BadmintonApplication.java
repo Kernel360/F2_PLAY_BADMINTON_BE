@@ -1,4 +1,4 @@
-package com.final2.badminton;
+package org.badminton.api;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -8,7 +8,6 @@ public class BadmintonApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(BadmintonApplication.class, args);
-
 	}
 
 }
