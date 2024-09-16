@@ -16,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class JwtUtil {
 
-	private SecretKey secretKey;
+	private final SecretKey secretKey;
 
 	public JwtUtil(@Value("${spring.jwt.secret}") String secret) {
 
