@@ -1,16 +1,16 @@
 package org.badminton.domain.member.model.entity;
 
+import lombok.Getter;
+
+@Getter
 public enum MemberRole {
 	ROLE_ADMIN("admin"),
 	ROLE_USER("user");
 
-	private String description;
+	private final String description;
 
 	MemberRole(String description) {
 		this.description = description;
 	}
 
-	public String getDescription() {
-		return description;
-	}
 }
