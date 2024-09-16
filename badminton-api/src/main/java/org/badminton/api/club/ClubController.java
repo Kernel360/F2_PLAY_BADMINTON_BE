@@ -22,8 +22,8 @@ public class ClubController {
 		var club = new ClubEntity("박소은", "소은소은");
 		clubRepository.save(club);
 		ClubJoinResponse clubJoinResponse = ClubJoinResponse.builder()
-			.name(club.getName())
-			.description(club.getDescription())
+			.name(club.getClubName())
+			.description(club.getClubDescription())
 			.createdAt(club.getCreatedAt())
 			.modifiedAt(club.getModifiedAt())
 			.build();
