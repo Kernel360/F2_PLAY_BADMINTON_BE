@@ -20,17 +20,17 @@ public class ClubEntity extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	private Long clubId;
 
-	private String name;
+	private String clubName;
 
 	@Column(columnDefinition = "text")
-	private String description;
+	private String clubDescription;
 
 	private String clubImage;
 
-	public ClubEntity(String name, String description) {
-		this.name = name;
-		this.description = description;
+	public ClubEntity(String clubName, String clubDescription) {
+		this.clubName = clubName;
+		this.clubDescription = clubDescription;
 	}
 }
