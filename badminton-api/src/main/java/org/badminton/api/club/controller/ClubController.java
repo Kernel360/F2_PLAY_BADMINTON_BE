@@ -25,7 +25,9 @@ public class ClubController {
 	private final ClubAddService clubAddService;
 
 	@PostMapping
-	@Operation(summary = "클럽 추가", description = "클럽을 추가합니다.")
+	@Operation(summary = "동호회 추가",
+		description = "동호회를 추가합니다.",
+		tags = {"Club"})
 	@ApiResponses(value = {
 		@ApiResponse(responseCode = "200", description = "클럽이 성공적으로 추가되었습니다."),
 		@ApiResponse(responseCode = "400", description = "잘못된 요청입니다.")
