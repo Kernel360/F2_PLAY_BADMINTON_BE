@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import lombok.RequiredArgsConstructor;
 
@@ -19,16 +18,14 @@ public class LeagueController {
 
 	@Operation(
 		summary = "경기를 생성합니다.",
-		description = "경기를 데이터베이스에 저장합니다.",
+		description = "경기 생성하고를 데이터베이스에 저장합니다.",
 		tags = {"League"}, // 태그 분류
 		requestBody = @RequestBody(
-			description = "경기 저장 시 필요한 데이터",
-			required = true,
-			content = @Content(
-			)
+			description = "경기 저장 시 필요한 스키마",
+			required = true
 		)
 	)
-	@PostMapping("")
+	@PostMapping
 	public void leagueCreate(@org.springframework.web.bind.annotation.RequestBody LeagueCreateRequest request) {
 		leagueService.createLeague(request);
 	}
