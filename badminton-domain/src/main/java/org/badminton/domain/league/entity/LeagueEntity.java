@@ -21,27 +21,27 @@ public class LeagueEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	Long leagueId;
+	private Long leagueId;
 
-	String name;
+	private String name;
 
-	String description;
+	private String description;
 
-	String tierLimit;
+	private String tierLimit;
 
-	String status;
+	private String status;
 
-	String matchType;
+	private String matchType;
 
-	LocalDateTime leagueAt;
+	private LocalDateTime leagueAt;
 
-	LocalDateTime closedAt;
+	private LocalDateTime closedAt;
 
-	Long playerCount;
+	private Long playerCount;
 
-	LocalDateTime createdAt;
+	private LocalDateTime createdAt;
 
-	LocalDateTime modifiedAt;
+	private LocalDateTime modifiedAt;
 
 	public LeagueEntity(String name, String description, LocalDateTime leagueAt,
 		String tierLimit, LocalDateTime closedAt, String status, Long playerCount,
