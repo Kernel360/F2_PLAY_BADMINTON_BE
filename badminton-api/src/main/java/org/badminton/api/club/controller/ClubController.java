@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,10 +25,12 @@ public class ClubController {
 	private final ClubAddService clubAddService;
 
 	@PostMapping
+	@Operation(summary = "클럽 추가", description = "클럽을 추가합니다.")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "클럽이 성공적으로 추가되었습니다."),
+		@ApiResponse(responseCode = "400", description = "잘못된 요청입니다.")
+	})
 	public ResponseEntity<ClubAddResponse> addClubController(@Valid @RequestBody ClubAddRequest clubAddRequest) {
-		log.info(clubAddRequest.getClubName());
-		log.info(clubAddRequest.getClubDescription());
-
 		ClubAddResponse clubAddResponse = clubAddService.addClub(clubAddRequest);
 		return ResponseEntity.ok(clubAddResponse);
 	}
