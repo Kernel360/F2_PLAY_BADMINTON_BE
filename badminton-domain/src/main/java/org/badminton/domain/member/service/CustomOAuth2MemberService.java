@@ -37,17 +37,14 @@ public class CustomOAuth2MemberService extends DefaultOAuth2UserService {
 
 		String registrationId = userRequest.getClientRegistration().getRegistrationId();
 		OAuthResponse oAuth2Response = null;
-		if (registrationId.equals("naver")) {
+		switch (registrationId) {
+			case "naver" -> oAuth2Response = new NaverResponse(oAuth2User.getAttributes());
+			case "google" -> oAuth2Response = new GoogleResponse(oAuth2User.getAttributes());
+			case "kakao" -> oAuth2Response = new KakaoResponse(oAuth2User.getAttributes());
+			default -> {
 
-			oAuth2Response = new NaverResponse(oAuth2User.getAttributes());
-		} else if (registrationId.equals("google")) {
-
-			oAuth2Response = new GoogleResponse(oAuth2User.getAttributes());
-		} else if (registrationId.equals("kakao")) {
-			oAuth2Response = new KakaoResponse(oAuth2User.getAttributes());
-		} else {
-
-			return null;
+				return null;
+			}
 		}
 		// String providerId = oAuth2Response.getProvider() + " " + oAuth2Response.getProviderId();
 		String providerId = oAuth2Response.getProviderId();

@@ -12,6 +12,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -48,20 +49,29 @@ public class SecurityConfig {
 				}
 			}));
 
-		http.csrf(csrf -> csrf.disable());
-		http.formLogin(formLogin -> formLogin.disable());
-		http.httpBasic(httpBasic -> httpBasic.disable());
-		http.addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
+		http
+			.csrf(AbstractHttpConfigurer::disable);
+		http
+			.formLogin(AbstractHttpConfigurer::disable);
+		http
+			.httpBasic(AbstractHttpConfigurer::disable);
+		//	.httpBasic((auth) -> auth.disable());
+		http
+			.addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
-		http.oauth2Login(oauth2 -> oauth2
-			.userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig.userService(customOAuth2MemberService))
-			.successHandler(customSuccessHandler));
+		http
+			.oauth2Login(oauth2 -> oauth2
+				.userInfoEndpoint(
+					userInfoEndpointConfig -> userInfoEndpointConfig.userService(customOAuth2MemberService))
+				.successHandler(customSuccessHandler));
 
-		http.authorizeHttpRequests(auth -> auth
-			.requestMatchers("/", "/groups", "/oauth2/**", "/login/**", "/error").permitAll()
-			.anyRequest().authenticated());
+		http
+			.authorizeHttpRequests(auth -> auth
+				.requestMatchers("/", "/groups", "/oauth2/**", "/login/**", "/error").permitAll()
+				.anyRequest().authenticated());
 
-		http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+		http
+			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
 		return http.build();
 	}
