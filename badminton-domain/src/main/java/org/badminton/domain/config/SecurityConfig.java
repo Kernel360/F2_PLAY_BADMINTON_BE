@@ -67,8 +67,10 @@ public class SecurityConfig {
 
 		http
 			.authorizeHttpRequests(auth -> auth
-				.requestMatchers("/", "/groups", "/oauth2/**", "/login/**", "/error").permitAll()
-				.anyRequest().authenticated());
+				.requestMatchers("/", "/groups", "/oauth2/**", "/login/**", "/error", "/api/logout", "/swagger-ui/**")
+				.permitAll()
+				.anyRequest()
+				.authenticated());
 
 		http
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
