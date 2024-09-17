@@ -33,7 +33,6 @@ public class CustomOAuth2MemberService extends DefaultOAuth2UserService {
 
 		OAuth2User oAuth2User = super.loadUser(userRequest);
 		log.info("USer details: {}", oAuth2User);
-		System.out.println("CustomOAuth2UserService :super.loadUser(userRequest) " + oAuth2User);
 
 		String registrationId = userRequest.getClientRegistration().getRegistrationId();
 		OAuthResponse oAuth2Response = null;

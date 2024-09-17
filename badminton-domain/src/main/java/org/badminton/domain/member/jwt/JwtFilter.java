@@ -16,8 +16,10 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
+@Slf4j
 public class JwtFilter extends OncePerRequestFilter {
 
 	private final JwtUtil jwtUtil;
@@ -37,14 +39,15 @@ public class JwtFilter extends OncePerRequestFilter {
 		String authorization = null;
 		Cookie[] cookies = request.getCookies();
 		for (Cookie cookie : cookies) {
-			System.out.println(cookie.getName());
+
+			log.info("cookie: {}", cookie.getName());
 			if (cookie.getName().equals("Authorization")) {
 				authorization = cookie.getValue();
 			}
 		}
 
 		if (authorization == null) {
-			System.out.println("token null");
+			log.info("Authorization cookie not found");
 			filterChain.doFilter(request, response);
 
 			return;
@@ -53,7 +56,7 @@ public class JwtFilter extends OncePerRequestFilter {
 		String token = authorization;
 
 		if (jwtUtil.isExpired(token)) {
-			System.out.println("token expired");
+			log.info("JWT token expired");
 			filterChain.doFilter(request, response);
 
 			return;
