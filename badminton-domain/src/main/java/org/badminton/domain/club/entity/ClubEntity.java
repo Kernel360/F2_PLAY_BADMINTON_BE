@@ -29,8 +29,9 @@ public class ClubEntity extends BaseTimeEntity {
 
 	private String clubImage;
 
-	public ClubEntity(String clubName, String clubDescription) {
+	public ClubEntity(String clubName, String clubDescription, String clubImage) {
 		this.clubName = clubName;
 		this.clubDescription = clubDescription;
+		this.clubImage = clubImage;
 	}
 }
