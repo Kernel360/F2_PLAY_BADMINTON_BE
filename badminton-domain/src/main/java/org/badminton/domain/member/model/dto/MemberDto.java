@@ -6,10 +6,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 
 @Getter
 @Builder
 @AllArgsConstructor
+@ToString
 public class MemberDto {
 
 	@Schema(description = "회원 역할", example = "ROLE_USER")

@@ -1,4 +1,4 @@
-package org.badminton.domain.config;
+package org.badminton.api.config.security;
 
 import java.util.Arrays;
 import java.util.Collections;

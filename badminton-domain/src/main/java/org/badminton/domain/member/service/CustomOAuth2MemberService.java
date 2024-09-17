@@ -30,7 +30,6 @@ public class CustomOAuth2MemberService extends DefaultOAuth2UserService {
 	@Override
 	public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 		log.info("CustomOAuth2MemberService is being executed");
-
 		OAuth2User oAuth2User = super.loadUser(userRequest);
 		log.info("USer details: {}", oAuth2User);
 
@@ -41,7 +40,6 @@ public class CustomOAuth2MemberService extends DefaultOAuth2UserService {
 			case "google" -> oAuth2Response = new GoogleResponse(oAuth2User.getAttributes());
 			case "kakao" -> oAuth2Response = new KakaoResponse(oAuth2User.getAttributes());
 			default -> {
-
 				return null;
 			}
 		}
@@ -52,8 +50,7 @@ public class CustomOAuth2MemberService extends DefaultOAuth2UserService {
 		if (existData == null) {
 
 			MemberDto memberDto = new MemberDto(MemberRole.ROLE_USER, oAuth2Response.getName(),
-				oAuth2Response.getEmail(),
-				providerId);
+				oAuth2Response.getEmail(), providerId);
 
 			MemberEntity memberEntity = memberMapper.toEntity(memberDto);
 

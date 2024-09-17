@@ -39,7 +39,6 @@ public class JwtFilter extends OncePerRequestFilter {
 		String authorization = null;
 		Cookie[] cookies = request.getCookies();
 		for (Cookie cookie : cookies) {
-
 			log.info("cookie: {}", cookie.getName());
 			if (cookie.getName().equals("Authorization")) {
 				authorization = cookie.getValue();
@@ -64,10 +63,12 @@ public class JwtFilter extends OncePerRequestFilter {
 
 		String providerId = jwtUtil.getProviderId(token);
 		String role = jwtUtil.getRole(token);
+		log.info("JWT role: {}", role);
 		String name = jwtUtil.getName(token);
 		String email = jwtUtil.getEmail(token);
 
-		MemberDto memberDto = new MemberDto(MemberRole.ROLE_USER, name, email, providerId);
+		MemberDto memberDto = new MemberDto(MemberRole.fromDescription(role), name, email, providerId);
+		log.info("memberDto: {}", memberDto);
 
 		CustomOAuth2Member customOAuth2Member = new CustomOAuth2Member(memberDto);
 

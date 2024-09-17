@@ -32,7 +32,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		log.info("CustomSuccessHandler onAuthenticationSuccess");
 
 		//OAuth2User
-		CustomOAuth2Member customUserDetails = (CustomOAuth2Member)authentication.getPrincipal();
+		CustomOAuth2Member customUserDetails = (CustomOAuth2Member)authentication.getPrincipal(); // 인증된 사용자 객체 가져오기
 
 		String providerId = customUserDetails.getProviderId();
 
@@ -45,7 +45,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		GrantedAuthority auth = iterator.next();
 		String role = auth.getAuthority();
 
-		String token = jwtUtil.createJwt(providerId, role, name, email, 60 * 60 * 60L);
+		String token = jwtUtil.createJwt(providerId, role, name, email, 60 * 60 * 60L); // 초 * 분 * 시
 
 		// response.setHeader("Authorization", "Bearer " + token);
 
@@ -59,7 +59,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		cookie.setMaxAge(60 * 60 * 60);
 		//cookie.setSecure(true);
 		cookie.setPath("/");
-		cookie.setHttpOnly(true);
+		cookie.setHttpOnly(true); // 클라이언트 측에서 자바스크립트로 이 쿠키에 접근 못하도록 -> 보안 강화
 
 		return cookie;
 	}
