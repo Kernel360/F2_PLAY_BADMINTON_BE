@@ -7,9 +7,10 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ClubErrorCode implements ErrorCodeIfs {
 
-	CLUB_NOT_FOUND(400, 1404, "존재하지 않는 동호회입니다."),
-	CLUB_ALREADY_EXISTS(400, 1402, "이미 존재하는 동호회입니다."),
-	;
+	CLUB_NOT_FOUND(ErrorCode.BAD_REQUEST.getErrorCode(), ErrorCode.CLUB_NOT_FOUND.getErrorCode(),
+		ErrorCode.CLUB_NOT_FOUND.getDescription()),
+	CLUB_ALREADY_EXISTS(ErrorCode.BAD_REQUEST.getErrorCode(), ErrorCode.CLUB_ALREADY_EXISTS.getErrorCode(),
+		ErrorCode.CLUB_ALREADY_EXISTS.getDescription());
 
 	private final Integer httpStatusCode;
 	private final Integer errorCode;
