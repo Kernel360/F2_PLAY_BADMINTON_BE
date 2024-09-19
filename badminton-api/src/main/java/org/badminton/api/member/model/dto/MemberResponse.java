@@ -7,8 +7,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Schema(description = "회원 요청 DTO")
 public record MemberResponse(
 
-	@Schema(description = "회원 역할", example = "ROLE_USER")
-	String role,
+	@Schema(description = "회원 역할", example = "AUTHORIZATION_USER")
+	String authorization,
 
 	@Schema(description = "회원 이름", example = "이선우")
 	String name,
@@ -21,7 +21,7 @@ public record MemberResponse(
 ) {
 
 	public static MemberResponse memberEntityToResponse(MemberEntity memberEntity) {
-		return new MemberResponse(memberEntity.getRole(), memberEntity.getName(), memberEntity.getEmail(),
+		return new MemberResponse(memberEntity.getAuthorization(), memberEntity.getName(), memberEntity.getEmail(),
 			memberEntity.getProviderId());
 	}
 }

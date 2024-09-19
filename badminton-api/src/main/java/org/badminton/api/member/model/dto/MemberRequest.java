@@ -1,15 +1,15 @@
 package org.badminton.api.member.model.dto;
 
+import org.badminton.domain.member.entity.MemberAuthorization;
 import org.badminton.domain.member.entity.MemberEntity;
-import org.badminton.domain.member.entity.MemberRole;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "회원 요청 DTO")
 public record MemberRequest(
 
-	@Schema(description = "회원 역할", example = "ROLE_USER")
-	MemberRole role,
+	@Schema(description = "회원 역할", example = "AUTHORIZATION_USER")
+	MemberAuthorization authorization,
 
 	@Schema(description = "회원 이름", example = "이선우")
 	String name,
@@ -23,7 +23,7 @@ public record MemberRequest(
 
 	public static MemberEntity memberRequestToEntity(MemberRequest memberRequest) {
 		return new MemberEntity(memberRequest.email(), memberRequest.name(), memberRequest.providerId(),
-			memberRequest.role());
+			memberRequest.authorization());
 	}
 }
 

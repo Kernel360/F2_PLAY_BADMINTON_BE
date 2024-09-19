@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import org.badminton.api.member.model.dto.CustomOAuth2Member;
 import org.badminton.api.member.model.dto.MemberResponse;
-import org.badminton.domain.member.entity.MemberRole;
+import org.badminton.domain.member.entity.MemberAuthorization;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -68,12 +68,13 @@ public class JwtFilter extends OncePerRequestFilter {
 		}
 
 		String providerId = jwtUtil.getProviderId(token);
-		String role = jwtUtil.getRole(token);
-		log.info("JWT role: {}", role);
+		String authorization = jwtUtil.getAuthorization(token);
+		log.info("JWT authorization: {}", authorization);
 		String name = jwtUtil.getName(token);
 		String email = jwtUtil.getEmail(token);
 
-		MemberResponse memberResponse = new MemberResponse(MemberRole.ROLE_USER.name(), name, email, providerId);
+		MemberResponse memberResponse = new MemberResponse(MemberAuthorization.AUTHORIZATION_USER.name(), name, email,
+			providerId);
 		log.info("memberDto: {}", memberResponse);
 
 		CustomOAuth2Member customOAuth2Member = new CustomOAuth2Member(memberResponse);
