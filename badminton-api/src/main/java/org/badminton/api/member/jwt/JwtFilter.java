@@ -28,7 +28,7 @@ public class JwtFilter extends OncePerRequestFilter {
 	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
 		String path = request.getRequestURI();
 		return path.equals("/") || path.equals("/groups") || path.startsWith("/oauth2") || path.startsWith("/login")
-			|| path.startsWith("/api") || path.startsWith("/swagger-ui") || path.startsWith("/api-docs")
+			|| path.startsWith("/api") || path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs")
 			|| path.startsWith("/v1");
 
 	}
@@ -37,23 +37,23 @@ public class JwtFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
 
-		String authorization = null;
+		String JWT = null;
 		Cookie[] cookies = request.getCookies();
 		for (Cookie cookie : cookies) {
 			log.info("cookie: {}", cookie.getName());
-			if (cookie.getName().equals("Authorization")) {
-				authorization = cookie.getValue();
+			if (cookie.getName().equals("JWT")) {
+				JWT = cookie.getValue();
 			}
 		}
 
-		if (authorization == null) {
-			log.info("Authorization cookie not found");
+		if (JWT == null) {
+			log.info("JWT cookie not found");
 			filterChain.doFilter(request, response);
 
 			return;
 		}
 
-		String token = authorization;
+		String token = JWT;
 
 		if (jwtUtil.isExpired(token)) {
 			log.info("JWT token expired");
