@@ -17,12 +17,12 @@ public class MemberController {
 
 	@Operation(
 		summary = "로그아웃을 합니다",
-		description = "쿠키에서 Jwt 토큰을 제거해 로그아웃을 합니다",
+		description = "쿠키에서 JWT 토큰을 제거해 로그아웃을 합니다",
 		tags = {"Member"}
 	)
 	@PostMapping("/api/logout")
 	public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
-		Cookie cookie = new Cookie("Authorization", null);
+		Cookie cookie = new Cookie("JWT", null);
 		cookie.setMaxAge(0);
 		cookie.setPath("/");
 		cookie.setHttpOnly(true);

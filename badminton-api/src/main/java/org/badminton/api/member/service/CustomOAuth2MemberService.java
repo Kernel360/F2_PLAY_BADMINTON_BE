@@ -10,8 +10,8 @@ import org.badminton.api.member.model.dto.MemberRequest;
 import org.badminton.api.member.model.dto.MemberResponse;
 import org.badminton.api.member.model.dto.NaverResponse;
 import org.badminton.api.member.model.dto.OAuthResponse;
+import org.badminton.domain.member.entity.MemberAuthorization;
 import org.badminton.domain.member.entity.MemberEntity;
-import org.badminton.domain.member.entity.MemberRole;
 import org.badminton.domain.member.repository.MemberRepository;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -51,7 +51,8 @@ public class CustomOAuth2MemberService extends DefaultOAuth2UserService {
 
 		if (existData == null) {
 
-			MemberRequest memberRequest = new MemberRequest(MemberRole.ROLE_USER, oAuth2Response.getName(),
+			MemberRequest memberRequest = new MemberRequest(MemberAuthorization.AUTHORIZATION_USER,
+				oAuth2Response.getName(),
 				oAuth2Response.getEmail(), providerId);
 
 			MemberEntity memberEntity = memberRequestToEntity(memberRequest);

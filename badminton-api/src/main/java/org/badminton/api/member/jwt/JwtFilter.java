@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import org.badminton.api.member.model.dto.CustomOAuth2Member;
 import org.badminton.api.member.model.dto.MemberResponse;
-import org.badminton.domain.member.entity.MemberRole;
+import org.badminton.domain.member.entity.MemberAuthorization;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,7 +28,7 @@ public class JwtFilter extends OncePerRequestFilter {
 	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
 		String path = request.getRequestURI();
 		return path.equals("/") || path.equals("/groups") || path.startsWith("/oauth2") || path.startsWith("/login")
-			|| path.startsWith("/api") || path.startsWith("/swagger-ui") || path.startsWith("/api-docs")
+			|| path.startsWith("/api") || path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs")
 			|| path.startsWith("/v1");
 
 	}
@@ -37,38 +37,44 @@ public class JwtFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
 
-		String authorization = null;
+		String JWT = null;
 		Cookie[] cookies = request.getCookies();
 		for (Cookie cookie : cookies) {
 			log.info("cookie: {}", cookie.getName());
-			if (cookie.getName().equals("Authorization")) {
-				authorization = cookie.getValue();
+			if (cookie.getName().equals("JWT")) {
+				JWT = cookie.getValue();
 			}
 		}
 
-		if (authorization == null) {
-			log.info("Authorization cookie not found");
+		if (JWT == null) {
+			log.info("JWT cookie not found");
 			filterChain.doFilter(request, response);
 
 			return;
 		}
 
-		String token = authorization;
+		String token = JWT;
 
 		if (jwtUtil.isExpired(token)) {
 			log.info("JWT token expired");
+			Cookie expiredCookie = new Cookie("JWT", null);
+			expiredCookie.setMaxAge(0);
+			expiredCookie.setPath("/");
+			response.addCookie(expiredCookie);
+
 			filterChain.doFilter(request, response);
 
 			return;
 		}
 
 		String providerId = jwtUtil.getProviderId(token);
-		String role = jwtUtil.getRole(token);
-		log.info("JWT role: {}", role);
+		String authorization = jwtUtil.getAuthorization(token);
+		log.info("JWT authorization: {}", authorization);
 		String name = jwtUtil.getName(token);
 		String email = jwtUtil.getEmail(token);
 
-		MemberResponse memberResponse = new MemberResponse(MemberRole.ROLE_USER.name(), name, email, providerId);
+		MemberResponse memberResponse = new MemberResponse(MemberAuthorization.AUTHORIZATION_USER.name(), name, email,
+			providerId);
 		log.info("memberDto: {}", memberResponse);
 
 		CustomOAuth2Member customOAuth2Member = new CustomOAuth2Member(memberResponse);

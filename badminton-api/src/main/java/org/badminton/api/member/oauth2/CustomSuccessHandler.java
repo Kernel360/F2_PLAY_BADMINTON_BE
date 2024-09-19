@@ -43,9 +43,9 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 		Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
 		GrantedAuthority auth = iterator.next();
-		String role = auth.getAuthority();
+		String authorization = auth.getAuthority();
 
-		String token = jwtUtil.createJwt(providerId, role, name, email, 60 * 60 * 60L); // 초 * 분 * 시
+		String token = jwtUtil.createJwt(providerId, authorization, name, email, 60 * 60 * 60L); // 초 * 분 * 시
 
 		// response.setHeader("Authorization", "Bearer " + token);
 
@@ -55,7 +55,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
 	// JWT 쿠키 생성 메서드
 	private Cookie createCookie(String value) {
-		Cookie cookie = new Cookie("Authorization", value);
+		Cookie cookie = new Cookie("JWT", value);
 		cookie.setMaxAge(60 * 60 * 60);
 		//cookie.setSecure(true);
 		cookie.setPath("/");

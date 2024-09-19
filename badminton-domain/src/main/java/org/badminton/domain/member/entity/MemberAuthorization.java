@@ -3,13 +3,13 @@ package org.badminton.domain.member.entity;
 import lombok.Getter;
 
 @Getter
-public enum MemberRole {
-	ROLE_ADMIN("admin"),
-	ROLE_USER("user");
+public enum MemberAuthorization {
+	AUTHORIZATION_ADMIN("admin"),
+	AUTHORIZATION_USER("user");
 
 	private final String description;
 
-	MemberRole(String description) {
+	MemberAuthorization(String description) {
 		this.description = description;
 	}
 }

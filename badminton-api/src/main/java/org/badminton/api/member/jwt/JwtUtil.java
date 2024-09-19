@@ -54,14 +54,14 @@ public class JwtUtil {
 			.get("name", String.class);
 	}
 
-	public String getRole(String token) {
+	public String getAuthorization(String token) {
 
 		return Jwts.parser()
 			.verifyWith(secretKey)
 			.build()
 			.parseSignedClaims(token)
 			.getPayload()
-			.get("role", String.class);
+			.get("authorization", String.class);
 	}
 
 	public Boolean isExpired(String token) {
@@ -75,11 +75,11 @@ public class JwtUtil {
 			.before(new Date());
 	}
 
-	public String createJwt(String providerId, String role, String name, String email, Long expiredMs) {
+	public String createJwt(String providerId, String authorization, String name, String email, Long expiredMs) {
 
 		return Jwts.builder()
 			.claim("providerId", providerId)
-			.claim("role", role)
+			.claim("authorization", authorization)
 			.claim("name", name)
 			.claim("email", email) // providerId, role, name, email 을 클레임(데이터)로 추가
 			.issuedAt(new Date(System.currentTimeMillis())) // 토큰 발행 시각 설정
