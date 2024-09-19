@@ -26,12 +26,12 @@ public class MemberEntity extends BaseTimeEntity {
 
 	private String name;
 
-	private MemberRole role;
+	private String role;
 
 	public MemberEntity(String email, String name, String providerId, MemberRole role) {
 		this.email = email;
 		this.name = name;
 		this.providerId = providerId;
-		this.role = role;
+		this.role = role.name();
 	}
 }

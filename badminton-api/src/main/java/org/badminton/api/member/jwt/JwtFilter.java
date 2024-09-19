@@ -28,7 +28,8 @@ public class JwtFilter extends OncePerRequestFilter {
 	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
 		String path = request.getRequestURI();
 		return path.equals("/") || path.equals("/groups") || path.startsWith("/oauth2") || path.startsWith("/login")
-			|| path.startsWith("/api") || path.startsWith("/swagger-ui") || path.startsWith("/api-docs");
+			|| path.startsWith("/api") || path.startsWith("/swagger-ui") || path.startsWith("/api-docs")
+			|| path.startsWith("/v1");
 
 	}
 
@@ -67,7 +68,7 @@ public class JwtFilter extends OncePerRequestFilter {
 		String name = jwtUtil.getName(token);
 		String email = jwtUtil.getEmail(token);
 
-		MemberResponse memberResponse = new MemberResponse(MemberRole.fromDescription(role), name, email, providerId);
+		MemberResponse memberResponse = new MemberResponse(MemberRole.ROLE_USER.name(), name, email, providerId);
 		log.info("memberDto: {}", memberResponse);
 
 		CustomOAuth2Member customOAuth2Member = new CustomOAuth2Member(memberResponse);

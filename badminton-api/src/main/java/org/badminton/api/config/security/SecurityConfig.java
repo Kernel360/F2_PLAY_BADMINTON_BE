@@ -8,7 +8,6 @@ import org.badminton.api.member.jwt.JwtUtil;
 import org.badminton.api.member.oauth2.CustomSuccessHandler;
 import org.badminton.api.member.service.CustomOAuth2MemberService;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -24,7 +23,6 @@ import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
-@ComponentScan(basePackages = "org.badminton.domain")
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -50,13 +48,9 @@ public class SecurityConfig {
 			}));
 
 		http
-			.csrf(AbstractHttpConfigurer::disable);
-		http
-			.formLogin(AbstractHttpConfigurer::disable);
-		http
-			.httpBasic(AbstractHttpConfigurer::disable);
-		//	.httpBasic((auth) -> auth.disable());
-		http
+			.csrf(AbstractHttpConfigurer::disable)
+			.formLogin(AbstractHttpConfigurer::disable)
+			.httpBasic(AbstractHttpConfigurer::disable)
 			.addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
 		http
@@ -68,7 +62,7 @@ public class SecurityConfig {
 		http
 			.authorizeHttpRequests(auth -> auth
 				.requestMatchers("/", "/groups", "/oauth2/**", "/login/**", "/error", "/api/*", "/swagger-ui/**",
-					"/v3/api-docs/**")
+					"/v3/api-docs/**", "/v1/**")
 				.permitAll()
 				.anyRequest()
 				.authenticated());

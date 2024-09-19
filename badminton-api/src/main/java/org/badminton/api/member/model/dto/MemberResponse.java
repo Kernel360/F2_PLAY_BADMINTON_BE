@@ -1,7 +1,6 @@
 package org.badminton.api.member.model.dto;
 
 import org.badminton.domain.member.entity.MemberEntity;
-import org.badminton.domain.member.entity.MemberRole;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -9,7 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public record MemberResponse(
 
 	@Schema(description = "회원 역할", example = "ROLE_USER")
-	MemberRole role,
+	String role,
 
 	@Schema(description = "회원 이름", example = "이선우")
 	String name,
