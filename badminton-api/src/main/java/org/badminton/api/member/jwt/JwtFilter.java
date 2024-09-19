@@ -57,6 +57,11 @@ public class JwtFilter extends OncePerRequestFilter {
 
 		if (jwtUtil.isExpired(token)) {
 			log.info("JWT token expired");
+			Cookie expiredCookie = new Cookie("JWT", null);
+			expiredCookie.setMaxAge(0);
+			expiredCookie.setPath("/");
+			response.addCookie(expiredCookie);
+
 			filterChain.doFilter(request, response);
 
 			return;
