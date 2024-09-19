@@ -28,7 +28,7 @@ bin/
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
-badminton-api/.env
+.env
 
 ### NetBeans ###
 /nbproject/private/
