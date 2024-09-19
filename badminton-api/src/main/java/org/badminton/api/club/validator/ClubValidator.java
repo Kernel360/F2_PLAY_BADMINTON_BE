@@ -1,5 +1,8 @@
 package org.badminton.api.club.validator;
 
+import static org.badminton.api.common.error.ClubErrorCode.*;
+
+import org.badminton.api.common.exception.BadmintonException;
 import org.badminton.domain.club.entity.ClubEntity;
 import org.badminton.domain.club.repository.ClubRepository;
 import org.springframework.stereotype.Component;
@@ -18,7 +21,7 @@ public class ClubValidator {
 
 	public void checkIfClubPresent(String clubName) {
 		clubRepository.findByClubName(clubName).ifPresent(club -> {
-			throw new IllegalArgumentException("이미 존재하는 동호회입니다.");
+			throw new BadmintonException(CLUB_ALREADY_EXISTS);
 		});
 	}
 
