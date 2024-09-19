@@ -1,10 +1,10 @@
-package org.badminton.domain.member.jwt;
+package org.badminton.api.member.jwt;
 
 import java.io.IOException;
 
-import org.badminton.domain.member.model.dto.CustomOAuth2Member;
-import org.badminton.domain.member.model.dto.MemberDto;
-import org.badminton.domain.member.model.entity.MemberRole;
+import org.badminton.api.member.model.dto.CustomOAuth2Member;
+import org.badminton.api.member.model.dto.MemberResponse;
+import org.badminton.domain.member.entity.MemberRole;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,7 +28,7 @@ public class JwtFilter extends OncePerRequestFilter {
 	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
 		String path = request.getRequestURI();
 		return path.equals("/") || path.equals("/groups") || path.startsWith("/oauth2") || path.startsWith("/login")
-			|| path.startsWith("/api/logout") || path.startsWith("/swagger-ui");
+			|| path.startsWith("/api") || path.startsWith("/swagger-ui") || path.startsWith("/api-docs");
 
 	}
 
@@ -67,10 +67,10 @@ public class JwtFilter extends OncePerRequestFilter {
 		String name = jwtUtil.getName(token);
 		String email = jwtUtil.getEmail(token);
 
-		MemberDto memberDto = new MemberDto(MemberRole.fromDescription(role), name, email, providerId);
-		log.info("memberDto: {}", memberDto);
+		MemberResponse memberResponse = new MemberResponse(MemberRole.fromDescription(role), name, email, providerId);
+		log.info("memberDto: {}", memberResponse);
 
-		CustomOAuth2Member customOAuth2Member = new CustomOAuth2Member(memberDto);
+		CustomOAuth2Member customOAuth2Member = new CustomOAuth2Member(memberResponse);
 
 		Authentication authToken = new UsernamePasswordAuthenticationToken(customOAuth2Member, null,
 			customOAuth2Member.getAuthorities());

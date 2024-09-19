@@ -1,4 +1,4 @@
-package org.badminton.domain.member.model.entity;
+package org.badminton.domain.member.entity;
 
 import org.badminton.domain.common.BaseTimeEntity;
 

@@ -3,10 +3,10 @@ package org.badminton.api.config.security;
 import java.util.Arrays;
 import java.util.Collections;
 
-import org.badminton.domain.member.jwt.JwtFilter;
-import org.badminton.domain.member.jwt.JwtUtil;
-import org.badminton.domain.member.oauth2.CustomSuccessHandler;
-import org.badminton.domain.member.service.CustomOAuth2MemberService;
+import org.badminton.api.member.jwt.JwtFilter;
+import org.badminton.api.member.jwt.JwtUtil;
+import org.badminton.api.member.oauth2.CustomSuccessHandler;
+import org.badminton.api.member.service.CustomOAuth2MemberService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -67,7 +67,8 @@ public class SecurityConfig {
 
 		http
 			.authorizeHttpRequests(auth -> auth
-				.requestMatchers("/", "/groups", "/oauth2/**", "/login/**", "/error", "/api/logout", "/swagger-ui/**")
+				.requestMatchers("/", "/groups", "/oauth2/**", "/login/**", "/error", "/api/*", "/swagger-ui/**",
+					"/v3/api-docs/**")
 				.permitAll()
 				.anyRequest()
 				.authenticated());

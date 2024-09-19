@@ -1,11 +1,11 @@
-package org.badminton.domain.member.oauth2;
+package org.badminton.api.member.oauth2;
 
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.badminton.domain.member.jwt.JwtUtil;
-import org.badminton.domain.member.model.dto.CustomOAuth2Member;
+import org.badminton.api.member.jwt.JwtUtil;
+import org.badminton.api.member.model.dto.CustomOAuth2Member;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;

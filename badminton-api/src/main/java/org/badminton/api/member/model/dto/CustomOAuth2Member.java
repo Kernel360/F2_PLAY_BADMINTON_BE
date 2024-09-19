@@ -1,4 +1,4 @@
-package org.badminton.domain.member.model.dto;
+package org.badminton.api.member.model.dto;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CustomOAuth2Member implements OAuth2User {
 
-	private final MemberDto memberDto;
+	private final MemberResponse memberResponse;
 
 	@Override
 	public Map<String, Object> getAttributes() {
@@ -25,7 +25,7 @@ public class CustomOAuth2Member implements OAuth2User {
 		collection.add(new GrantedAuthority() {
 			@Override
 			public String getAuthority() {
-				return memberDto.getRole().getDescription();
+				return memberResponse.role().getDescription();
 			}
 		});
 		return collection;
@@ -33,14 +33,14 @@ public class CustomOAuth2Member implements OAuth2User {
 
 	@Override
 	public String getName() {
-		return memberDto.getName();
+		return memberResponse.name();
 	}
 
 	public String getProviderId() {
-		return memberDto.getProviderId();
+		return memberResponse.providerId();
 	}
 
 	public String getEmail() {
-		return memberDto.getEmail();
+		return memberResponse.email();
 	}
 }

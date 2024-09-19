@@ -1,22 +1,24 @@
-package org.badminton.domain.member.model.dto;
+package org.badminton.api.member.model.dto;
 
 import java.util.Map;
 
-import lombok.RequiredArgsConstructor;
-
-@RequiredArgsConstructor
-public class GoogleResponse implements OAuthResponse {
+public class NaverResponse implements OAuthResponse {
 
 	private final Map<String, Object> attribute;
 
+	public NaverResponse(Map<String, Object> attribute) {
+
+		this.attribute = (Map<String, Object>)attribute.get("response");
+	}
+
 	@Override
 	public String getProvider() {
-		return "google";
+		return "naver";
 	}
 
 	@Override
 	public String getProviderId() {
-		return attribute.get("sub").toString();
+		return attribute.get("id").toString();
 	}
 
 	@Override

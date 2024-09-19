@@ -1,4 +1,4 @@
-package org.badminton.domain.member.jwt;
+package org.badminton.api.member.jwt;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;

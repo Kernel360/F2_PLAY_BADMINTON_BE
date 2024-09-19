@@ -1,14 +1,17 @@
-package org.badminton.domain.member.service;
+package org.badminton.api.member.service;
 
-import org.badminton.domain.member.model.dto.CustomOAuth2Member;
-import org.badminton.domain.member.model.dto.GoogleResponse;
-import org.badminton.domain.member.model.dto.KakaoResponse;
-import org.badminton.domain.member.model.dto.MemberDto;
-import org.badminton.domain.member.model.dto.NaverResponse;
-import org.badminton.domain.member.model.dto.OAuthResponse;
-import org.badminton.domain.member.model.entity.MemberEntity;
-import org.badminton.domain.member.model.entity.MemberRole;
-import org.badminton.domain.member.model.mapper.MemberMapper;
+import static org.badminton.api.member.model.dto.MemberRequest.*;
+import static org.badminton.api.member.model.dto.MemberResponse.*;
+
+import org.badminton.api.member.model.dto.CustomOAuth2Member;
+import org.badminton.api.member.model.dto.GoogleResponse;
+import org.badminton.api.member.model.dto.KakaoResponse;
+import org.badminton.api.member.model.dto.MemberRequest;
+import org.badminton.api.member.model.dto.MemberResponse;
+import org.badminton.api.member.model.dto.NaverResponse;
+import org.badminton.api.member.model.dto.OAuthResponse;
+import org.badminton.domain.member.entity.MemberEntity;
+import org.badminton.domain.member.entity.MemberRole;
 import org.badminton.domain.member.repository.MemberRepository;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -25,7 +28,6 @@ import lombok.extern.slf4j.Slf4j;
 public class CustomOAuth2MemberService extends DefaultOAuth2UserService {
 
 	private final MemberRepository memberRepository;
-	private final MemberMapper memberMapper;
 
 	@Override
 	public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -49,21 +51,23 @@ public class CustomOAuth2MemberService extends DefaultOAuth2UserService {
 
 		if (existData == null) {
 
-			MemberDto memberDto = new MemberDto(MemberRole.ROLE_USER, oAuth2Response.getName(),
+			MemberRequest memberRequest = new MemberRequest(MemberRole.ROLE_USER, oAuth2Response.getName(),
 				oAuth2Response.getEmail(), providerId);
 
-			MemberEntity memberEntity = memberMapper.toEntity(memberDto);
+			MemberEntity memberEntity = memberRequestToEntity(memberRequest);
 
 			memberRepository.save(memberEntity);
 
-			return new CustomOAuth2Member(memberDto);
+			MemberResponse memberResponse = memberEntityToResponse(memberEntity);
+
+			return new CustomOAuth2Member(memberResponse);
 		} else {
 
 			memberRepository.save(existData);
 
-			MemberDto memberDto = memberMapper.toDto(existData);
+			MemberResponse memberResponse = memberEntityToResponse(existData);
 
-			return new CustomOAuth2Member(memberDto);
+			return new CustomOAuth2Member(memberResponse);
 		}
 	}
 }
