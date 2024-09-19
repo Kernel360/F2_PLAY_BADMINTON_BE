@@ -19,7 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/club")
+@RequestMapping("/v1/club")
 public class ClubController {
 
 	private final ClubAddService clubAddService;
