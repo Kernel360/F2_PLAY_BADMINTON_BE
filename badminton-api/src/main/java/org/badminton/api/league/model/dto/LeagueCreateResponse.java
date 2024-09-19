@@ -38,7 +38,10 @@ public record LeagueCreateResponse(
 	LocalDateTime createdAt,
 
 	@Schema(description = "수정 일자", example = "2024-09-10T15:30:00")
-	LocalDateTime modifiedAt
+	LocalDateTime modifiedAt,
+
+	@Schema(description = "매칭 조건", example = "TIER")
+	String matchingRequirement
 ) {
 
 	public LeagueCreateResponse(LeagueEntity entity) {
@@ -52,7 +55,8 @@ public record LeagueCreateResponse(
 			entity.getClosedAt(),
 			entity.getPlayerCount(),
 			entity.getCreatedAt(),
-			entity.getModifiedAt()
+			entity.getModifiedAt(),
+			entity.getMatchingRequirement()
 		);
 	}
 

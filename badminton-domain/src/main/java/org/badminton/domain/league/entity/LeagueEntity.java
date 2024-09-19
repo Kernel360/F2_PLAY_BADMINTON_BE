@@ -41,9 +41,11 @@ public class LeagueEntity extends BaseTimeEntity {
 
 	private Long playerCount;
 
+	private String matchingRequirement;
+
 	public LeagueEntity(String leagueName, String description, LocalDateTime leagueAt,
 		String tierLimit, LocalDateTime closedAt, String status, Long playerCount,
-		String matchType) {
+		String matchType, String matchingRequirement) {
 		this.leagueName = leagueName;
 		this.description = description;
 		this.leagueAt = leagueAt;
@@ -52,5 +54,6 @@ public class LeagueEntity extends BaseTimeEntity {
 		this.status = status;
 		this.playerCount = playerCount;
 		this.matchType = matchType;
+		this.matchingRequirement = matchingRequirement;
 	}
 }

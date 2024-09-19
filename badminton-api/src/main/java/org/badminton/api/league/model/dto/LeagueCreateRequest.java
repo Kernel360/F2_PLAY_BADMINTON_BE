@@ -37,7 +37,11 @@ public record LeagueCreateRequest(
 	LocalDateTime closedAt,
 
 	@Schema(description = "참가 인원", example = "16")
-	Long playerCount
+	Long playerCount,
+
+	@Schema(description = "매칭 조건", example = "TIER")
+	String matchingRequirement
+
 ) {
 	public static LeagueEntity leagueCreateRequestToEntity(LeagueCreateRequest request) {
 		return new LeagueEntity(
@@ -48,7 +52,8 @@ public record LeagueCreateRequest(
 			request.closedAt(),
 			request.status().name(),
 			request.playerCount(),
-			request.matchType().name()
+			request.matchType().name(),
+			request.matchingRequirement()
 		);
 	}
 }
