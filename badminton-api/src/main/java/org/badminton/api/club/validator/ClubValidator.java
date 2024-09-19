@@ -1,4 +1,4 @@
-package org.badminton.api.club.provider;
+package org.badminton.api.club.validator;
 
 import org.badminton.domain.club.entity.ClubEntity;
 import org.badminton.domain.club.repository.ClubRepository;
@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class ClubDataProvider {
+public class ClubValidator {
 
 	private final ClubRepository clubRepository;
 

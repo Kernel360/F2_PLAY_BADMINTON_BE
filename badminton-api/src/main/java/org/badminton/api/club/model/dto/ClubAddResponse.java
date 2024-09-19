@@ -16,7 +16,7 @@ public class ClubAddResponse {
 	private LocalDateTime createdAt;
 	private LocalDateTime modifiedAt;
 
-	public static ClubAddResponse toClubAddResponse(ClubEntity clubEntity) {
+	public static ClubAddResponse clubEntityToClubAddResponse(ClubEntity clubEntity) {
 		return new ClubAddResponse(clubEntity.getClubName(), clubEntity.getClubDescription(), clubEntity.getClubImage(),
 			clubEntity.getCreatedAt(),
 			clubEntity.getModifiedAt());
