@@ -5,7 +5,7 @@ import org.badminton.api.common.error.ErrorCode;
 import lombok.Getter;
 
 @Getter
-public class BadmintonException extends RuntimeException implements ErrorDescriptor {
+public class BadmintonException extends RuntimeException {
 
 	private final ErrorCode errorCode;
 	private final String errorDetails;
