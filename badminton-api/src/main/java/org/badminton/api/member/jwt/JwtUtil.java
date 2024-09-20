@@ -44,6 +44,15 @@ public class JwtUtil {
 			.get("email", String.class);
 	}
 
+	public String getProfileImage(String token) {
+		return Jwts.parser()
+			.verifyWith(secretKey)
+			.build()
+			.parseSignedClaims(token)
+			.getPayload()
+			.get("profileImage", String.class);
+	}
+
 	public String getName(String token) {
 
 		return Jwts.parser()
@@ -75,13 +84,15 @@ public class JwtUtil {
 			.before(new Date());
 	}
 
-	public String createJwt(String providerId, String authorization, String name, String email, Long expiredMs) {
+	public String createJwt(String providerId, String authorization, String name, String email, String profileImage,
+		Long expiredMs) {
 
 		return Jwts.builder()
 			.claim("providerId", providerId)
 			.claim("authorization", authorization)
 			.claim("name", name)
 			.claim("email", email) // providerId, role, name, email 을 클레임(데이터)로 추가
+			.claim("profileImage", profileImage)
 			.issuedAt(new Date(System.currentTimeMillis())) // 토큰 발행 시각 설정
 			.expiration(new Date(System.currentTimeMillis() + expiredMs)) // 만료 시각 설정 (현재 시각 + expiredMs)
 			.signWith(secretKey) // secretKey 로 서명

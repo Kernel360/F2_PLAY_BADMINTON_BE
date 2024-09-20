@@ -43,4 +43,8 @@ public class CustomOAuth2Member implements OAuth2User {
 	public String getEmail() {
 		return memberResponse.email();
 	}
+
+	public String getProfileImage() {
+		return memberResponse.profileImage();
+	}
 }

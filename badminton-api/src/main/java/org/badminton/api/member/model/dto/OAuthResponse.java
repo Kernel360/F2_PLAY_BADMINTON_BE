@@ -9,4 +9,6 @@ public interface OAuthResponse {
 	String getEmail(); // 이메일
 
 	String getName(); // 설정한 이름
+
+	String getProfileImage();
 }

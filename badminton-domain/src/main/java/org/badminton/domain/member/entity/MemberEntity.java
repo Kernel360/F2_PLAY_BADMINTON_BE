@@ -28,10 +28,16 @@ public class MemberEntity extends BaseTimeEntity {
 
 	private String authorization;
 
-	public MemberEntity(String email, String name, String providerId, MemberAuthorization authorization) {
+	private String profileImage;
+
+	private boolean isDeleted;
+
+	public MemberEntity(String email, String name, String providerId, String profileImage,
+		MemberAuthorization authorization) {
 		this.email = email;
 		this.name = name;
 		this.providerId = providerId;
 		this.authorization = authorization.name();
+		this.profileImage = profileImage;
 	}
 }

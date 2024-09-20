@@ -17,12 +17,16 @@ public record MemberResponse(
 	String email,
 
 	@Schema(description = "oAuth 제공 ID", example = "1070449979547641023123")
-	String providerId
+	String providerId,
+
+	@Schema(description = "oAuth 제공 이미지", example = "1070449979547641023123")
+	String profileImage
+
 ) {
 
 	public static MemberResponse memberEntityToResponse(MemberEntity memberEntity) {
 		return new MemberResponse(memberEntity.getAuthorization(), memberEntity.getName(), memberEntity.getEmail(),
-			memberEntity.getProviderId());
+			memberEntity.getProviderId(), memberEntity.getProfileImage());
 	}
 }
 

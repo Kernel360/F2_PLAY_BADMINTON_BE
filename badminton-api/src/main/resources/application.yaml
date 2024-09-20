@@ -43,7 +43,7 @@ spring:
             client-secret: ${KAKAO_CLIENT_SECRET}
             redirect-uri: ${SERVER_URL}/login/oauth2/code/kakao
             authorization-grant-type: authorization_code
-            scope: profile_nickname, account_email
+            scope: profile_nickname, account_email, profile_image
             client-authentication-method: client_secret_post
           google:
             client-name: google

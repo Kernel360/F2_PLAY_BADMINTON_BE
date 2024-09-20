@@ -45,6 +45,8 @@ public class CustomOAuth2MemberService extends DefaultOAuth2UserService {
 				return null;
 			}
 		}
+		log.info("attribute:{}", oAuth2User.getAttributes());
+
 		// String providerId = oAuth2Response.getProvider() + " " + oAuth2Response.getProviderId();
 		String providerId = oAuth2Response.getProviderId();
 		MemberEntity existData = memberRepository.findByProviderId(providerId);
@@ -53,7 +55,7 @@ public class CustomOAuth2MemberService extends DefaultOAuth2UserService {
 
 			MemberRequest memberRequest = new MemberRequest(MemberAuthorization.AUTHORIZATION_USER,
 				oAuth2Response.getName(),
-				oAuth2Response.getEmail(), providerId);
+				oAuth2Response.getEmail(), providerId, oAuth2Response.getProfileImage());
 
 			MemberEntity memberEntity = memberRequestToEntity(memberRequest);
 

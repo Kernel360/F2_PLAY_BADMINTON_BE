@@ -18,12 +18,15 @@ public record MemberRequest(
 	String email,
 
 	@Schema(description = "oAuth 제공 ID", example = "1070449979547641023123")
-	String providerId
+	String providerId,
+
+	@Schema(description = "oAuth 이미지", example = "1070449979547641023123")
+	String profileImage
 ) {
 
 	public static MemberEntity memberRequestToEntity(MemberRequest memberRequest) {
 		return new MemberEntity(memberRequest.email(), memberRequest.name(), memberRequest.providerId(),
-			memberRequest.authorization());
+			memberRequest.profileImage, memberRequest.authorization());
 	}
 }
 
