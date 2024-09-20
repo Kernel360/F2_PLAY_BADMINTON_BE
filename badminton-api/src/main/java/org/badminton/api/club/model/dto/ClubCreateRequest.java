@@ -7,7 +7,7 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public class ClubAddRequest {
+public class ClubCreateRequest {
 
 	@NotBlank(message = "동호회 이름은 필수 입력 항목입니다.")
 	@Size(min = 2, max = 20)

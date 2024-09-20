@@ -1,18 +1,22 @@
 package org.badminton.api.common.exception;
 
-import org.badminton.api.common.error.ErrorCodeIfs;
+import org.badminton.api.common.error.ErrorCode;
 
 import lombok.Getter;
 
 @Getter
-public class BadmintonException extends RuntimeException implements BadmintonExceptionIfs {
+public class BadmintonException extends RuntimeException implements ErrorDescriptor {
 
-	private final ErrorCodeIfs errorCodeIfs;
-	private final String errorDescription;
+	private final ErrorCode errorCode;
+	private final String errorDetails;
 
-	public BadmintonException(ErrorCodeIfs errorCodeIfs) {
-		super(errorCodeIfs.getDescription());
-		this.errorCodeIfs = errorCodeIfs;
-		this.errorDescription = errorCodeIfs.getDescription();
+	public BadmintonException(ErrorCode errorCode, String errorDetails) {
+		super(errorCode.getDescription());
+		this.errorCode = errorCode;
+		this.errorDetails = errorCode.getDescription() + wrapErrorDetails(errorDetails);
+	}
+
+	private String wrapErrorDetails(String target) {
+		return "[" + target + "]";
 	}
 }
