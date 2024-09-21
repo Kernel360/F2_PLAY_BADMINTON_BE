@@ -3,6 +3,7 @@ package org.badminton.api.member.service;
 import static org.badminton.api.member.model.dto.MemberRequest.*;
 import static org.badminton.api.member.model.dto.MemberResponse.*;
 
+import org.badminton.api.member.jwt.JwtUtil;
 import org.badminton.api.member.model.dto.CustomOAuth2Member;
 import org.badminton.api.member.model.dto.GoogleResponse;
 import org.badminton.api.member.model.dto.KakaoResponse;
@@ -28,15 +29,22 @@ import lombok.extern.slf4j.Slf4j;
 public class CustomOAuth2MemberService extends DefaultOAuth2UserService {
 
 	private final MemberRepository memberRepository;
+	private final JwtUtil jwtUtil;
 
 	@Override
 	public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 		log.info("CustomOAuth2MemberService is being executed");
+
+		String accessToken = userRequest.getAccessToken().getTokenValue();
+		log.info("accessToken: {}", accessToken);
+
 		OAuth2User oAuth2User = super.loadUser(userRequest);
 		log.info("USer details: {}", oAuth2User);
 
 		String registrationId = userRequest.getClientRegistration().getRegistrationId();
+		log.info("registrationId: {}", registrationId);
 		OAuthResponse oAuth2Response = null;
+
 		switch (registrationId) {
 			case "naver" -> oAuth2Response = new NaverResponse(oAuth2User.getAttributes());
 			case "google" -> oAuth2Response = new GoogleResponse(oAuth2User.getAttributes());
@@ -47,9 +55,10 @@ public class CustomOAuth2MemberService extends DefaultOAuth2UserService {
 		}
 		log.info("attribute:{}", oAuth2User.getAttributes());
 
-		// String providerId = oAuth2Response.getProvider() + " " + oAuth2Response.getProviderId();
 		String providerId = oAuth2Response.getProviderId();
 		MemberEntity existData = memberRepository.findByProviderId(providerId);
+
+		MemberResponse memberResponse;
 
 		if (existData == null) {
 
@@ -60,17 +69,28 @@ public class CustomOAuth2MemberService extends DefaultOAuth2UserService {
 			MemberEntity memberEntity = memberRequestToEntity(memberRequest);
 
 			memberRepository.save(memberEntity);
+			memberResponse = memberEntityToResponse(memberEntity);
 
-			MemberResponse memberResponse = memberEntityToResponse(memberEntity);
-
-			return new CustomOAuth2Member(memberResponse);
+			// return new CustomOAuth2Member(memberResponse);
 		} else {
 
-			memberRepository.save(existData);
+			// memberRepository.save(existData);
 
-			MemberResponse memberResponse = memberEntityToResponse(existData);
+			memberResponse = memberEntityToResponse(existData);
 
-			return new CustomOAuth2Member(memberResponse);
+			// return new CustomOAuth2Member(memberResponse);
 		}
+		String jwt = jwtUtil.createJwt(
+			providerId,
+			memberResponse.authorization(),
+			memberResponse.name(),
+			memberResponse.email(),
+			memberResponse.profileImage(),
+			accessToken,
+			60 * 60 * 1000L
+		);
+
+		log.info("jwt: {}", jwt);
+		return new CustomOAuth2Member(memberResponse, accessToken);
 	}
 }

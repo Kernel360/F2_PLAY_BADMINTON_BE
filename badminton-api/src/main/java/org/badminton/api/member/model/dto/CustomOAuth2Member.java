@@ -7,12 +7,15 @@ import java.util.Map;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class CustomOAuth2Member implements OAuth2User {
 
 	private final MemberResponse memberResponse;
+	@Getter
+	private final String accessToken;
 
 	@Override
 	public Map<String, Object> getAttributes() {
@@ -47,4 +50,5 @@ public class CustomOAuth2Member implements OAuth2User {
 	public String getProfileImage() {
 		return memberResponse.profileImage();
 	}
+
 }

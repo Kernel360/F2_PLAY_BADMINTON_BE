@@ -43,13 +43,15 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		String profileImage = customUserDetails.getProfileImage();
 		log.info("profileImage: {}", profileImage);
 
+		String accessToken = customUserDetails.getAccessToken();
+
 		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 		Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
 		GrantedAuthority auth = iterator.next();
 		String authorization = auth.getAuthority();
 
 		String token = jwtUtil.createJwt(providerId, authorization, name, email, profileImage,
-			60 * 60 * 60L); // 초 * 분 * 시
+			accessToken, 60 * 60 * 60L); // 초 * 분 * 시
 
 		// response.setHeader("Authorization", "Bearer " + token);
 
