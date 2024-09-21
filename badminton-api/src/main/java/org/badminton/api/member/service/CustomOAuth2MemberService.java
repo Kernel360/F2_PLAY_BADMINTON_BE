@@ -87,10 +87,11 @@ public class CustomOAuth2MemberService extends DefaultOAuth2UserService {
 			memberResponse.email(),
 			memberResponse.profileImage(),
 			accessToken,
-			60 * 60 * 1000L
+			registrationId,
+			24 * 60 * 60 * 1000L
 		);
 
 		log.info("jwt: {}", jwt);
-		return new CustomOAuth2Member(memberResponse, accessToken);
+		return new CustomOAuth2Member(memberResponse, accessToken, registrationId);
 	}
 }

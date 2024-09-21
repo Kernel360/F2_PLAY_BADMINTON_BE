@@ -16,6 +16,8 @@ public class CustomOAuth2Member implements OAuth2User {
 	private final MemberResponse memberResponse;
 	@Getter
 	private final String accessToken;
+	@Getter
+	private final String registrationId;
 
 	@Override
 	public Map<String, Object> getAttributes() {

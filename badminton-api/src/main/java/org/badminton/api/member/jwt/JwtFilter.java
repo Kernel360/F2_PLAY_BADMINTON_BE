@@ -74,12 +74,13 @@ public class JwtFilter extends OncePerRequestFilter {
 		String email = jwtUtil.getEmail(token);
 		String profileImage = jwtUtil.getProfileImage(token);
 		String accessToken = jwtUtil.getAccessToken(token);
+		String registrationId = jwtUtil.getRegistrationId(token);
 
 		MemberResponse memberResponse = new MemberResponse(MemberAuthorization.AUTHORIZATION_USER.name(), name, email,
 			providerId, profileImage);
 		log.info("memberDto: {}", memberResponse);
 
-		CustomOAuth2Member customOAuth2Member = new CustomOAuth2Member(memberResponse, accessToken);
+		CustomOAuth2Member customOAuth2Member = new CustomOAuth2Member(memberResponse, accessToken, registrationId);
 
 		Authentication authToken = new UsernamePasswordAuthenticationToken(customOAuth2Member, null,
 			customOAuth2Member.getAuthorities());

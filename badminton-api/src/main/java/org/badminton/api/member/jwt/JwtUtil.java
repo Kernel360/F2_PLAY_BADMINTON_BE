@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Jwts;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,13 +27,29 @@ public class JwtUtil {
 	}
 
 	public String extractProviderIdFromRequest(HttpServletRequest request) {
-		String token = request.getHeader("Authorization");
-		if (token != null && token.startsWith("Bearer ")) {
-			throw new IllegalArgumentException("토큰이 없습니다");
+		Cookie[] cookies = request.getCookies();
+		if (cookies != null) {
+			for (Cookie cookie : cookies) {
+				if ("JWT".equals(cookie.getName())) {
+					String jwtToken = cookie.getValue();
+					log.info("JWT Token from Cookie: {}", jwtToken);
+					return getProviderId(jwtToken);
+				}
+			}
 		}
-		assert token != null;
-		String jwtToken = token.substring(7);
-		return getProviderId(jwtToken);
+		throw new IllegalArgumentException("JWT 쿠키가 없습니다");
+	}
+
+	public String extractJwtTokenFromRequest(HttpServletRequest request) {
+		Cookie[] cookies = request.getCookies();
+		if (cookies != null) {
+			for (Cookie cookie : cookies) {
+				if ("JWT".equals(cookie.getName())) {
+					return cookie.getValue();
+				}
+			}
+		}
+		throw new IllegalArgumentException("JWT 쿠키가 없습니다");
 	}
 
 	public String getProviderId(String token) {
@@ -93,6 +110,15 @@ public class JwtUtil {
 			.get("accessToken", String.class);
 	}
 
+	public String getRegistrationId(String token) {
+		return Jwts.parser()
+			.verifyWith(secretKey)
+			.build()
+			.parseSignedClaims(token)
+			.getPayload()
+			.get("registrationId", String.class);
+	}
+
 	public Boolean isExpired(String token) {
 
 		return Jwts.parser()
@@ -105,7 +131,7 @@ public class JwtUtil {
 	}
 
 	public String createJwt(String providerId, String authorization, String name, String email, String profileImage
-		, String accessToken, Long expiredMs) {
+		, String accessToken, String registrationId, Long expiredMs) {
 
 		return Jwts.builder()
 			.claim("providerId", providerId)
@@ -114,6 +140,7 @@ public class JwtUtil {
 			.claim("email", email) // providerId, role, name, email 을 클레임(데이터)로 추가
 			.claim("profileImage", profileImage)
 			.claim("accessToken", accessToken)
+			.claim("registrationId", registrationId)
 			.issuedAt(new Date(System.currentTimeMillis())) // 토큰 발행 시각 설정
 			.expiration(new Date(System.currentTimeMillis() + expiredMs)) // 만료 시각 설정 (현재 시각 + expiredMs)
 			.signWith(secretKey) // secretKey 로 서명
