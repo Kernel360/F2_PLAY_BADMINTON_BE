@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Jwts;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 
 @Component
@@ -22,6 +23,16 @@ public class JwtUtil {
 
 		secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8),
 			Jwts.SIG.HS256.key().build().getAlgorithm()); // 비밀 키 생성
+	}
+
+	public String extractProviderIdFromRequest(HttpServletRequest request) {
+		String token = request.getHeader("Authorization");
+		if (token != null && token.startsWith("Bearer ")) {
+			throw new IllegalArgumentException("토큰이 없습니다");
+		}
+		assert token != null;
+		String jwtToken = token.substring(7);
+		return getProviderId(jwtToken);
 	}
 
 	public String getProviderId(String token) {
@@ -73,6 +84,15 @@ public class JwtUtil {
 			.get("authorization", String.class);
 	}
 
+	public String getAccessToken(String token) {
+		return Jwts.parser()
+			.verifyWith(secretKey)
+			.build()
+			.parseSignedClaims(token)
+			.getPayload()
+			.get("accessToken", String.class);
+	}
+
 	public Boolean isExpired(String token) {
 
 		return Jwts.parser()
@@ -84,8 +104,8 @@ public class JwtUtil {
 			.before(new Date());
 	}
 
-	public String createJwt(String providerId, String authorization, String name, String email, String profileImage,
-		Long expiredMs) {
+	public String createJwt(String providerId, String authorization, String name, String email, String profileImage
+		, String accessToken, Long expiredMs) {
 
 		return Jwts.builder()
 			.claim("providerId", providerId)
@@ -93,6 +113,7 @@ public class JwtUtil {
 			.claim("name", name)
 			.claim("email", email) // providerId, role, name, email 을 클레임(데이터)로 추가
 			.claim("profileImage", profileImage)
+			.claim("accessToken", accessToken)
 			.issuedAt(new Date(System.currentTimeMillis())) // 토큰 발행 시각 설정
 			.expiration(new Date(System.currentTimeMillis() + expiredMs)) // 만료 시각 설정 (현재 시각 + expiredMs)
 			.signWith(secretKey) // secretKey 로 서명

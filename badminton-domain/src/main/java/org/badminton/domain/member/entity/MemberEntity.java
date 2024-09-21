@@ -40,4 +40,9 @@ public class MemberEntity extends BaseTimeEntity {
 		this.authorization = authorization.name();
 		this.profileImage = profileImage;
 	}
+
+	public void updateMember(String profileImage) {
+		this.profileImage = profileImage;
+	}
+
 }
