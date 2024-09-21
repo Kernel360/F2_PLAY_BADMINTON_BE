@@ -1,5 +1,7 @@
 package org.badminton.domain.member.entity;
 
+import java.time.LocalDateTime;
+
 import org.badminton.domain.common.BaseTimeEntity;
 
 import jakarta.persistence.Entity;
@@ -30,7 +32,9 @@ public class MemberEntity extends BaseTimeEntity {
 
 	private String profileImage;
 
-	private boolean isDeleted;
+	private boolean isDeleted = false;
+
+	private LocalDateTime lastConnectionAt;
 
 	public MemberEntity(String email, String name, String providerId, String profileImage,
 		MemberAuthorization authorization) {
@@ -43,6 +47,23 @@ public class MemberEntity extends BaseTimeEntity {
 
 	public void updateMember(String profileImage) {
 		this.profileImage = profileImage;
+	}
+
+	public void deleteMember() {
+		this.isDeleted = true;
+		this.updateLastConnection();
+	}
+
+	public void updateLastConnection() {
+		this.lastConnectionAt = LocalDateTime.now();
+	}
+
+	public void reactivateMember() {
+		this.isDeleted = false;
+	}
+	
+	public boolean isMemberDeleted() {
+		return this.isDeleted;
 	}
 
 }

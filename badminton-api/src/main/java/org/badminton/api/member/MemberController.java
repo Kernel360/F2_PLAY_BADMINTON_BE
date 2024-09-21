@@ -41,6 +41,46 @@ public class MemberController {
 	private String naverClientSecret;
 
 	@Operation(
+		summary = "프로필 사진을 수정합니다",
+		description = "프로필 사진을 수정합니다",
+		tags = {"Member"}
+
+	)
+	@PatchMapping
+	public ResponseEntity<String> update(HttpServletRequest request, @RequestBody MemberUpdateRequest updateRequest) {
+		memberService.updateMember(request, updateRequest);
+		return new ResponseEntity<>("update successful", HttpStatus.OK);
+	}
+
+	@DeleteMapping
+	public ResponseEntity<String> delete(HttpServletRequest request, HttpServletResponse response) {
+		String jwtToken = jwtUtil.extractJwtTokenFromRequest(request);
+		if (jwtToken == null) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Jwt 토큰을 찾을 수 없습니다");
+		}
+
+		String accessToken = jwtUtil.getAccessToken(jwtToken);
+		String registrationId = jwtUtil.getRegistrationId(jwtToken);
+
+		// 연결 끊기 로직 (Google, Naver, Kakao)
+		if ("google".equals(registrationId)) {
+			googleUnlink(accessToken);
+		} else if ("naver".equals(registrationId)) {
+			naverUnlink(accessToken);
+		} else if ("kakao".equals(registrationId)) {
+			kakaoUnlink(accessToken);
+		}
+		memberService.markAsDeleted(jwtUtil.getProviderId(jwtToken));
+
+		Cookie cookie = new Cookie("JWT", null);
+		cookie.setMaxAge(0);
+		cookie.setPath("/");
+		response.addCookie(cookie);
+
+		return ResponseEntity.ok("탈퇴 성공, OAuth 연결끊기 성공!");
+	}
+
+	@Operation(
 		summary = "로그아웃을 합니다",
 		description = "쿠키에서 JWT 토큰을 제거해 로그아웃을 합니다",
 		tags = {"Member"}
@@ -129,23 +169,6 @@ public class MemberController {
 		} catch (IOException e) {
 			log.error("Error occurred while unlinking Google account", e);
 		}
-	}
-
-	@Operation(
-		summary = "프로필 사진을 수정합니다",
-		description = "프로필 사진을 수정합니다",
-		tags = {"Member"}
-
-	)
-	@PatchMapping
-	public ResponseEntity<String> update(HttpServletRequest request, @RequestBody MemberUpdateRequest updateRequest) {
-		memberService.updateMember(request, updateRequest);
-		return new ResponseEntity<>("update successful", HttpStatus.OK);
-	}
-
-	@DeleteMapping
-	public ResponseEntity<String> delete(HttpServletRequest request, HttpServletResponse response) {
-		return new ResponseEntity<>("delete successful", HttpStatus.OK);
 	}
 
 }

@@ -74,6 +74,11 @@ public class CustomOAuth2MemberService extends DefaultOAuth2UserService {
 			// return new CustomOAuth2Member(memberResponse);
 		} else {
 
+			if (existData.isDeleted()) {
+				existData.reactivateMember();
+				memberRepository.save(existData);
+			}
+
 			// memberRepository.save(existData);
 
 			memberResponse = memberEntityToResponse(existData);
