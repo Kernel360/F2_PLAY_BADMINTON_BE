@@ -54,6 +54,8 @@ public class MemberController {
 		try {
 			memberService.deleteMember(request, response);
 			return new ResponseEntity<>("delete successful", HttpStatus.OK);
+		} catch (IllegalArgumentException e) {
+			return new ResponseEntity<>("delete failed", HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
 			return new ResponseEntity<>("delete failed", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -66,8 +68,15 @@ public class MemberController {
 	)
 	@PostMapping("/logout")
 	public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
-		memberService.logoutMember(request, response);
-		return ResponseEntity.ok("로그아웃 성공 , OAuth 연결끊기 성공!");
+		try {
+			memberService.logoutMember(request, response);
+			return ResponseEntity.ok("로그아웃 성공 , OAuth 연결끊기 성공!");
+		} catch (IllegalArgumentException e) {
+			return new ResponseEntity<>("logout failed", HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			return new ResponseEntity<>("logout failed", HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
 	}
 
 }

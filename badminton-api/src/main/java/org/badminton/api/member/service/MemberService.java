@@ -28,6 +28,16 @@ public class MemberService {
 
 	private final MemberRepository memberRepository;
 	private final JwtUtil jwtUtil;
+
+	@Value("${spring.security.oauth2.revoke-url.naver}")
+	private String naverRevokeUrl;
+
+	@Value("${spring.security.oauth2.revoke-url.kakao}")
+	private String kakaoRevokeUrl;
+
+	@Value("${spring.security.oauth2.revoke-url.google}")
+	private String googleRevokeUrl;
+
 	@Value("${NAVER_CLIENT_ID}")
 	private String naverClientId;
 
@@ -50,15 +60,16 @@ public class MemberService {
 
 	public void logoutMember(HttpServletRequest request, HttpServletResponse response) {
 		unLinkOAuth(request);
-		Cookie cookie = new Cookie("JWT", null);
-		cookie.setMaxAge(0);
-		cookie.setPath("/");
-		response.addCookie(cookie);
+		removeJwtCookie(response);
 	}
 
 	public void deleteMember(HttpServletRequest request, HttpServletResponse response) {
 		String jwtToken = unLinkOAuth(request);
 		changeIsDeleted(jwtUtil.getProviderId(jwtToken));
+		removeJwtCookie(response);
+	}
+
+	private static void removeJwtCookie(HttpServletResponse response) {
 		Cookie cookie = new Cookie("JWT", null);
 		cookie.setMaxAge(0);
 		cookie.setPath("/");
@@ -110,62 +121,45 @@ public class MemberService {
 		log.info("Deleting members");
 	}
 
+	public void kakaoUnlink(String accessToken) {
+		String formattedUrl = kakaoRevokeUrl;
+		unlinkAccount(formattedUrl, "POST", accessToken, true);
+	}
+
+	public void googleUnlink(String accessToken) {
+		String formattedUrl = googleRevokeUrl.replace("{access_token}", accessToken);
+		unlinkAccount(formattedUrl, "GET", null, false);
+	}
+
 	public void naverUnlink(String accessToken) {
-		String revokeUrl = String.format(
-			"https://nid.naver.com/oauth2.0/token?grant_type=delete&client_id=%s&client_secret=%s&access_token=%s&service_provider=NAVER",
-			naverClientId, naverClientSecret, accessToken);
+		String formattedUrl = naverRevokeUrl
+			.replace("{client_id}", naverClientId)
+			.replace("{client_secret}", naverClientSecret)
+			.replace("{access_token}", accessToken);
+
+		unlinkAccount(formattedUrl, "GET", null, false);
+	}
+
+	private void unlinkAccount(String revokeUrl, String method, String accessToken, boolean useAuthHeader) {
 		try {
 			URL url = new URL(revokeUrl);
 			HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-			connection.setRequestMethod("GET");
+			connection.setRequestMethod(method);
+
+			if (useAuthHeader && accessToken != null) {
+				connection.setRequestProperty("Authorization", "Bearer " + accessToken);
+			}
+
 			connection.setRequestProperty("Content-Length", "0");
 
 			int responseCode = connection.getResponseCode();
 			if (responseCode == 200) {
-				log.info("Naver account successfully unlinked");
+				log.info("Account successfully unlinked");
 			} else {
-				log.error("Failed to unlink Naver account, response code: {}", responseCode);
+				log.error("Failed to unlink account, response code: {}", responseCode);
 			}
 		} catch (IOException e) {
-			log.error("Error occurred while unlinking Naver account", e);
-		}
-	}
-
-	public void kakaoUnlink(String accessToken) {
-		String revokeUrl = "https://kapi.kakao.com/v1/user/unlink";
-		try {
-			URL url = new URL(revokeUrl);
-			HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-			connection.setRequestMethod("POST");
-			connection.setRequestProperty("Authorization", "Bearer " + accessToken);
-
-			int responseCode = connection.getResponseCode();
-			if (responseCode == 200) {
-				log.info("Kakao account successfully unlinked");
-			} else {
-				log.error("Failed to unlink Kakao account, response code: {}", responseCode);
-			}
-		} catch (IOException e) {
-			log.error("Error occurred while unlinking Kakao account", e);
-		}
-	}
-
-	public void googleUnlink(String accessToken) {
-		String revokeUrl = "https://accounts.google.com/o/oauth2/revoke?token=" + accessToken;
-		try {
-			URL url = new URL(revokeUrl);
-			HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-			connection.setRequestMethod("GET"); // GET 요청으로 변경
-			connection.setRequestProperty("Content-Length", "0"); // Content-Length 설정
-
-			int responseCode = connection.getResponseCode();
-			if (responseCode == 200) {
-				log.info("Google account successfully unlinked");
-			} else {
-				log.error("Failed to unlink Google account, response code: {}", responseCode);
-			}
-		} catch (IOException e) {
-			log.error("Error occurred while unlinking Google account", e);
+			log.error("Error occurred while unlinking account", e);
 		}
 	}
 
