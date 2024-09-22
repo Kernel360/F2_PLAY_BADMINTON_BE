@@ -29,17 +29,8 @@ public class JwtUtil {
 	}
 
 	public String extractProviderIdFromRequest(HttpServletRequest request) {
-		Cookie[] cookies = request.getCookies();
-		if (cookies != null) {
-			for (Cookie cookie : cookies) {
-				if ("JWT".equals(cookie.getName())) {
-					String jwtToken = cookie.getValue();
-					log.info("JWT Token from Cookie: {}", jwtToken);
-					return getProviderId(jwtToken);
-				}
-			}
-		}
-		throw new IllegalArgumentException("JWT 쿠키가 없습니다");
+		String JwtToken = extractJwtTokenFromRequest(request);
+		return getProviderId(JwtToken);
 	}
 
 	public String extractJwtTokenFromRequest(HttpServletRequest request) {
@@ -53,72 +44,42 @@ public class JwtUtil {
 		}
 		throw new IllegalArgumentException("JWT 쿠키가 없습니다");
 	}
-
+	
 	public String getProviderId(String token) {
-
-		return Jwts.parser()
-			.verifyWith(secretKey) // secretKey 를 사용해서 JWT 서명을 검증
-			.build()
-			.parseSignedClaims(token) // 서명된 JWT 를 파싱하고, 데이터(클레임)를 추출
-			.getPayload()
-			.get("providerId", String.class); // "providerId" 클레임을 String 으로 변환
+		return getDetail(token, "providerId");
 	}
 
 	public String getEmail(String token) {
-
-		return Jwts.parser()
-			.verifyWith(secretKey)
-			.build()
-			.parseSignedClaims(token)
-			.getPayload()
-			.get("email", String.class);
+		return getDetail(token, "email");
 	}
 
 	public String getProfileImage(String token) {
-		return Jwts.parser()
-			.verifyWith(secretKey)
-			.build()
-			.parseSignedClaims(token)
-			.getPayload()
-			.get("profileImage", String.class);
+		return getDetail(token, "profileImage");
 	}
 
 	public String getName(String token) {
-
-		return Jwts.parser()
-			.verifyWith(secretKey)
-			.build()
-			.parseSignedClaims(token)
-			.getPayload()
-			.get("name", String.class);
+		return getDetail(token, "name");
 	}
 
 	public String getAuthorization(String token) {
-
-		return Jwts.parser()
-			.verifyWith(secretKey)
-			.build()
-			.parseSignedClaims(token)
-			.getPayload()
-			.get("authorization", String.class);
+		return getDetail(token, "authorization");
 	}
 
 	public String getAccessToken(String token) {
-		return Jwts.parser()
-			.verifyWith(secretKey)
-			.build()
-			.parseSignedClaims(token)
-			.getPayload()
-			.get("accessToken", String.class);
+		return getDetail(token, "accessToken");
 	}
 
 	public String getRegistrationId(String token) {
+		return getDetail(token, "registrationId");
+	}
+
+	public String getDetail(String token, String detail) {
 		return Jwts.parser()
 			.verifyWith(secretKey)
 			.build()
 			.parseSignedClaims(token)
 			.getPayload()
-			.get("registrationId", String.class);
+			.get(detail, String.class);
 	}
 
 	public Boolean isExpired(String token) {

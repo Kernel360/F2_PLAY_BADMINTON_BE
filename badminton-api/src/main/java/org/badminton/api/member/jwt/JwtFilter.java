@@ -37,25 +37,15 @@ public class JwtFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
 
-		String JWT = null;
-		Cookie[] cookies = request.getCookies();
-		for (Cookie cookie : cookies) {
-			log.info("cookie: {}", cookie.getName());
-			if (cookie.getName().equals("JWT")) {
-				JWT = cookie.getValue();
-			}
-		}
+		String jwtToken = jwtUtil.extractJwtTokenFromRequest(request);
 
-		if (JWT == null) {
+		if (jwtToken == null) {
 			log.info("JWT cookie not found");
 			filterChain.doFilter(request, response);
-
 			return;
 		}
 
-		String token = JWT;
-
-		if (jwtUtil.isExpired(token)) {
+		if (jwtUtil.isExpired(jwtToken)) {
 			log.info("JWT token expired");
 			Cookie expiredCookie = new Cookie("JWT", null);
 			expiredCookie.setMaxAge(0);
@@ -67,14 +57,14 @@ public class JwtFilter extends OncePerRequestFilter {
 			return;
 		}
 
-		String providerId = jwtUtil.getProviderId(token);
-		String authorization = jwtUtil.getAuthorization(token);
+		String providerId = jwtUtil.getProviderId(jwtToken);
+		String authorization = jwtUtil.getAuthorization(jwtToken);
 		log.info("JWT authorization: {}", authorization);
-		String name = jwtUtil.getName(token);
-		String email = jwtUtil.getEmail(token);
-		String profileImage = jwtUtil.getProfileImage(token);
-		String accessToken = jwtUtil.getAccessToken(token);
-		String registrationId = jwtUtil.getRegistrationId(token);
+		String name = jwtUtil.getName(jwtToken);
+		String email = jwtUtil.getEmail(jwtToken);
+		String profileImage = jwtUtil.getProfileImage(jwtToken);
+		String accessToken = jwtUtil.getAccessToken(jwtToken);
+		String registrationId = jwtUtil.getRegistrationId(jwtToken);
 
 		MemberResponse memberResponse = new MemberResponse(MemberAuthorization.AUTHORIZATION_USER.name(), name, email,
 			providerId, profileImage);

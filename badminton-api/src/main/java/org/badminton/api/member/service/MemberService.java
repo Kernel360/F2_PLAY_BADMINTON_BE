@@ -69,7 +69,7 @@ public class MemberService {
 		removeJwtCookie(response);
 	}
 
-	private static void removeJwtCookie(HttpServletResponse response) {
+	private void removeJwtCookie(HttpServletResponse response) {
 		Cookie cookie = new Cookie("JWT", null);
 		cookie.setMaxAge(0);
 		cookie.setPath("/");
