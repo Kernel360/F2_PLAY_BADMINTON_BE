@@ -48,18 +48,14 @@ public record LeagueStatusUpdateResponse(
 			entity.getLeagueId(),
 			entity.getLeagueName(),
 			entity.getDescription(),
-			MemberTier.valueOf(entity.getTierLimit()),
-			LeagueStatus.valueOf(entity.getStatus()),
-			MatchType.valueOf(entity.getMatchType()),
+			entity.getTierLimit(),
+			entity.getStatus(),
+			entity.getMatchType(),
 			entity.getLeagueAt(),
 			entity.getClosedAt(),
 			entity.getPlayerCount(),
 			entity.getModifiedAt(),
 			entity.getMatchingRequirement()
 		);
-	}
-
-	public static LeagueStatusUpdateResponse leagueStatusUpdateEntityToResponse(LeagueEntity entity) {
-		return new LeagueStatusUpdateResponse(entity);
 	}
 }

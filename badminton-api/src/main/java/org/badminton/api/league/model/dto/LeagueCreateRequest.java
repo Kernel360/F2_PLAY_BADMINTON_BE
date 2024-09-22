@@ -48,11 +48,11 @@ public record LeagueCreateRequest(
 			request.leagueName(),
 			request.description(),
 			request.leagueAt(),
-			request.tierLimit().name(),
+			request.tierLimit(),
 			request.closedAt(),
-			request.status().name(),
+			request.status(),
 			request.playerCount(),
-			request.matchType().name(),
+			request.matchType(),
 			request.matchingRequirement()
 		);
 	}

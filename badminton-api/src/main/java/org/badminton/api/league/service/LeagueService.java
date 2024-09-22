@@ -19,7 +19,6 @@ public class LeagueService {
 	private final LeagueValidator leagueValidator;
 
 	public LeagueCreateResponse createLeague(LeagueCreateRequest createRequest) {
-		// leagueValidator.checkIfLeagueExists(createRequest.leagueName());
 		LeagueEntity savedLeague = leagueRepository.save(
 			LeagueCreateRequest.leagueCreateRequestToEntity(createRequest));
 		return LeagueCreateResponse.leagueCreateEntityToResponse(savedLeague);
@@ -34,7 +33,7 @@ public class LeagueService {
 	public LeagueStatusUpdateResponse updateLeagueStatus(LeagueStatusUpdateRequest updateRequest) {
 		LeagueEntity findLeague = leagueRepository.findById(updateRequest.leagueId()).orElseThrow();
 		LeagueEntity updatedLeague = LeagueStatusUpdateRequest.leagueStatusToEntity(findLeague, updateRequest);
-		return LeagueStatusUpdateResponse.leagueStatusUpdateEntityToResponse(leagueRepository.save(updatedLeague));
+		return new LeagueStatusUpdateResponse(leagueRepository.save(updatedLeague));
 	}
 
 	public void deleteLeague(Long leagueId) {

@@ -48,9 +48,9 @@ public record LeagueCreateResponse(
 		this(
 			entity.getLeagueName(),
 			entity.getDescription(),
-			MemberTier.valueOf(entity.getTierLimit()),
-			LeagueStatus.valueOf(entity.getStatus()),
-			MatchType.valueOf(entity.getMatchType()),
+			entity.getTierLimit(),
+			entity.getStatus(),
+			entity.getMatchType(),
 			entity.getLeagueAt(),
 			entity.getClosedAt(),
 			entity.getPlayerCount(),
