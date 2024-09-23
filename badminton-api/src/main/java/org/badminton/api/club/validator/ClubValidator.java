@@ -20,9 +20,12 @@ public class ClubValidator {
 
 	public void checkIfClubPresent(String clubName) {
 		clubRepository.findByClubName(clubName).ifPresent(club -> {
-			// 해당 클래스 이름을 반환하면 어디서 에러가 발생 했는지 쉽게 파악할 수 있을 것 같아서 아래와 같이 작성했어요
-			throw new DuplicationException(ErrorCode.RESOURCE_ALREADY_EXIST, ClubValidator.class.getSimpleName());
+			throw new DuplicationException(ErrorCode.RESOURCE_ALREADY_EXIST, clubName.getClass().getSimpleName(),
+				clubName);
 		});
 	}
 
+	public ClubEntity provideClubByClubId(Long clubId) {
+		return clubRepository.findById(clubId).orElseThrow();
+	}
 }

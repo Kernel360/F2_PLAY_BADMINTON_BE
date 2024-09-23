@@ -10,5 +10,5 @@ import lombok.Getter;
 public class ExceptionResponse {
 	private int httpStatusCode;
 	private ErrorCode errorCode;
-	private String message;
+	private String errorDetails;
 }
