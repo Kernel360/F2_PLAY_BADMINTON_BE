@@ -29,7 +29,7 @@ public class ClubService {
 	// TODO: clubAddRequest에 이미지가 없으면 default 이미지를 넣어주도록 구현
 	@Transactional
 	public ClubCreateResponse createClub(ClubCreateRequest clubAddRequest) {
-		clubValidator.checkIfClubPresent(clubAddRequest.clubName());
+		clubValidator.checkIfClubNameDuplicate(clubAddRequest.clubName());
 		ClubEntity club = new ClubEntity(clubAddRequest.clubName(), clubAddRequest.clubDescription(),
 			clubAddRequest.clubImage());
 		clubValidator.saveClub(club);
