@@ -6,6 +6,8 @@ import java.util.Date;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.badminton.api.common.error.ErrorCode;
+import org.badminton.api.common.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -42,9 +44,9 @@ public class JwtUtil {
 				}
 			}
 		}
-		throw new IllegalArgumentException("JWT 쿠키가 없습니다");
+		throw new NotFoundException(ErrorCode.NOT_FOUND, request.getClass().getSimpleName(), request.getRequestURI());
 	}
-	
+
 	public String getProviderId(String token) {
 		return getDetail(token, "providerId");
 	}
