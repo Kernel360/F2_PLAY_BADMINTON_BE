@@ -10,11 +10,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Jwts;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
 public class JwtUtil {
+
+	//TODO: refresh 토큰 추가
 
 	private final SecretKey secretKey;
 
@@ -24,44 +28,58 @@ public class JwtUtil {
 			Jwts.SIG.HS256.key().build().getAlgorithm()); // 비밀 키 생성
 	}
 
-	public String getProviderId(String token) {
+	public String extractProviderIdFromRequest(HttpServletRequest request) {
+		String JwtToken = extractJwtTokenFromRequest(request);
+		return getProviderId(JwtToken);
+	}
 
-		return Jwts.parser()
-			.verifyWith(secretKey) // secretKey 를 사용해서 JWT 서명을 검증
-			.build()
-			.parseSignedClaims(token) // 서명된 JWT 를 파싱하고, 데이터(클레임)를 추출
-			.getPayload()
-			.get("providerId", String.class); // "providerId" 클레임을 String 으로 변환
+	public String extractJwtTokenFromRequest(HttpServletRequest request) {
+		Cookie[] cookies = request.getCookies();
+		if (cookies != null) {
+			for (Cookie cookie : cookies) {
+				if ("JWT".equals(cookie.getName())) {
+					return cookie.getValue();
+				}
+			}
+		}
+		throw new IllegalArgumentException("JWT 쿠키가 없습니다");
+	}
+	
+	public String getProviderId(String token) {
+		return getDetail(token, "providerId");
 	}
 
 	public String getEmail(String token) {
+		return getDetail(token, "email");
+	}
 
-		return Jwts.parser()
-			.verifyWith(secretKey)
-			.build()
-			.parseSignedClaims(token)
-			.getPayload()
-			.get("email", String.class);
+	public String getProfileImage(String token) {
+		return getDetail(token, "profileImage");
 	}
 
 	public String getName(String token) {
-
-		return Jwts.parser()
-			.verifyWith(secretKey)
-			.build()
-			.parseSignedClaims(token)
-			.getPayload()
-			.get("name", String.class);
+		return getDetail(token, "name");
 	}
 
 	public String getAuthorization(String token) {
+		return getDetail(token, "authorization");
+	}
 
+	public String getAccessToken(String token) {
+		return getDetail(token, "accessToken");
+	}
+
+	public String getRegistrationId(String token) {
+		return getDetail(token, "registrationId");
+	}
+
+	public String getDetail(String token, String detail) {
 		return Jwts.parser()
 			.verifyWith(secretKey)
 			.build()
 			.parseSignedClaims(token)
 			.getPayload()
-			.get("authorization", String.class);
+			.get(detail, String.class);
 	}
 
 	public Boolean isExpired(String token) {
@@ -75,13 +93,17 @@ public class JwtUtil {
 			.before(new Date());
 	}
 
-	public String createJwt(String providerId, String authorization, String name, String email, Long expiredMs) {
+	public String createJwt(String providerId, String authorization, String name, String email, String profileImage
+		, String accessToken, String registrationId, Long expiredMs) {
 
 		return Jwts.builder()
 			.claim("providerId", providerId)
 			.claim("authorization", authorization)
 			.claim("name", name)
 			.claim("email", email) // providerId, role, name, email 을 클레임(데이터)로 추가
+			.claim("profileImage", profileImage)
+			.claim("accessToken", accessToken)
+			.claim("registrationId", registrationId)
 			.issuedAt(new Date(System.currentTimeMillis())) // 토큰 발행 시각 설정
 			.expiration(new Date(System.currentTimeMillis() + expiredMs)) // 만료 시각 설정 (현재 시각 + expiredMs)
 			.signWith(secretKey) // secretKey 로 서명
