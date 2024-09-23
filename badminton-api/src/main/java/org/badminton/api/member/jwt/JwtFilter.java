@@ -83,8 +83,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
 			filterChain.doFilter(request, response);
 		} catch (IOException | ServletException e) {
-			throw new JwtProcessingException(ErrorCode.INTERNAL_SERVER_ERROR, request.getClass().getSimpleName(),
-				request.getRequestURI());
+			throw new JwtProcessingException(ErrorCode.INTERNAL_SERVER_ERROR);
 		}
 	}
 }

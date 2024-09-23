@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.badminton.api.common.error.ErrorCode;
-import org.badminton.api.common.exception.OAuthSuccessHandlingException;
+import org.badminton.api.common.exception.OAuthException;
 import org.badminton.api.member.jwt.JwtUtil;
 import org.badminton.api.member.oauth2.dto.CustomOAuth2Member;
 import org.springframework.security.core.Authentication;
@@ -64,8 +64,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 			response.sendRedirect("http://localhost:3000/");
 
 		} catch (IOException e) {
-			throw new OAuthSuccessHandlingException(ErrorCode.INTERNAL_SERVER_ERROR, request.getClass().getSimpleName(),
-				request.getRequestURI());
+			throw new OAuthException(ErrorCode.INTERNAL_SERVER_ERROR);
 		}
 
 	}

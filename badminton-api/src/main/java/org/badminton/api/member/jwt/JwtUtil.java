@@ -6,9 +6,8 @@ import java.util.Date;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-import org.badminton.api.common.error.ErrorCode;
-import org.badminton.api.common.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Jwts;
@@ -44,7 +43,7 @@ public class JwtUtil {
 				}
 			}
 		}
-		throw new NotFoundException(ErrorCode.NOT_FOUND, request.getClass().getSimpleName(), request.getRequestURI());
+		throw new JwtException("JWT 가 존재하지 않습니다");
 	}
 
 	public String getProviderId(String token) {
