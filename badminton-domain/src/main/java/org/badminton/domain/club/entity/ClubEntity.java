@@ -29,9 +29,22 @@ public class ClubEntity extends BaseTimeEntity {
 
 	private String clubImage;
 
+	private boolean isClubDeleted;
+
 	public ClubEntity(String clubName, String clubDescription, String clubImage) {
 		this.clubName = clubName;
 		this.clubDescription = clubDescription;
 		this.clubImage = clubImage;
+		isClubDeleted = false;
+	}
+
+	public void updateClub(String clubName, String clubDescription, String clubImage) {
+		this.clubName = clubName;
+		this.clubDescription = clubDescription;
+		this.clubImage = clubImage;
+	}
+
+	public void doWithdrawal() {
+		this.isClubDeleted = true;
 	}
 }

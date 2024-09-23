@@ -9,15 +9,16 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class ClubCreateResponse {
+public class ClubReadResponse {
+
 	private String clubName;
 	private String clubDescription;
 	private String clubImage;
 	private LocalDateTime createdAt;
 	private LocalDateTime modifiedAt;
 
-	public static ClubCreateResponse clubEntityToClubCreateResponse(ClubEntity clubEntity) {
-		return new ClubCreateResponse(clubEntity.getClubName(), clubEntity.getClubDescription(),
+	public static ClubReadResponse clubEntityToClubReadResponse(ClubEntity clubEntity) {
+		return new ClubReadResponse(clubEntity.getClubName(), clubEntity.getClubDescription(),
 			clubEntity.getClubImage(),
 			clubEntity.getCreatedAt(),
 			clubEntity.getModifiedAt());
