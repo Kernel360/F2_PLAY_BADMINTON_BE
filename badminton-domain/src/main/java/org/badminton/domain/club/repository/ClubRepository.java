@@ -8,4 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface ClubRepository extends JpaRepository<ClubEntity, Long> {
 
 	Optional<ClubEntity> findByClubName(String clubName);
+
+	Optional<ClubEntity> findByClubNameAndIsClubDeletedFalse(String clubName);
+
+	Optional<ClubEntity> findByClubIdAndIsClubDeletedFalse(Long clubId);
 }
