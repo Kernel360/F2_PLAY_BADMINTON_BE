@@ -1,8 +1,7 @@
 package org.badminton.api.club.validator;
 
-import static org.badminton.api.common.error.ClubErrorCode.*;
-
-import org.badminton.api.common.exception.BadmintonException;
+import org.badminton.api.common.error.ErrorCode;
+import org.badminton.api.common.exception.DuplicationException;
 import org.badminton.domain.club.entity.ClubEntity;
 import org.badminton.domain.club.repository.ClubRepository;
 import org.springframework.stereotype.Component;
@@ -21,8 +20,12 @@ public class ClubValidator {
 
 	public void checkIfClubPresent(String clubName) {
 		clubRepository.findByClubName(clubName).ifPresent(club -> {
-			throw new BadmintonException(CLUB_ALREADY_EXISTS);
+			throw new DuplicationException(ErrorCode.RESOURCE_ALREADY_EXIST, clubName.getClass().getSimpleName(),
+				clubName);
 		});
 	}
 
+	public ClubEntity provideClubByClubId(Long clubId) {
+		return clubRepository.findById(clubId).orElseThrow();
+	}
 }
