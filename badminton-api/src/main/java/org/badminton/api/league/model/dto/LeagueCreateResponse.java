@@ -7,14 +7,9 @@ import org.badminton.domain.common.enums.MemberTier;
 import org.badminton.domain.league.entity.LeagueEntity;
 import org.badminton.domain.league.enums.LeagueStatus;
 
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public record LeagueCreateRequest(
-
+public record LeagueCreateResponse(
 	@Schema(description = "경기 이름", example = "배드민턴 경기")
 	String leagueName,
 
@@ -39,21 +34,33 @@ public record LeagueCreateRequest(
 	@Schema(description = "참가 인원", example = "16")
 	Long playerCount,
 
+	@Schema(description = "생성 일자", example = "2024-09-10T15:30:00")
+	LocalDateTime createdAt,
+
+	@Schema(description = "수정 일자", example = "2024-09-10T15:30:00")
+	LocalDateTime modifiedAt,
+
 	@Schema(description = "매칭 조건", example = "TIER")
 	String matchingRequirement
-
 ) {
-	public static LeagueEntity leagueCreateRequestToEntity(LeagueCreateRequest request) {
-		return new LeagueEntity(
-			request.leagueName(),
-			request.description(),
-			request.leagueAt(),
-			request.tierLimit(),
-			request.closedAt(),
-			request.status(),
-			request.playerCount(),
-			request.matchType(),
-			request.matchingRequirement()
+
+	public LeagueCreateResponse(LeagueEntity entity) {
+		this(
+			entity.getLeagueName(),
+			entity.getDescription(),
+			entity.getTierLimit(),
+			entity.getStatus(),
+			entity.getMatchType(),
+			entity.getLeagueAt(),
+			entity.getClosedAt(),
+			entity.getPlayerCount(),
+			entity.getCreatedAt(),
+			entity.getModifiedAt(),
+			entity.getMatchingRequirement()
 		);
+	}
+
+	public static LeagueCreateResponse leagueCreateEntityToResponse(LeagueEntity entity) {
+		return new LeagueCreateResponse(entity);
 	}
 }

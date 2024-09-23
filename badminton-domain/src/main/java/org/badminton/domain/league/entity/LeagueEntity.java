@@ -2,6 +2,11 @@ package org.badminton.domain.league.entity;
 
 import java.time.LocalDateTime;
 
+import org.badminton.domain.common.BaseTimeEntity;
+import org.badminton.domain.common.enums.MatchType;
+import org.badminton.domain.common.enums.MemberTier;
+import org.badminton.domain.league.enums.LeagueStatus;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -17,21 +22,21 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "league")
-public class LeagueEntity {
+public class LeagueEntity extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long leagueId;
 
-	private String name;
+	private String leagueName;
 
 	private String description;
 
-	private String tierLimit;
+	private MemberTier tierLimit;
 
-	private String status;
+	private LeagueStatus status;
 
-	private String matchType;
+	private MatchType matchType;
 
 	private LocalDateTime leagueAt;
 
@@ -39,14 +44,12 @@ public class LeagueEntity {
 
 	private Long playerCount;
 
-	private LocalDateTime createdAt;
+	private String matchingRequirement;
 
-	private LocalDateTime modifiedAt;
-
-	public LeagueEntity(String name, String description, LocalDateTime leagueAt,
-		String tierLimit, LocalDateTime closedAt, String status, Long playerCount,
-		String matchType, LocalDateTime createdAt, LocalDateTime modifiedAt) {
-		this.name = name;
+	public LeagueEntity(String leagueName, String description, LocalDateTime leagueAt,
+		MemberTier tierLimit, LocalDateTime closedAt, LeagueStatus status, Long playerCount,
+		MatchType matchType, String matchingRequirement) {
+		this.leagueName = leagueName;
 		this.description = description;
 		this.leagueAt = leagueAt;
 		this.tierLimit = tierLimit;
@@ -54,7 +57,7 @@ public class LeagueEntity {
 		this.status = status;
 		this.playerCount = playerCount;
 		this.matchType = matchType;
-		this.createdAt = createdAt;
-		this.modifiedAt = modifiedAt;
+		this.matchingRequirement = matchingRequirement;
 	}
+
 }
