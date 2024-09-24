@@ -33,7 +33,10 @@ public class LeagueService {
 	public LeagueStatusUpdateResponse updateLeagueStatus(LeagueStatusUpdateRequest updateRequest) {
 		LeagueEntity findLeague = leagueRepository.findById(updateRequest.leagueId()).orElseThrow(() ->
 			new LeagueNotExistException(ErrorCode.CLUB_NOT_EXIST, String.valueOf(updateRequest.leagueId())));
-		LeagueEntity updatedLeague = updateRequest.leagueStatusToEntity(findLeague);
+		LeagueEntity updatedLeague = LeagueEntity.updateLeague(findLeague.getLeagueId(), findLeague.getLeagueName(),
+			findLeague.getDescription(), findLeague.getLeagueAt(), findLeague.getTierLimit(), findLeague.getClosedAt(),
+			updateRequest.status(), findLeague.getPlayerCount(), findLeague.getMatchType(),
+			findLeague.getMatchingRequirement());
 		return new LeagueStatusUpdateResponse(leagueRepository.save(updatedLeague));
 	}
 

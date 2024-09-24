@@ -60,4 +60,12 @@ public class LeagueEntity extends BaseTimeEntity {
 		this.matchingRequirement = matchingRequirement;
 	}
 
+	public static LeagueEntity updateLeague(Long leagueId, String leagueName, String description,
+		LocalDateTime leagueAt,
+		MemberTier tierLimit, LocalDateTime closedAt, LeagueStatus status, Long playerCount,
+		MatchType matchType, String matchingRequirement) {
+		return new LeagueEntity(leagueId, leagueName, description, tierLimit, status, matchType, leagueAt, closedAt,
+			playerCount, matchingRequirement);
+	}
+
 }
