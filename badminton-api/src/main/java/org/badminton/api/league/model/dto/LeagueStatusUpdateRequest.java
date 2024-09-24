@@ -12,20 +12,17 @@ public record LeagueStatusUpdateRequest(
 	@Schema(description = "현재 경기 상태", example = "CLOSED")
 	LeagueStatus status
 ) {
-	public static LeagueEntity leagueStatusToEntity(
-		LeagueEntity leagueEntity,
-		LeagueStatusUpdateRequest leagueStatusUpdateRequest) {
-		return new LeagueEntity(
-			leagueEntity.getLeagueId(),
+
+	public LeagueEntity leagueStatusToEntity(LeagueEntity leagueEntity) {
+		return new LeagueEntity(leagueEntity.getLeagueId(),
 			leagueEntity.getLeagueName(),
 			leagueEntity.getDescription(),
 			leagueEntity.getTierLimit(),
-			leagueStatusUpdateRequest.status,
+			this.status,
 			leagueEntity.getMatchType(),
 			leagueEntity.getLeagueAt(),
 			leagueEntity.getClosedAt(),
 			leagueEntity.getPlayerCount(),
-			leagueEntity.getMatchingRequirement()
-		);
+			leagueEntity.getMatchingRequirement());
 	}
 }
