@@ -61,6 +61,10 @@ public class JwtUtil {
 		return getDetail(token, "name");
 	}
 
+	public String getMemberId(String token) {
+		return getDetail(token, "memberId");
+	}
+
 	public String getAuthorization(String token) {
 		return getDetail(token, "authorization");
 	}
@@ -93,10 +97,12 @@ public class JwtUtil {
 			.before(new Date());
 	}
 
-	public String createJwt(String providerId, String authorization, String name, String email, String profileImage
+	public String createJwt(String memberId, String providerId, String authorization, String name, String email,
+		String profileImage
 		, String accessToken, String registrationId, Long expiredMs) {
 
 		return Jwts.builder()
+			.claim("memberId", memberId)
 			.claim("providerId", providerId)
 			.claim("authorization", authorization)
 			.claim("name", name)

@@ -79,7 +79,9 @@ public class CustomOAuth2MemberService extends DefaultOAuth2UserService {
 
 			memberResponse = memberEntityToResponse(existData);
 		}
+		String memberId = String.valueOf(memberResponse.memberId());
 		String jwt = jwtUtil.createJwt(
+			memberId,
 			providerId,
 			memberResponse.authorization(),
 			memberResponse.name(),

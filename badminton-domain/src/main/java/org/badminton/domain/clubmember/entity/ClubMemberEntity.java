@@ -1,7 +1,5 @@
 package org.badminton.domain.clubmember.entity;
 
-import java.time.LocalDateTime;
-
 import org.badminton.domain.club.entity.ClubEntity;
 import org.badminton.domain.common.BaseTimeEntity;
 import org.badminton.domain.member.entity.MemberEntity;
@@ -31,12 +29,6 @@ public class ClubMemberEntity extends BaseTimeEntity {
 
 	private String role;
 
-	private boolean isBanned;
-
-	private String banType;
-
-	private LocalDateTime banStartAt;
-
 	@ManyToOne
 	@JoinColumn(name = "clubId")
 	private ClubEntity club;
@@ -44,4 +36,11 @@ public class ClubMemberEntity extends BaseTimeEntity {
 	@ManyToOne
 	@JoinColumn(name = "memberId")
 	private MemberEntity member;
+
+	public ClubMemberEntity(ClubEntity club, MemberEntity member, ClubMemberRole role) {
+		this.club = club;
+		this.member = member;
+		this.role = role.name();
+		this.isDeleted = false;
+	}
 }

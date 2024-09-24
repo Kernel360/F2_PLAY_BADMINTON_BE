@@ -28,8 +28,7 @@ public class JwtFilter extends OncePerRequestFilter {
 	protected boolean shouldNotFilter(HttpServletRequest request) {
 		String path = request.getRequestURI();
 		return path.equals("/") || path.equals("/groups") || path.startsWith("/oauth2") || path.startsWith("/login")
-			|| path.startsWith("/api") || path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs")
-			|| path.startsWith("/v1");
+			|| path.startsWith("/api") || path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs");
 
 	}
 
@@ -61,13 +60,15 @@ public class JwtFilter extends OncePerRequestFilter {
 		String providerId = jwtUtil.getProviderId(jwtToken);
 		String authorization = jwtUtil.getAuthorization(jwtToken);
 		log.info("JWT authorization: {}", authorization);
+		Long memberId = Long.valueOf(jwtUtil.getMemberId(jwtToken));
 		String name = jwtUtil.getName(jwtToken);
 		String email = jwtUtil.getEmail(jwtToken);
 		String profileImage = jwtUtil.getProfileImage(jwtToken);
 		String accessToken = jwtUtil.getAccessToken(jwtToken);
 		String registrationId = jwtUtil.getRegistrationId(jwtToken);
 
-		MemberResponse memberResponse = new MemberResponse(MemberAuthorization.AUTHORIZATION_USER.name(), name,
+		MemberResponse memberResponse = new MemberResponse(memberId, MemberAuthorization.AUTHORIZATION_USER.name(),
+			name,
 			email,
 			providerId, profileImage);
 		log.info("memberDto: {}", memberResponse);

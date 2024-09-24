@@ -8,6 +8,7 @@ import org.badminton.api.club.model.dto.ClubUpdateRequest;
 import org.badminton.api.club.model.dto.ClubUpdateResponse;
 import org.badminton.api.club.service.ClubService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -41,8 +42,9 @@ public class ClubController {
 	@Operation(summary = "동호회 추가",
 		description = "동호회를 추가합니다.",
 		tags = {"Club"})
-	public ResponseEntity<ClubCreateResponse> createClub(@Valid @RequestBody ClubCreateRequest clubCreateRequest) {
-		ClubCreateResponse clubAddResponse = clubService.createClub(clubCreateRequest);
+	public ResponseEntity<ClubCreateResponse> createClub(@Valid @RequestBody ClubCreateRequest clubCreateRequest,
+		Authentication authentication) {
+		ClubCreateResponse clubAddResponse = clubService.createClub(clubCreateRequest, authentication);
 		return ResponseEntity.ok(clubAddResponse);
 	}
 
