@@ -19,14 +19,14 @@ public class BadmintonExceptionHandler {
 		BadmintonException badmintonException
 	) {
 		var errorCode = badmintonException.getErrorCode();
-		var errorDetails = badmintonException.getErrorDetails();
-		log.error(wrapLogMessage(errorCode, errorDetails));
+		var errorMessage = badmintonException.getErrorMessage();
+		log.error(wrapLogMessage(errorCode, errorMessage));
 		return ResponseEntity.status(errorCode.getHttpStatusCode())
 			.body(
 				ExceptionResponse.builder()
 					.httpStatusCode(errorCode.getHttpStatusCode())
 					.errorCode(errorCode)
-					.errorDetails(errorDetails)
+					.errorMessage(errorMessage)
 					.build()
 			);
 	}
@@ -38,13 +38,13 @@ public class BadmintonExceptionHandler {
 		return ResponseEntity
 			.status(unknownError.getHttpStatusCode())
 			.body(ExceptionResponse.builder()
-				.errorDetails(e.getMessage() + UNKNOWN_ERROR)
+				.errorMessage(e.getMessage() + UNKNOWN_ERROR)
 				.errorCode(unknownError)
 				.httpStatusCode(unknownError.getHttpStatusCode())
 				.build());
 	}
 
 	private String wrapLogMessage(ErrorCode errorCode, String errorDetails) {
-		return "예외 발생: " + errorCode + " 예외 상세: " + errorDetails;
+		return "**** 예외 발생: " + errorCode + " > 예외 상세: " + errorDetails;
 	}
 }
