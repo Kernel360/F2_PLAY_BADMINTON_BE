@@ -33,6 +33,8 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		//OAuth2User
 		CustomOAuth2Member customUserDetails = (CustomOAuth2Member)authentication.getPrincipal(); // 인증된 사용자 객체 가져오기
 
+		String memberId = String.valueOf(customUserDetails.getMemberId());
+
 		String providerId = customUserDetails.getProviderId();
 
 		String name = customUserDetails.getName();
@@ -50,7 +52,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		GrantedAuthority auth = iterator.next();
 		String authorization = auth.getAuthority();
 
-		String token = jwtUtil.createJwt(providerId, authorization, name, email, profileImage,
+		String token = jwtUtil.createJwt(memberId, providerId, authorization, name, email, profileImage,
 			accessToken, registrationId, 24 * 60 * 60 * 1000L); // 초 * 분 * 시
 
 		request.getSession().invalidate();

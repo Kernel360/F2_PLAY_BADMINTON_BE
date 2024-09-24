@@ -46,6 +46,10 @@ public class CustomOAuth2Member implements OAuth2User {
 		return memberResponse.providerId();
 	}
 
+	public Long getMemberId() {
+		return memberResponse.memberId();
+	}
+
 	public String getEmail() {
 		return memberResponse.email();
 	}

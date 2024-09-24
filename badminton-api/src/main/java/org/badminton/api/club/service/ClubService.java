@@ -7,7 +7,14 @@ import org.badminton.api.club.model.dto.ClubReadResponse;
 import org.badminton.api.club.model.dto.ClubUpdateRequest;
 import org.badminton.api.club.model.dto.ClubUpdateResponse;
 import org.badminton.api.club.validator.ClubValidator;
+import org.badminton.api.common.error.ErrorCode;
+import org.badminton.api.common.exception.member.MemberNotExistException;
 import org.badminton.domain.club.entity.ClubEntity;
+import org.badminton.domain.clubmember.entity.ClubMemberEntity;
+import org.badminton.domain.clubmember.entity.ClubMemberRole;
+import org.badminton.domain.clubmember.repository.ClubMemberRepository;
+import org.badminton.domain.member.entity.MemberEntity;
+import org.badminton.domain.member.repository.MemberRepository;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
@@ -20,6 +27,8 @@ import lombok.extern.slf4j.Slf4j;
 public class ClubService {
 
 	private final ClubValidator clubValidator;
+	private final ClubMemberRepository clubMemberRepository;
+	private final MemberRepository memberRepository;
 
 	public ClubReadResponse readClub(Long clubId) {
 		ClubEntity club = clubValidator.provideClubByClubId(clubId);
@@ -28,10 +37,19 @@ public class ClubService {
 
 	// TODO: clubAddRequest에 이미지가 없으면 default 이미지를 넣어주도록 구현
 	@Transactional
-	public ClubCreateResponse createClub(ClubCreateRequest clubAddRequest) {
+	public ClubCreateResponse createClub(ClubCreateRequest clubAddRequest, Long memberId) {
+
+		MemberEntity memberEntity = memberRepository.findByMemberId(memberId)
+			.orElseThrow(() -> new MemberNotExistException(
+				ErrorCode.MEMBER_NOT_EXIST, String.valueOf(memberId)));
+
 		clubValidator.checkIfClubNameDuplicate(clubAddRequest.clubName());
 		ClubEntity club = new ClubEntity(clubAddRequest.clubName(), clubAddRequest.clubDescription(),
 			clubAddRequest.clubImage());
+
+		ClubMemberEntity clubMemberEntity = new ClubMemberEntity(club, memberEntity, ClubMemberRole.ROLE_OWNER);
+		clubMemberRepository.save(clubMemberEntity);
+
 		clubValidator.saveClub(club);
 		return ClubCreateResponse.clubEntityToClubCreateResponse(club);
 	}

@@ -9,5 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface MemberRepository extends JpaRepository<MemberEntity, Long> {
 	Optional<MemberEntity> findByProviderId(String providerId);
 
+	Optional<MemberEntity> findByMemberId(Long memberId);
+
 	List<MemberEntity> findAllByIsDeletedTrue();
 }
