@@ -2,8 +2,6 @@ package org.badminton.api.member.jwt;
 
 import java.io.IOException;
 
-import org.badminton.api.common.error.ErrorCode;
-import org.badminton.api.common.exception.JwtProcessingException;
 import org.badminton.api.member.model.dto.MemberResponse;
 import org.badminton.api.member.oauth2.dto.CustomOAuth2Member;
 import org.badminton.domain.member.entity.MemberAuthorization;
@@ -27,7 +25,7 @@ public class JwtFilter extends OncePerRequestFilter {
 	private final JwtUtil jwtUtil;
 
 	@Override
-	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+	protected boolean shouldNotFilter(HttpServletRequest request) {
 		String path = request.getRequestURI();
 		return path.equals("/") || path.equals("/groups") || path.startsWith("/oauth2") || path.startsWith("/login")
 			|| path.startsWith("/api") || path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs")
@@ -35,55 +33,53 @@ public class JwtFilter extends OncePerRequestFilter {
 
 	}
 
+	// 일반적인 예외 -> 커스텀 예외 처리 X
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
 
-		try {
-			String jwtToken = jwtUtil.extractJwtTokenFromRequest(request);
+		String jwtToken = jwtUtil.extractJwtTokenFromRequest(request);
 
-			if (jwtToken == null) {
-				log.info("JWT cookie not found");
-				filterChain.doFilter(request, response);
-				return;
-			}
+		if (jwtToken == null) {
+			log.info("JWT cookie not found");
+			filterChain.doFilter(request, response);
+			return;
+		}
 
-			if (jwtUtil.isExpired(jwtToken)) {
-				log.info("JWT token expired");
-				Cookie expiredCookie = new Cookie("JWT", null);
-				expiredCookie.setMaxAge(0);
-				expiredCookie.setPath("/");
-				response.addCookie(expiredCookie);
-
-				filterChain.doFilter(request, response);
-
-				return;
-			}
-
-			String providerId = jwtUtil.getProviderId(jwtToken);
-			String authorization = jwtUtil.getAuthorization(jwtToken);
-			log.info("JWT authorization: {}", authorization);
-			String name = jwtUtil.getName(jwtToken);
-			String email = jwtUtil.getEmail(jwtToken);
-			String profileImage = jwtUtil.getProfileImage(jwtToken);
-			String accessToken = jwtUtil.getAccessToken(jwtToken);
-			String registrationId = jwtUtil.getRegistrationId(jwtToken);
-
-			MemberResponse memberResponse = new MemberResponse(MemberAuthorization.AUTHORIZATION_USER.name(), name,
-				email,
-				providerId, profileImage);
-			log.info("memberDto: {}", memberResponse);
-
-			CustomOAuth2Member customOAuth2Member = new CustomOAuth2Member(memberResponse, accessToken, registrationId);
-
-			Authentication authToken = new UsernamePasswordAuthenticationToken(customOAuth2Member, null,
-				customOAuth2Member.getAuthorities());
-
-			SecurityContextHolder.getContext().setAuthentication(authToken);
+		if (jwtUtil.isExpired(jwtToken)) {
+			log.info("JWT token expired");
+			Cookie expiredCookie = new Cookie("JWT", null);
+			expiredCookie.setMaxAge(0);
+			expiredCookie.setPath("/");
+			response.addCookie(expiredCookie);
 
 			filterChain.doFilter(request, response);
-		} catch (IOException | ServletException e) {
-			throw new JwtProcessingException(ErrorCode.INTERNAL_SERVER_ERROR);
+
+			return;
 		}
+
+		String providerId = jwtUtil.getProviderId(jwtToken);
+		String authorization = jwtUtil.getAuthorization(jwtToken);
+		log.info("JWT authorization: {}", authorization);
+		String name = jwtUtil.getName(jwtToken);
+		String email = jwtUtil.getEmail(jwtToken);
+		String profileImage = jwtUtil.getProfileImage(jwtToken);
+		String accessToken = jwtUtil.getAccessToken(jwtToken);
+		String registrationId = jwtUtil.getRegistrationId(jwtToken);
+
+		MemberResponse memberResponse = new MemberResponse(MemberAuthorization.AUTHORIZATION_USER.name(), name,
+			email,
+			providerId, profileImage);
+		log.info("memberDto: {}", memberResponse);
+
+		CustomOAuth2Member customOAuth2Member = new CustomOAuth2Member(memberResponse, accessToken, registrationId);
+
+		Authentication authToken = new UsernamePasswordAuthenticationToken(customOAuth2Member, null,
+			customOAuth2Member.getAuthorities());
+
+		SecurityContextHolder.getContext().setAuthentication(authToken);
+
+		filterChain.doFilter(request, response);
+
 	}
 }

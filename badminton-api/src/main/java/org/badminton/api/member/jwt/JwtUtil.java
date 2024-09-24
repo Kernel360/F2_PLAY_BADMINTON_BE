@@ -6,8 +6,9 @@ import java.util.Date;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.badminton.api.common.error.ErrorCode;
+import org.badminton.api.common.exception.oauth.JwtCookieNotFoundException;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Jwts;
@@ -18,8 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @Slf4j
 public class JwtUtil {
-
-	//TODO: refresh 토큰 추가
 
 	private final SecretKey secretKey;
 
@@ -34,6 +33,7 @@ public class JwtUtil {
 		return getProviderId(JwtToken);
 	}
 
+	//TODO: exception 수정
 	public String extractJwtTokenFromRequest(HttpServletRequest request) {
 		Cookie[] cookies = request.getCookies();
 		if (cookies != null) {
@@ -43,7 +43,7 @@ public class JwtUtil {
 				}
 			}
 		}
-		throw new JwtException("JWT 가 존재하지 않습니다");
+		throw new JwtCookieNotFoundException(ErrorCode.NOT_FOUND, "JWT cookie not found");
 	}
 
 	public String getProviderId(String token) {

@@ -24,9 +24,14 @@ public record MemberRequest(
 	String profileImage
 ) {
 
-	public static MemberEntity memberRequestToEntity(MemberRequest memberRequest) {
-		return new MemberEntity(memberRequest.email(), memberRequest.name(), memberRequest.providerId(),
-			memberRequest.profileImage, memberRequest.authorization());
+	// public static MemberEntity memberRequestToEntity(MemberRequest memberRequest) {
+	// 	return new MemberEntity(memberRequest.email(), memberRequest.name(), memberRequest.providerId(),
+	// 		memberRequest.profileImage, memberRequest.authorization());
+	// }
+
+	public MemberEntity memberRequestToEntity() {
+		return new MemberEntity(this.email(), this.name(), this.providerId(),
+			this.profileImage, this.authorization());
 	}
 }
 

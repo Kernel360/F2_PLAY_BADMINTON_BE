@@ -1,6 +1,5 @@
 package org.badminton.api.member.service;
 
-import static org.badminton.api.member.model.dto.MemberRequest.*;
 import static org.badminton.api.member.model.dto.MemberResponse.*;
 
 import org.badminton.api.member.jwt.JwtUtil;
@@ -66,12 +65,11 @@ public class CustomOAuth2MemberService extends DefaultOAuth2UserService {
 				oAuth2Response.getName(),
 				oAuth2Response.getEmail(), providerId, oAuth2Response.getProfileImage());
 
-			MemberEntity memberEntity = memberRequestToEntity(memberRequest);
+			MemberEntity memberEntity = memberRequest.memberRequestToEntity();
 
 			memberRepository.save(memberEntity);
 			memberResponse = memberEntityToResponse(memberEntity);
 
-			// return new CustomOAuth2Member(memberResponse);
 		} else {
 
 			if (existData.isDeleted()) {
@@ -79,11 +77,7 @@ public class CustomOAuth2MemberService extends DefaultOAuth2UserService {
 				memberRepository.save(existData);
 			}
 
-			// memberRepository.save(existData);
-
 			memberResponse = memberEntityToResponse(existData);
-
-			// return new CustomOAuth2Member(memberResponse);
 		}
 		String jwt = jwtUtil.createJwt(
 			providerId,

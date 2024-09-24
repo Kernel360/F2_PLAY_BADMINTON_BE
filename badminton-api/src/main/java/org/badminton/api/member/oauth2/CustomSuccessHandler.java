@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.badminton.api.common.error.ErrorCode;
-import org.badminton.api.common.exception.OAuthException;
 import org.badminton.api.member.jwt.JwtUtil;
 import org.badminton.api.member.oauth2.dto.CustomOAuth2Member;
 import org.springframework.security.core.Authentication;
@@ -28,7 +26,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-		Authentication authentication) {
+		Authentication authentication) throws IOException {
 
 		log.info("CustomSuccessHandler onAuthenticationSuccess");
 
@@ -60,13 +58,8 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		response.setHeader("Set-Cookie", "JSESSIONID=; HttpOnly; Path=/; Max-Age=0; Secure; SameS ite=None;");
 
 		response.addCookie(createCookie(token));
-		try {
-			response.sendRedirect("http://localhost:3000/");
 
-		} catch (IOException e) {
-			throw new OAuthException(ErrorCode.INTERNAL_SERVER_ERROR);
-		}
-
+		response.sendRedirect("http://localhost:3000/");
 	}
 
 	// JWT 쿠키 생성 메서드
@@ -81,4 +74,5 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 	}
 
 }
+
 
