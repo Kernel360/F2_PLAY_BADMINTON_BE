@@ -33,7 +33,6 @@ public class JwtUtil {
 		return getProviderId(JwtToken);
 	}
 
-	//TODO: exception 수정
 	public String extractJwtTokenFromRequest(HttpServletRequest request) {
 		Cookie[] cookies = request.getCookies();
 		if (cookies != null) {
@@ -43,7 +42,7 @@ public class JwtUtil {
 				}
 			}
 		}
-		throw new JwtCookieNotFoundException(ErrorCode.NOT_FOUND, "JWT cookie not found");
+		throw new JwtCookieNotFoundException(ErrorCode.JWT_COOKIE_NOT_FOUNT);
 	}
 
 	public String getProviderId(String token) {

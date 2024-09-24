@@ -37,11 +37,9 @@ public class MemberValidator {
 		memberRepository.delete(memberEntity);
 	}
 
-	//TODO:exception 수정
 	public MemberEntity findMemberByProviderId(String providerId) {
 		return memberRepository.findByProviderId(providerId).orElseThrow(() ->
-			new MemberNotExistException(ErrorCode.RESOURCE_NOT_EXIST, providerId.getClass().getSimpleName(),
-				providerId));
+			new MemberNotExistException(ErrorCode.MEMBER_NOT_EXIST, providerId));
 	}
 
 	public String extractJwtToken(HttpServletRequest request) {
