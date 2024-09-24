@@ -3,7 +3,6 @@ package org.badminton.api.clubmember.controller;
 import org.badminton.api.clubmember.model.dto.ClubMemberJoinResponse;
 import org.badminton.api.clubmember.service.ClubMemberService;
 import org.badminton.api.member.oauth2.dto.CustomOAuth2Member;
-import org.badminton.domain.clubmember.entity.ClubMemberEntity;
 import org.badminton.domain.member.repository.MemberRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -33,11 +32,10 @@ public class ClubMemberController {
 		CustomOAuth2Member member = (CustomOAuth2Member)authentication.getPrincipal();
 		Long memberId = member.getMemberId();
 
-		ClubMemberEntity clubMemberEntity = clubMemberService.joinClub(memberId, clubId);
-		ClubMemberJoinResponse clubMemberJoinResponse = ClubMemberJoinResponse.clubMemberEntityToClubMemberJoinResponse(
-			clubMemberEntity);
+		ClubMemberJoinResponse clubMemberJoinResponse = clubMemberService.joinClub(memberId, clubId);
 
 		return ResponseEntity.ok(clubMemberJoinResponse);
 
 	}
 }
+
