@@ -1,6 +1,6 @@
 FROM amazoncorretto:17
 
-LABEL authors="Kangmin Lee"
+LABEL authors="hit team"
 
 COPY build/libs/badminton-api.jar /docker-springboot.jar
 
