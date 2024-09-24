@@ -23,7 +23,7 @@ public class ClubMemberService {
 	private final ClubRepository clubRepository;
 	private final MemberRepository memberRepository;
 
-	public ClubMemberEntity participateClub(Long memberId, Long clubId) {
+	public ClubMemberEntity joinClub(Long memberId, Long clubId) {
 		ClubEntity clubEntity = clubRepository.findByClubIdAndIsClubDeletedFalse(clubId)
 			.orElseThrow(() -> new ClubNotExistException(ErrorCode.RESOURCE_NOT_EXIST, clubId));
 

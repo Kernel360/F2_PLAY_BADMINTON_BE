@@ -2,13 +2,13 @@ package org.badminton.api.clubmember.model.dto;
 
 import org.badminton.domain.clubmember.entity.ClubMemberEntity;
 
-public record ClubMemberParticipateResponse(
+public record ClubMemberJoinResponse(
 	Long clubMemberId,
 	String role
 ) {
-	public static ClubMemberParticipateResponse clubMemberEntityToClubMemberParticipateResponse(
+	public static ClubMemberJoinResponse clubMemberEntityToClubMemberJoinResponse(
 		ClubMemberEntity clubMemberEntity) {
-		return new ClubMemberParticipateResponse(
+		return new ClubMemberJoinResponse(
 			clubMemberEntity.getClubMemberId(),
 			clubMemberEntity.getRole().name()
 		);

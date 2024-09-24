@@ -1,6 +1,6 @@
 package org.badminton.api.clubmember.controller;
 
-import org.badminton.api.clubmember.model.dto.ClubMemberParticipateResponse;
+import org.badminton.api.clubmember.model.dto.ClubMemberJoinResponse;
 import org.badminton.api.clubmember.service.ClubMemberService;
 import org.badminton.api.member.oauth2.dto.CustomOAuth2Member;
 import org.badminton.domain.clubmember.entity.ClubMemberEntity;
@@ -27,17 +27,17 @@ public class ClubMemberController {
 		description = "동호회에 가입을 신청합니다.",
 		tags = {"ClubMember"})
 	@PostMapping
-	public ResponseEntity<ClubMemberParticipateResponse> participateClub(Authentication authentication,
+	public ResponseEntity<ClubMemberJoinResponse> joinClub(Authentication authentication,
 		@Parameter(description = "동호회 ID", example = "1") @RequestParam Long clubId) {
 
 		CustomOAuth2Member member = (CustomOAuth2Member)authentication.getPrincipal();
 		Long memberId = member.getMemberId();
 
-		ClubMemberEntity clubMemberEntity = clubMemberService.participateClub(memberId, clubId);
-		ClubMemberParticipateResponse clubMemberParticipateResponse = ClubMemberParticipateResponse.clubMemberEntityToClubMemberParticipateResponse(
+		ClubMemberEntity clubMemberEntity = clubMemberService.joinClub(memberId, clubId);
+		ClubMemberJoinResponse clubMemberJoinResponse = ClubMemberJoinResponse.clubMemberEntityToClubMemberJoinResponse(
 			clubMemberEntity);
 
-		return ResponseEntity.ok(clubMemberParticipateResponse);
+		return ResponseEntity.ok(clubMemberJoinResponse);
 
 	}
 }
