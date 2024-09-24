@@ -1,8 +1,10 @@
 package org.badminton.api.member;
 
+import org.badminton.api.member.model.dto.MemberDeleteResponse;
+import org.badminton.api.member.model.dto.MemberLogoutResponse;
 import org.badminton.api.member.model.dto.MemberUpdateRequest;
+import org.badminton.api.member.model.dto.MemberUpdateResponse;
 import org.badminton.api.member.service.MemberService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -31,17 +33,10 @@ public class MemberController {
 		tags = {"Member"}
 	)
 	@PatchMapping
-	public ResponseEntity<String> update(HttpServletRequest request,
+	public ResponseEntity<MemberUpdateResponse> update(HttpServletRequest request,
 		@RequestBody MemberUpdateRequest updateRequest) {
-		try {
-			memberService.updateMember(request, updateRequest);
-			return new ResponseEntity<>("update successful", HttpStatus.OK);
-		} catch (IllegalArgumentException e) {
-			return new ResponseEntity<>("update failed", HttpStatus.BAD_REQUEST);
-		} catch (Exception e) {
-			return new ResponseEntity<>("update failed", HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-
+		MemberUpdateResponse memberUpdateResponse = memberService.updateMember(request, updateRequest);
+		return ResponseEntity.ok(memberUpdateResponse);
 	}
 
 	@Operation(
@@ -50,15 +45,9 @@ public class MemberController {
 		tags = {"Member"}
 	)
 	@DeleteMapping
-	public ResponseEntity<String> delete(HttpServletRequest request, HttpServletResponse response) {
-		try {
-			memberService.deleteMember(request, response);
-			return new ResponseEntity<>("delete successful", HttpStatus.OK);
-		} catch (IllegalArgumentException e) {
-			return new ResponseEntity<>("delete failed", HttpStatus.BAD_REQUEST);
-		} catch (Exception e) {
-			return new ResponseEntity<>("delete failed", HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+	public ResponseEntity<MemberDeleteResponse> delete(HttpServletRequest request, HttpServletResponse response) {
+		MemberDeleteResponse memberDeleteResponse = memberService.deleteMember(request, response);
+		return ResponseEntity.ok(memberDeleteResponse);
 	}
 
 	@Operation(
@@ -67,16 +56,9 @@ public class MemberController {
 		tags = {"Member"}
 	)
 	@PostMapping("/logout")
-	public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
-		try {
-			memberService.logoutMember(request, response);
-			return ResponseEntity.ok("로그아웃 성공 , OAuth 연결끊기 성공!");
-		} catch (IllegalArgumentException e) {
-			return new ResponseEntity<>("logout failed", HttpStatus.BAD_REQUEST);
-		} catch (Exception e) {
-			return new ResponseEntity<>("logout failed", HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-
+	public ResponseEntity<MemberLogoutResponse> logout(HttpServletRequest request, HttpServletResponse response) {
+		MemberLogoutResponse memberLogoutResponse = memberService.logoutMember(request, response);
+		return ResponseEntity.ok(memberLogoutResponse);
 	}
 
 }

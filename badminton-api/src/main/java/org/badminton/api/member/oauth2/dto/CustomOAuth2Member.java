@@ -1,9 +1,10 @@
-package org.badminton.api.member.model.dto;
+package org.badminton.api.member.oauth2.dto;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
+import org.badminton.api.member.model.dto.MemberResponse;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 

@@ -2,8 +2,8 @@ package org.badminton.api.member.jwt;
 
 import java.io.IOException;
 
-import org.badminton.api.member.model.dto.CustomOAuth2Member;
 import org.badminton.api.member.model.dto.MemberResponse;
+import org.badminton.api.member.oauth2.dto.CustomOAuth2Member;
 import org.badminton.domain.member.entity.MemberAuthorization;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -25,7 +25,7 @@ public class JwtFilter extends OncePerRequestFilter {
 	private final JwtUtil jwtUtil;
 
 	@Override
-	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+	protected boolean shouldNotFilter(HttpServletRequest request) {
 		String path = request.getRequestURI();
 		return path.equals("/") || path.equals("/groups") || path.startsWith("/oauth2") || path.startsWith("/login")
 			|| path.startsWith("/api") || path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs")
@@ -33,6 +33,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
 	}
 
+	// 일반적인 예외 -> 커스텀 예외 처리 X
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
@@ -66,7 +67,8 @@ public class JwtFilter extends OncePerRequestFilter {
 		String accessToken = jwtUtil.getAccessToken(jwtToken);
 		String registrationId = jwtUtil.getRegistrationId(jwtToken);
 
-		MemberResponse memberResponse = new MemberResponse(MemberAuthorization.AUTHORIZATION_USER.name(), name, email,
+		MemberResponse memberResponse = new MemberResponse(MemberAuthorization.AUTHORIZATION_USER.name(), name,
+			email,
 			providerId, profileImage);
 		log.info("memberDto: {}", memberResponse);
 

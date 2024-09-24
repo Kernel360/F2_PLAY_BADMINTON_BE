@@ -5,13 +5,12 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.badminton.api.member.jwt.JwtUtil;
-import org.badminton.api.member.model.dto.CustomOAuth2Member;
+import org.badminton.api.member.oauth2.dto.CustomOAuth2Member;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -27,7 +26,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-		Authentication authentication) throws IOException, ServletException {
+		Authentication authentication) throws IOException {
 
 		log.info("CustomSuccessHandler onAuthenticationSuccess");
 
@@ -54,9 +53,12 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		String token = jwtUtil.createJwt(providerId, authorization, name, email, profileImage,
 			accessToken, registrationId, 24 * 60 * 60 * 1000L); // 초 * 분 * 시
 
-		// response.setHeader("Authorization", "Bearer " + token);
+		request.getSession().invalidate();
+
+		response.setHeader("Set-Cookie", "JSESSIONID=; HttpOnly; Path=/; Max-Age=0; Secure; SameS ite=None;");
 
 		response.addCookie(createCookie(token));
+
 		response.sendRedirect("http://localhost:3000/");
 	}
 
@@ -72,4 +74,5 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 	}
 
 }
+
 

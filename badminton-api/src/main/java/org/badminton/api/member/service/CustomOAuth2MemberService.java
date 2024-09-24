@@ -1,16 +1,15 @@
 package org.badminton.api.member.service;
 
-import static org.badminton.api.member.model.dto.MemberRequest.*;
 import static org.badminton.api.member.model.dto.MemberResponse.*;
 
 import org.badminton.api.member.jwt.JwtUtil;
-import org.badminton.api.member.model.dto.CustomOAuth2Member;
-import org.badminton.api.member.model.dto.GoogleResponse;
-import org.badminton.api.member.model.dto.KakaoResponse;
 import org.badminton.api.member.model.dto.MemberRequest;
 import org.badminton.api.member.model.dto.MemberResponse;
-import org.badminton.api.member.model.dto.NaverResponse;
-import org.badminton.api.member.model.dto.OAuthResponse;
+import org.badminton.api.member.oauth2.dto.CustomOAuth2Member;
+import org.badminton.api.member.oauth2.dto.GoogleResponse;
+import org.badminton.api.member.oauth2.dto.KakaoResponse;
+import org.badminton.api.member.oauth2.dto.NaverResponse;
+import org.badminton.api.member.oauth2.dto.OAuthResponse;
 import org.badminton.domain.member.entity.MemberAuthorization;
 import org.badminton.domain.member.entity.MemberEntity;
 import org.badminton.domain.member.repository.MemberRepository;
@@ -56,7 +55,7 @@ public class CustomOAuth2MemberService extends DefaultOAuth2UserService {
 		log.info("attribute:{}", oAuth2User.getAttributes());
 
 		String providerId = oAuth2Response.getProviderId();
-		MemberEntity existData = memberRepository.findByProviderId(providerId);
+		MemberEntity existData = memberRepository.findByProviderId(providerId).orElse(null);
 
 		MemberResponse memberResponse;
 
@@ -66,12 +65,11 @@ public class CustomOAuth2MemberService extends DefaultOAuth2UserService {
 				oAuth2Response.getName(),
 				oAuth2Response.getEmail(), providerId, oAuth2Response.getProfileImage());
 
-			MemberEntity memberEntity = memberRequestToEntity(memberRequest);
+			MemberEntity memberEntity = memberRequest.memberRequestToEntity();
 
 			memberRepository.save(memberEntity);
 			memberResponse = memberEntityToResponse(memberEntity);
 
-			// return new CustomOAuth2Member(memberResponse);
 		} else {
 
 			if (existData.isDeleted()) {
@@ -79,11 +77,7 @@ public class CustomOAuth2MemberService extends DefaultOAuth2UserService {
 				memberRepository.save(existData);
 			}
 
-			// memberRepository.save(existData);
-
 			memberResponse = memberEntityToResponse(existData);
-
-			// return new CustomOAuth2Member(memberResponse);
 		}
 		String jwt = jwtUtil.createJwt(
 			providerId,

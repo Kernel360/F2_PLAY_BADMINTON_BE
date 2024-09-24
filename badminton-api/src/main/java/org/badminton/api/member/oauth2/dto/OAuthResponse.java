@@ -1,4 +1,4 @@
-package org.badminton.api.member.model.dto;
+package org.badminton.api.member.oauth2.dto;
 
 public interface OAuthResponse {
 
