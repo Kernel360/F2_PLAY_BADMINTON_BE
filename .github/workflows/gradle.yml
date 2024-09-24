@@ -24,6 +24,9 @@ jobs:
         touch ./.env
         echo "${{ secrets.ENV }}" > ./.env
       shell: bash
+      
+    - name: Set Gradle Wrapper Permissions
+      run: chmod +x ./gradlew
 
     - name: Build with Gradle
       run: ./gradlew assemble
