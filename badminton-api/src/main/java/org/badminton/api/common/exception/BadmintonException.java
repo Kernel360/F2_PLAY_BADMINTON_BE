@@ -8,21 +8,30 @@ import lombok.Getter;
 public class BadmintonException extends RuntimeException {
 
 	private final ErrorCode errorCode;
-	private final String errorDetails;
+	private final String errorMessage;
 
 	public BadmintonException(ErrorCode errorCode, String typeName, String resourceName) {
-		super(errorCode.getDescription());
-		this.errorCode = errorCode;
-		this.errorDetails = errorCode.getDescription() + wrapErrorDetails(typeName) + resourceName + "]";
+		this(errorCode, typeName, resourceName, null);
 	}
 
-	public BadmintonException(ErrorCode errorCode, String errorDetails) {
-		super(errorCode.getDescription());
+	public BadmintonException(ErrorCode errorCode, String typeName, String resourceName, Exception e) {
+		super(errorCode.getDescription(), e);
 		this.errorCode = errorCode;
-		this.errorDetails = errorCode.getDescription() + "[ " + errorDetails + " ]";
+		this.errorMessage =
+			errorCode.getDescription() + wrapTypeAndResourceNameToErrorMessage(typeName, resourceName);
 	}
 
-	private String wrapErrorDetails(String typeName) {
-		return "[" + typeName + ": ";
+	public BadmintonException(ErrorCode errorCode) {
+		this(errorCode, null);
+	}
+
+	public BadmintonException(ErrorCode errorCode, Exception e) {
+		super(errorCode.getDescription(), e);
+		this.errorCode = errorCode;
+		this.errorMessage = errorCode.getDescription();
+	}
+
+	private String wrapTypeAndResourceNameToErrorMessage(String typeName, String resourceName) {
+		return "[" + typeName + ": " + resourceName + "]";
 	}
 }

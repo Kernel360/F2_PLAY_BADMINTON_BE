@@ -26,12 +26,18 @@ public enum ErrorCode {
 
 	// 404 Errors
 	NOT_FOUND(404, "요청한 리소스를 찾을 수 없습니다."),
+
+	// RESOURCE_NOT_EXIST
 	RESOURCE_NOT_EXIST(404, "특정 리소스를 찾을 수 없습니다."),
+	CLUB_NOT_EXIST(404, "해당하는 동호회가 존재하지 않습니다."),
 
 	// 409 Errors
 	CONFLICT(409, "리소스 충돌이 발생했습니다."),
 	ALREADY_EXIST(409, "리소스가 이미 존재합니다."),
+
+	// RESOURCE_ALREADY_EXIST
 	RESOURCE_ALREADY_EXIST(409, "특정 리소스가 이미 존재합니다."),
+	CLUB_NAME_ALREADY_EXIST(409, "이미 존재하는 동호회 이름입니다."),
 
 	// 410 Errors
 	DELETED(410, "요청한 리소스가 삭제되었습니다."),
