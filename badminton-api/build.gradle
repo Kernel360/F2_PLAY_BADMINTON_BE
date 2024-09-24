@@ -1,6 +1,7 @@
+def jarName = "badminton-api.jar" // 원하는 JAR 이름으로 설정
+
 dependencies {
     implementation project(':badminton-domain')
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -25,4 +26,15 @@ bootJar {
 
 jar {
     enabled = false
+}
+
+tasks.named("bootJar") {
+    bootJar.getArchiveFileName().set(jarName) // JAR 이름 설정
+
+    doLast {
+        copy {
+            from "build/libs/$jarName" // 생성된 JAR 파일 경로
+            into "../build/libs" // 복사할 경로
+        }
+    }
 }

@@ -1,8 +1,8 @@
 package org.badminton.api.club.validator;
 
 import org.badminton.api.common.error.ErrorCode;
-import org.badminton.api.common.exception.DuplicationException;
-import org.badminton.api.common.exception.ResourceNotFoundException;
+import org.badminton.api.common.exception.club.ClubNameDuplicateException;
+import org.badminton.api.common.exception.club.ClubNotExistException;
 import org.badminton.domain.club.entity.ClubEntity;
 import org.badminton.domain.club.repository.ClubRepository;
 import org.springframework.stereotype.Component;
@@ -21,15 +21,13 @@ public class ClubValidator {
 
 	public void checkIfClubNameDuplicate(String clubName) {
 		clubRepository.findByClubNameAndIsClubDeletedFalse(clubName).ifPresent(club -> {
-			throw new DuplicationException(ErrorCode.RESOURCE_ALREADY_EXIST, clubName.getClass().getSimpleName(),
-				clubName);
+			throw new ClubNameDuplicateException(ErrorCode.CLUB_NAME_ALREADY_EXIST, clubName);
 		});
 	}
 
 	public ClubEntity provideClubByClubId(Long clubId) {
 		return clubRepository.findByClubIdAndIsClubDeletedFalse(clubId)
 			.orElseThrow(
-				() -> new ResourceNotFoundException(ErrorCode.RESOURCE_NOT_EXIST, clubId.getClass().getSimpleName(),
-					clubId));
+				() -> new ClubNotExistException(ErrorCode.RESOURCE_NOT_EXIST, clubId));
 	}
 }
