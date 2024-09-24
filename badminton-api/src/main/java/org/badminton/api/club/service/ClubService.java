@@ -9,14 +9,12 @@ import org.badminton.api.club.model.dto.ClubUpdateResponse;
 import org.badminton.api.club.validator.ClubValidator;
 import org.badminton.api.common.error.ErrorCode;
 import org.badminton.api.common.exception.member.MemberNotExistException;
-import org.badminton.api.member.oauth2.dto.CustomOAuth2Member;
 import org.badminton.domain.club.entity.ClubEntity;
 import org.badminton.domain.clubmember.entity.ClubMemberEntity;
 import org.badminton.domain.clubmember.entity.ClubMemberRole;
 import org.badminton.domain.clubmember.repository.ClubMemberRepository;
 import org.badminton.domain.member.entity.MemberEntity;
 import org.badminton.domain.member.repository.MemberRepository;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
@@ -39,9 +37,8 @@ public class ClubService {
 
 	// TODO: clubAddRequest에 이미지가 없으면 default 이미지를 넣어주도록 구현
 	@Transactional
-	public ClubCreateResponse createClub(ClubCreateRequest clubAddRequest, Authentication authentication) {
-		CustomOAuth2Member member = (CustomOAuth2Member)authentication.getPrincipal();
-		Long memberId = member.getMemberId();
+	public ClubCreateResponse createClub(ClubCreateRequest clubAddRequest, Long memberId) {
+
 		MemberEntity memberEntity = memberRepository.findByMemberId(memberId)
 			.orElseThrow(() -> new MemberNotExistException(
 				ErrorCode.MEMBER_NOT_EXIST, String.valueOf(memberId)));
