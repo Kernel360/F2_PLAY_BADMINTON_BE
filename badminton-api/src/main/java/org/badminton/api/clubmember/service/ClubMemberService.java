@@ -29,7 +29,7 @@ public class ClubMemberService {
 			.orElseThrow(() -> new ClubNotExistException(ErrorCode.RESOURCE_NOT_EXIST, clubId));
 
 		MemberEntity memberEntity = memberRepository.findByMemberId(memberId)
-			.orElseThrow(() -> new MemberNotExistException(ErrorCode.RESOURCE_NOT_EXIST, String.valueOf(memberId)));
+			.orElseThrow(() -> new MemberNotExistException(ErrorCode.RESOURCE_NOT_EXIST, memberId));
 
 		if (clubMemberRepository.existsByMember_MemberId(memberId)) {
 			throw new ClubMemberExistInClubException(ErrorCode.MEMBER_ALREADY_EXIST_IN_CLUB, memberId);
@@ -38,9 +38,8 @@ public class ClubMemberService {
 		ClubMemberEntity clubMemberEntity = new ClubMemberEntity(clubEntity, memberEntity, ClubMemberRole.ROLE_USER);
 
 		clubMemberRepository.save(clubMemberEntity);
-		ClubMemberJoinResponse clubMemberJoinResponse = ClubMemberJoinResponse.clubMemberEntityToClubMemberJoinResponse(
+		return ClubMemberJoinResponse.clubMemberEntityToClubMemberJoinResponse(
 			clubMemberEntity);
-		return clubMemberJoinResponse;
 
 	}
 
