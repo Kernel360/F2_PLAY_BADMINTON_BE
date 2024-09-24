@@ -29,7 +29,7 @@ jobs:
       run: chmod +x ./gradlew
 
     - name: Build with Gradle
-      run: ./gradlew assemble
+      run: ./gradlew bootJar  # bootJar로 변경
 
     - name: Build and push Docker image
       run: |
@@ -37,14 +37,16 @@ jobs:
         echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
         
         # Build the Docker image with the 'latest' tag
-        docker build -t ${{ secrets.DOCKERHUB_CONTAINERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY }} .
+        docker build -t ${{ secrets.DOCKERHUB_CONTAINERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY }}:latest .
         
         # Push the Docker image to Docker Hub
         docker push ${{ secrets.DOCKERHUB_CONTAINERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY }}:latest
+        
     - name: Clean up dangling Docker images locally
       run: |
         # Clean up any dangling images after the build
-        sudo docker image prune -f
+        docker image prune -f
+
     - name: Deploy to EC2 Server
       uses: appleboy/ssh-action@master
       with:
@@ -57,18 +59,17 @@ jobs:
           echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
     
           # 최신 Docker 이미지 Pull
-          sudo docker pull ${{ secrets.DOCKERHUB_CONTAINERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY }}:latest
+          docker pull ${{ secrets.DOCKERHUB_CONTAINERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY }}:latest
     
           # 기존 컨테이너가 있을 경우 중지 및 제거
-          sudo docker ps -q -f name=speech2 | xargs -r sudo docker stop
-          sudo docker images --filter "dangling=true" -q | xargs sudo docker rmi
-          sudo docker ps -a -q -f name=speech2 | xargs -r sudo docker rm
+          docker ps -q -f name=speech2 | xargs -r docker stop
+          docker ps -a -q -f name=speech2 | xargs -r docker rm
     
           # 환경 변수를 사용하여 새로운 컨테이너 실행
-          sudo docker run -d \
+          docker run -d \
             -p 8080:8080 \
             --name speech2 \
             ${{ secrets.DOCKERHUB_CONTAINERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY }}:latest
     
           # 서버에서 오래된 Docker 이미지 정리
-          sudo docker image prune -f
+          docker image prune -f
