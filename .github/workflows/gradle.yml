@@ -20,7 +20,7 @@ jobs:
 
     - name: Set environment values
       run: |
-        cd ./src/main/resources
+        cd ./badminton-api/src/main/resources
         touch ./.env
         echo "${{ secrets.ENV }}" > ./.env
       shell: bash
