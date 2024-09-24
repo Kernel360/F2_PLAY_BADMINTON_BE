@@ -42,7 +42,7 @@ public class JwtUtil {
 				}
 			}
 		}
-		throw new JwtCookieNotFoundException(ErrorCode.JWT_COOKIE_NOT_FOUNT);
+		throw new JwtCookieNotFoundException(ErrorCode.JWT_COOKIE_NOT_FOUND);
 	}
 
 	public String getProviderId(String token) {

@@ -26,7 +26,7 @@ public enum ErrorCode {
 
 	// 404 Errors
 	NOT_FOUND(404, "요청한 리소스를 찾을 수 없습니다."),
-	JWT_COOKIE_NOT_FOUNT(404, "JWT 쿠키를 찾을 수 없습니다."),
+	JWT_COOKIE_NOT_FOUND(404, "JWT 쿠키를 찾을 수 없습니다."),
 
 	// RESOURCE_NOT_EXIST
 	RESOURCE_NOT_EXIST(404, "특정 리소스를 찾을 수 없습니다."),
