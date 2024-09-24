@@ -5,6 +5,8 @@ import org.badminton.domain.common.BaseTimeEntity;
 import org.badminton.domain.member.entity.MemberEntity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -27,7 +29,8 @@ public class ClubMemberEntity extends BaseTimeEntity {
 
 	private boolean isDeleted;
 
-	private String role;
+	@Enumerated(EnumType.STRING)
+	private ClubMemberRole role;
 
 	@ManyToOne
 	@JoinColumn(name = "clubId")
@@ -40,7 +43,7 @@ public class ClubMemberEntity extends BaseTimeEntity {
 	public ClubMemberEntity(ClubEntity club, MemberEntity member, ClubMemberRole role) {
 		this.club = club;
 		this.member = member;
-		this.role = role.name();
+		this.role = role;
 		this.isDeleted = false;
 	}
 }
