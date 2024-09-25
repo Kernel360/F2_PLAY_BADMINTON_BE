@@ -3,7 +3,7 @@ spring:
     name: badminton
   jpa:
     hibernate:
-      ddl-auto: ${DDL_METHOD}
+      ddl-auto: ${DDL_METHOD_API}
       show-sql: true
       properties:
         hibernate:
@@ -25,7 +25,6 @@ spring:
     driver-class-name: ${DATABASE_DRIVER}
   jwt:
     secret: ${JWT_SECRET}
-
   security:
     oauth2:
       client:

@@ -1,0 +1,27 @@
+server:
+  port: 9090
+spring:
+  application:
+    name: badminton-batch
+  jpa:
+    hibernate:
+      ddl-auto: ${DDL_METHOD_BATCH}
+      show-sql: true
+      properties:
+        hibernate:
+          format_sql: true
+          dialect: org.hibernate.dialect.MySQL8Dialect
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    defer-datasource-initialization: true
+  messages:
+    encoding: UTF-8
+    basename: messages
+  sql:
+    init:
+      mode: always
+  datasource:
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USER_NAME}
+    password: ${DATABASE_USER_PASSWORD}
+    driver-class-name: ${DATABASE_DRIVER}
