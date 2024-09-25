@@ -6,12 +6,10 @@ import org.badminton.api.common.exception.BadmintonException;
 public class LeagueNotExistException extends BadmintonException {
 
 	public LeagueNotExistException(Long leagueId) {
-		super(ErrorCode.LEAGUE_ALREADY_EXIST, ErrorCode.LEAGUE_ALREADY_EXIST.getDescription() + "[ : " +
-			leagueId + "]");
+		super(ErrorCode.LEAGUE_ALREADY_EXIST, "[경기 일정 아이디 : " + leagueId + "]");
 	}
 
 	public LeagueNotExistException(Long leagueId, Exception e) {
-		super(ErrorCode.LEAGUE_ALREADY_EXIST, ErrorCode.LEAGUE_ALREADY_EXIST.getDescription() + "[ : " +
-			leagueId + "]", e);
+		super(ErrorCode.LEAGUE_ALREADY_EXIST, "[경기 일정 아이디 : " + leagueId + "]", e);
 	}
 }
