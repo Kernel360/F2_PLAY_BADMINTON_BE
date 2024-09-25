@@ -6,10 +6,12 @@ import org.badminton.api.common.exception.BadmintonException;
 public class ClubNameDuplicateException extends BadmintonException {
 
 	public ClubNameDuplicateException(String clubName) {
-		super(ErrorCode.CLUB_NAME_ALREADY_EXIST, "동호회 이름", clubName);
+		super(ErrorCode.CLUB_NAME_ALREADY_EXIST, ErrorCode.LEAGUE_ALREADY_EXIST.getDescription() + "[ : " +
+			clubName + "]");
 	}
 
 	public ClubNameDuplicateException(String clubName, Exception e) {
-		super(ErrorCode.CLUB_NAME_ALREADY_EXIST, "동호회 이름", clubName, e);
+		super(ErrorCode.CLUB_NAME_ALREADY_EXIST, ErrorCode.LEAGUE_ALREADY_EXIST.getDescription() + "[ : " +
+			clubName + "]", e);
 	}
 }
