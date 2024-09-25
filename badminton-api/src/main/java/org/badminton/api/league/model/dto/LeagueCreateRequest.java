@@ -43,17 +43,9 @@ public record LeagueCreateRequest(
 	String matchingRequirement
 
 ) {
-	public static LeagueEntity leagueCreateRequestToEntity(LeagueCreateRequest request) {
-		return new LeagueEntity(
-			request.leagueName(),
-			request.description(),
-			request.leagueAt(),
-			request.tierLimit(),
-			request.closedAt(),
-			request.status(),
-			request.playerCount(),
-			request.matchType(),
-			request.matchingRequirement()
-		);
+	public LeagueEntity leagueCreateRequestToEntity() {
+		return new LeagueEntity(this.leagueName,
+			this.description, this.leagueAt, this.tierLimit, this.closedAt, this.status, this.playerCount,
+			this.matchType, this.matchingRequirement);
 	}
 }
