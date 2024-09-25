@@ -1,0 +1,40 @@
+def jarName = "badminton-batch.jar" // 원하는 JAR 이름으로 설정
+
+dependencies {
+    implementation project(':badminton-domain')
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.6.0'
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
+    implementation group: 'me.paulschwarz', name: 'spring-dotenv', version: '4.0.0'
+
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.3'
+    testImplementation 'org.springframework.security:spring-security-test'
+
+}
+
+test {
+    useJUnitPlatform()
+}
+
+bootJar {
+    enabled = true
+}
+
+jar {
+    enabled = false
+}
+
+tasks.named("bootJar") {
+    bootJar.getArchiveFileName().set(jarName) // JAR 이름 설정
+
+    doLast {
+        copy {
+            from "build/libs/$jarName" // 생성된 JAR 파일 경로
+            into "../build/libs" // 복사할 경로
+        }
+    }
+}
