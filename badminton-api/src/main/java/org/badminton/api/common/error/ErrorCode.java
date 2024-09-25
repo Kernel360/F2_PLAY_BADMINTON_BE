@@ -41,6 +41,7 @@ public enum ErrorCode {
 	// RESOURCE_ALREADY_EXIST
 	RESOURCE_ALREADY_EXIST(409, "특정 리소스가 이미 존재합니다."),
 	CLUB_NAME_ALREADY_EXIST(409, "이미 존재하는 동호회 이름입니다."),
+	LEAGUE_ALREADY_EXIST(409, "이미 존재하는 경기 일저입니다."),
 
 	// 410 Errors
 	DELETED(410, "요청한 리소스가 삭제되었습니다."),
