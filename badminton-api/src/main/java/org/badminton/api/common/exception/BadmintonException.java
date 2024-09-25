@@ -10,29 +10,14 @@ public class BadmintonException extends RuntimeException {
 	private final ErrorCode errorCode;
 	private final String errorMessage;
 
-	public BadmintonException(ErrorCode errorCode, String typeName, String resourceName) {
-		this(errorCode, typeName, resourceName, null);
+	public BadmintonException(ErrorCode errorCode, String errorMessage) {
+		this(errorCode, errorMessage, null);
 	}
 
-	public BadmintonException(ErrorCode errorCode, String typeName, String resourceName, Exception e) {
+	public BadmintonException(ErrorCode errorCode, String errorMessage, Exception e) {
 		super(errorCode.getDescription(), e);
 		this.errorCode = errorCode;
-		this.errorMessage =
-			errorCode.getDescription() + wrapTypeAndResourceNameToErrorMessage(typeName, resourceName);
+		this.errorMessage = errorMessage;
 	}
 
-	public BadmintonException(ErrorCode errorCode, Exception e) {
-		super(errorCode.getDescription(), e);
-		this.errorCode = errorCode;
-		this.errorMessage = errorCode.getDescription();
-	}
-
-	public BadmintonException(ErrorCode errorCode) {
-		this.errorCode = errorCode;
-		this.errorMessage = errorCode.getDescription();
-	}
-
-	private String wrapTypeAndResourceNameToErrorMessage(String typeName, String resourceName) {
-		return "[" + typeName + ": " + resourceName + "]";
-	}
 }

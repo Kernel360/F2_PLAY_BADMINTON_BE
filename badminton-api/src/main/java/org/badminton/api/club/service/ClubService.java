@@ -7,7 +7,6 @@ import org.badminton.api.club.model.dto.ClubReadResponse;
 import org.badminton.api.club.model.dto.ClubUpdateRequest;
 import org.badminton.api.club.model.dto.ClubUpdateResponse;
 import org.badminton.api.club.validator.ClubValidator;
-import org.badminton.api.common.error.ErrorCode;
 import org.badminton.api.common.exception.member.MemberNotExistException;
 import org.badminton.domain.club.entity.ClubEntity;
 import org.badminton.domain.clubmember.entity.ClubMemberEntity;
@@ -40,8 +39,7 @@ public class ClubService {
 	public ClubCreateResponse createClub(ClubCreateRequest clubAddRequest, Long memberId) {
 
 		MemberEntity memberEntity = memberRepository.findByMemberId(memberId)
-			.orElseThrow(() -> new MemberNotExistException(
-				ErrorCode.MEMBER_NOT_EXIST, memberId));
+			.orElseThrow(() -> new MemberNotExistException(memberId));
 
 		clubValidator.checkIfClubNameDuplicate(clubAddRequest.clubName());
 		ClubEntity club = new ClubEntity(clubAddRequest.clubName(), clubAddRequest.clubDescription(),

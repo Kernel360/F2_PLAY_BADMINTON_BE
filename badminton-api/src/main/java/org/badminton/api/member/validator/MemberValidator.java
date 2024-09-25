@@ -5,7 +5,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 
-import org.badminton.api.common.error.ErrorCode;
 import org.badminton.api.common.exception.member.MemberNotExistException;
 import org.badminton.api.member.jwt.JwtUtil;
 import org.badminton.domain.member.entity.MemberEntity;
@@ -39,7 +38,7 @@ public class MemberValidator {
 
 	public MemberEntity findMemberByProviderId(String providerId) {
 		return memberRepository.findByProviderId(providerId).orElseThrow(() ->
-			new MemberNotExistException(ErrorCode.MEMBER_NOT_EXIST, providerId));
+			new MemberNotExistException(providerId));
 	}
 
 	public String extractJwtToken(HttpServletRequest request) {

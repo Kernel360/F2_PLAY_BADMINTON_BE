@@ -1,7 +1,6 @@
 package org.badminton.api.clubmember.service;
 
 import org.badminton.api.clubmember.model.dto.ClubMemberJoinResponse;
-import org.badminton.api.common.error.ErrorCode;
 import org.badminton.api.common.exception.club.ClubNotExistException;
 import org.badminton.api.common.exception.clubmember.ClubMemberExistInClubException;
 import org.badminton.api.common.exception.member.MemberNotExistException;
@@ -29,10 +28,10 @@ public class ClubMemberService {
 			.orElseThrow(() -> new ClubNotExistException(clubId));
 
 		MemberEntity memberEntity = memberRepository.findByMemberId(memberId)
-			.orElseThrow(() -> new MemberNotExistException(ErrorCode.RESOURCE_NOT_EXIST, memberId));
+			.orElseThrow(() -> new MemberNotExistException(memberId));
 
 		if (clubMemberRepository.existsByMember_MemberId(memberId)) {
-			throw new ClubMemberExistInClubException(ErrorCode.MEMBER_ALREADY_EXIST_IN_CLUB, memberId);
+			throw new ClubMemberExistInClubException(memberId);
 		}
 
 		ClubMemberEntity clubMemberEntity = new ClubMemberEntity(clubEntity, memberEntity, ClubMemberRole.ROLE_USER);

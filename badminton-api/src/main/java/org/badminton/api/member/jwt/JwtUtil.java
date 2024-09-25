@@ -6,7 +6,6 @@ import java.util.Date;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-import org.badminton.api.common.error.ErrorCode;
 import org.badminton.api.common.exception.oauth.JwtCookieNotFoundException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -42,7 +41,7 @@ public class JwtUtil {
 				}
 			}
 		}
-		throw new JwtCookieNotFoundException(ErrorCode.JWT_COOKIE_NOT_FOUND);
+		throw new JwtCookieNotFoundException();
 	}
 
 	public String getProviderId(String token) {
