@@ -39,7 +39,6 @@ out/
 
 ### VS Code ###
 .vscode/
-docker-compose.yaml
 application-secret.properties
 data/
 
