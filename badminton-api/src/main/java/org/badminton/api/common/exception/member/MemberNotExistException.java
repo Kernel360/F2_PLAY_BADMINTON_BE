@@ -5,19 +5,20 @@ import org.badminton.api.common.exception.BadmintonException;
 
 public class MemberNotExistException extends BadmintonException {
 
-	public MemberNotExistException(ErrorCode errorCode, Long memberId, Exception e) {
-		super(errorCode, "회원", String.valueOf(memberId), e);
+	public MemberNotExistException(Long memberId) {
+		super(ErrorCode.MEMBER_NOT_EXIST, "[회원 아이디 : " + memberId + "]");
 	}
 
-	public MemberNotExistException(ErrorCode errorCode, Long memberId) {
-		super(errorCode, "회원", String.valueOf(memberId));
+	public MemberNotExistException(Long memberId, Exception e) {
+		super(ErrorCode.MEMBER_NOT_EXIST, "[회원 아이디 : " + memberId + "]",
+			e);
 	}
 
-	public MemberNotExistException(ErrorCode errorCode, String providerId) {
-		super(errorCode, "회원", providerId);
+	public MemberNotExistException(String providerId) {
+		super(ErrorCode.MEMBER_NOT_EXIST, "[회원 소셜 아이디 : " + providerId + "]");
 	}
 
-	public MemberNotExistException(ErrorCode errorCode, String providerId, Exception e) {
-		super(errorCode, "회원", providerId, e);
+	public MemberNotExistException(String providerId, Exception e) {
+		super(ErrorCode.MEMBER_NOT_EXIST, "[회원 소셜 아이디 : " + providerId + "]");
 	}
 }

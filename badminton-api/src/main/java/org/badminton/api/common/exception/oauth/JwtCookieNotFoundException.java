@@ -4,12 +4,12 @@ import org.badminton.api.common.error.ErrorCode;
 import org.badminton.api.common.exception.BadmintonException;
 
 public class JwtCookieNotFoundException extends BadmintonException {
-	public JwtCookieNotFoundException(ErrorCode errorCode) {
-		super(errorCode);
+	public JwtCookieNotFoundException() {
+		super(ErrorCode.JWT_COOKIE_NOT_FOUND);
 	}
 
-	public JwtCookieNotFoundException(ErrorCode errorCode, Exception e) {
-		super(errorCode, e);
+	public JwtCookieNotFoundException(Exception e) {
+		super(ErrorCode.JWT_COOKIE_NOT_FOUND, e);
 	}
 }
 
