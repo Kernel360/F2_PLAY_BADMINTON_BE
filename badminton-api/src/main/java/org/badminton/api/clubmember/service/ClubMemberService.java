@@ -26,7 +26,7 @@ public class ClubMemberService {
 
 	public ClubMemberJoinResponse joinClub(Long memberId, Long clubId) {
 		ClubEntity clubEntity = clubRepository.findByClubIdAndIsClubDeletedFalse(clubId)
-			.orElseThrow(() -> new ClubNotExistException(ErrorCode.RESOURCE_NOT_EXIST, clubId));
+			.orElseThrow(() -> new ClubNotExistException(clubId));
 
 		MemberEntity memberEntity = memberRepository.findByMemberId(memberId)
 			.orElseThrow(() -> new MemberNotExistException(ErrorCode.RESOURCE_NOT_EXIST, memberId));

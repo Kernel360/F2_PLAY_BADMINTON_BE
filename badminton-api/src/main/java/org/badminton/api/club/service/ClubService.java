@@ -41,7 +41,7 @@ public class ClubService {
 
 		MemberEntity memberEntity = memberRepository.findByMemberId(memberId)
 			.orElseThrow(() -> new MemberNotExistException(
-				ErrorCode.MEMBER_NOT_EXIST, String.valueOf(memberId)));
+				ErrorCode.MEMBER_NOT_EXIST, memberId));
 
 		clubValidator.checkIfClubNameDuplicate(clubAddRequest.clubName());
 		ClubEntity club = new ClubEntity(clubAddRequest.clubName(), clubAddRequest.clubDescription(),

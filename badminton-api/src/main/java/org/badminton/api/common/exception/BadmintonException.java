@@ -21,12 +21,13 @@ public class BadmintonException extends RuntimeException {
 			errorCode.getDescription() + wrapTypeAndResourceNameToErrorMessage(typeName, resourceName);
 	}
 
-	public BadmintonException(ErrorCode errorCode) {
-		this(errorCode, null);
-	}
-
 	public BadmintonException(ErrorCode errorCode, Exception e) {
 		super(errorCode.getDescription(), e);
+		this.errorCode = errorCode;
+		this.errorMessage = errorCode.getDescription();
+	}
+
+	public BadmintonException(ErrorCode errorCode) {
 		this.errorCode = errorCode;
 		this.errorMessage = errorCode.getDescription();
 	}

@@ -5,11 +5,11 @@ import org.badminton.api.common.exception.BadmintonException;
 
 public class ClubNotExistException extends BadmintonException {
 
-	public ClubNotExistException(ErrorCode errorCode, Long clubId) {
-		super(errorCode, "동호회 아이디", String.valueOf(clubId));
+	public ClubNotExistException(Long clubId) {
+		super(ErrorCode.CLUB_NOT_EXIST, "동호회 아이디", String.valueOf(clubId));
 	}
 
-	public ClubNotExistException(ErrorCode errorCode, Long clubId, Exception e) {
-		super(errorCode, "동호회 아이디", String.valueOf(clubId), e);
+	public ClubNotExistException(Long clubId, Exception e) {
+		super(ErrorCode.CLUB_NOT_EXIST, "동호회 아이디", String.valueOf(clubId), e);
 	}
 }
