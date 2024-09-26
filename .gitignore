@@ -28,6 +28,7 @@ bin/
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
+.env
 
 ### NetBeans ###
 /nbproject/private/
@@ -38,6 +39,8 @@ out/
 
 ### VS Code ###
 .vscode/
-docker-compose.yaml
 application-secret.properties
 data/
+
+gradlew
+gradlew.bat

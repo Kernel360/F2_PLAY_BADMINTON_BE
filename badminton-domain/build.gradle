@@ -1,0 +1,16 @@
+dependencies {
+    api 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation 'org.springframework.security:spring-security-test'
+    runtimeOnly 'com.mysql:mysql-connector-j'
+}
+
+bootJar {
+    enabled = false
+}
+
+jar {
+    enabled = true
+}
