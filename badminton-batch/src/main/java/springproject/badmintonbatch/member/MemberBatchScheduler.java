@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Service
 @EnableScheduling
-public class MemberScheduled {
+public class MemberBatchScheduler {
 
 	private final MemberRepository memberRepository;
 
