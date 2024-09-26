@@ -33,7 +33,7 @@ spring:
             client-name: naver
             client-id: ${NAVER_CLIENT_ID}
             client-secret: ${NAVER_CLIENT_SECRET}
-            redirect-uri: ${FRONT_URL}/login/oauth2/code/naver
+            redirect-uri: ${SERVER_URL}/login/oauth2/code/naver
             authorization-grant-type: authorization_code
             scope: name,email
           kakao:
