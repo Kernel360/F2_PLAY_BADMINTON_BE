@@ -6,13 +6,14 @@ import org.badminton.domain.league.entity.LeagueParticipationEntity;
 
 public record LeagueParticipationResponse(
 	Long leagueId,
-	Long memberId,
+	Long clubMemberId,
 	LocalDateTime createdAt,
 	LocalDateTime modifiedAt
 ) {
 
 	public static LeagueParticipationResponse entityToLeagueParticipateResponse(LeagueParticipationEntity entity) {
-		return new LeagueParticipationResponse(entity.getLeague().getLeagueId(), entity.getMember().getMemberId(),
+		return new LeagueParticipationResponse(entity.getLeague().getLeagueId(),
+			entity.getClubMember().getClubMemberId(),
 			entity.getCreatedAt(), entity.getModifiedAt());
 	}
 }

@@ -7,7 +7,7 @@ import org.badminton.domain.league.entity.LeagueParticipationEntity;
 public record LeagueParticipationCancelResponse(
 
 	Long leagueId,
-	Long memberId,
+	Long clubMemberId,
 	LocalDateTime createdAt,
 	LocalDateTime deletedAt
 ) {
@@ -15,9 +15,8 @@ public record LeagueParticipationCancelResponse(
 	public static LeagueParticipationCancelResponse entityToLeagueParticipateCancelResponse(
 		LeagueParticipationEntity entity) {
 
-		return new LeagueParticipationCancelResponse(entity.getLeague().getLeagueId(), entity.getMember().getMemberId(),
+		return new LeagueParticipationCancelResponse(entity.getLeague().getLeagueId(),
+			entity.getClubMember().getClubMemberId(),
 			entity.getCreatedAt(), entity.getModifiedAt());
-
 	}
-
 }

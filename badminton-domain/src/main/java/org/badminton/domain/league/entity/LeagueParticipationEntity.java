@@ -1,8 +1,9 @@
 package org.badminton.domain.league.entity;
 
+import org.badminton.domain.clubmember.entity.ClubMemberEntity;
 import org.badminton.domain.common.BaseTimeEntity;
-import org.badminton.domain.member.entity.MemberEntity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -23,26 +24,30 @@ public class LeagueParticipationEntity extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long leagueParticipantId;
+	private Long leagueParticipantionId;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "member_id")
-	private MemberEntity member;
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinColumn(name = "clubMemberId")
+	private ClubMemberEntity clubMember;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "league_id")
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinColumn(name = "leagueId")
 	private LeagueEntity league;
 
 	private boolean isCanceled;
 
-	public LeagueParticipationEntity(MemberEntity member, LeagueEntity league) {
-		this.member = member;
+	public LeagueParticipationEntity(ClubMemberEntity clubMember, LeagueEntity league) {
+		this.clubMember = clubMember;
 		this.league = league;
 		this.isCanceled = false;
 	}
 
 	public void cancelLeagueParticipation() {
 		this.isCanceled = true;
+	}
+
+	public void reactiveParticipation() {
+		this.isCanceled = false;
 	}
 
 }

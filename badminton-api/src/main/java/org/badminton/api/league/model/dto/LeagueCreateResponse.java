@@ -49,7 +49,7 @@ public record LeagueCreateResponse(
 			entity.getLeagueName(),
 			entity.getDescription(),
 			entity.getTierLimit(),
-			entity.getStatus(),
+			entity.getLeagueStatus(),
 			entity.getMatchType(),
 			entity.getLeagueAt(),
 			entity.getClosedAt(),

@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/v1/league")
+@RequestMapping("/v1/club/{clubId}/league")
 public class LeagueParticipationController {
 
 	private final LeagueParticipationService leagueParticipationService;
@@ -29,14 +29,14 @@ public class LeagueParticipationController {
 	)
 	@PostMapping("{leagueId}/participation")
 	public ResponseEntity<LeagueParticipationResponse> participateInLeague(
+		@PathVariable Long clubId,
 		@PathVariable Long leagueId,
 		Authentication authentication
 	) {
 		CustomOAuth2Member member = (CustomOAuth2Member)authentication.getPrincipal();
 		Long memberId = member.getMemberId();
-		LeagueParticipationResponse leagueParticipationResponse = leagueParticipationService.participateInLeague(
-			leagueId,
-			memberId);
+		LeagueParticipationResponse leagueParticipationResponse = leagueParticipationService.participateInLeague(clubId,
+			leagueId, memberId);
 		return ResponseEntity.ok(leagueParticipationResponse);
 	}
 
@@ -46,15 +46,15 @@ public class LeagueParticipationController {
 		tags = {"league"}
 	)
 	@DeleteMapping("{leagueId}/participation")
-	public ResponseEntity<LeagueParticipationCancelResponse> leagueParticipateCancel(
+	public ResponseEntity<LeagueParticipationCancelResponse> cancelLeagueParticipation(
+		@PathVariable Long clubId,
 		@PathVariable Long leagueId,
 		Authentication authentication
 	) {
 		CustomOAuth2Member member = (CustomOAuth2Member)authentication.getPrincipal();
 		Long memberId = member.getMemberId();
-		LeagueParticipationCancelResponse leagueParticipationCancelResponse = leagueParticipationService.cancelParticipateInLeague(
-			leagueId,
-			memberId);
+		LeagueParticipationCancelResponse leagueParticipationCancelResponse = leagueParticipationService.cancelLeagueParticipation(
+			clubId, leagueId, memberId);
 		return ResponseEntity.ok(leagueParticipationCancelResponse);
 	}
 

@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface LeagueParticipateRepository extends JpaRepository<LeagueParticipationEntity, Long> {
 
-	Optional<LeagueParticipationEntity> findByLeague_LeagueIdAndMember_MemberId(Long leagueId, Long memberId);
+	Optional<LeagueParticipationEntity> findByLeague_LeagueIdAndClubMember_ClubMemberId(Long leagueId,
+		Long clubMemberId);
 
 }
