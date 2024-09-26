@@ -57,7 +57,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
 		request.getSession().invalidate();
 
-		response.setHeader("Set-Cookie", "JSESSIONID=; HttpOnly; Path=/; Max-Age=0; Secure; SameS ite=None;");
+		response.setHeader("Set-Cookie", "JSESSIONID=; HttpOnly; Path=/; Max-Age=0; Secure; SameSite=None;");
 
 		response.addCookie(createCookie(token));
 
@@ -70,6 +70,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		cookie.setMaxAge(60 * 60 * 60);
 		//cookie.setSecure(true);
 		cookie.setPath("/");
+		cookie.setDomain("3.38.247.217");
 		cookie.setHttpOnly(true); // 클라이언트 측에서 자바스크립트로 이 쿠키에 접근 못하도록 -> 보안 강화
 
 		return cookie;
