@@ -13,9 +13,14 @@ public class MemberItemProcessor implements ItemProcessor<MemberEntity, MemberEn
 	@Override
 	public MemberEntity process(MemberEntity memberEntity) throws Exception {
 		LocalDateTime lastConnectionAt = memberEntity.getLastConnectionAt();
-		if (lastConnectionAt != null && ChronoUnit.DAYS.between(lastConnectionAt, LocalDateTime.now()) > 7) {
-			return memberEntity;  // 삭제 대상으로 처리
+		if (Before7Days(lastConnectionAt)) {
+			return memberEntity;
 		}
-		return null;  // 처리할 필요 없는 경우 null 리턴
+		return null;
+	}
+
+	private boolean Before7Days(LocalDateTime lastConnectionAt) {
+		return lastConnectionAt != null && ChronoUnit.DAYS.between(lastConnectionAt, LocalDateTime.now()) > 7;
 	}
 }
+
