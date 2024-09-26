@@ -70,7 +70,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		cookie.setMaxAge(60 * 60 * 60);
 		//cookie.setSecure(true);
 		cookie.setPath("/");
-		cookie.setDomain("3.38.247.217");
+		cookie.setDomain("ec2-3-38-247-217.ap-northeast-2.compute.amazonaws.com");
 		cookie.setHttpOnly(true); // 클라이언트 측에서 자바스크립트로 이 쿠키에 접근 못하도록 -> 보안 강화
 
 		return cookie;
