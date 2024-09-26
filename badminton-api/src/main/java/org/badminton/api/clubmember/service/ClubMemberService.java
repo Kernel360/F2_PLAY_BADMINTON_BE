@@ -2,7 +2,7 @@ package org.badminton.api.clubmember.service;
 
 import org.badminton.api.clubmember.model.dto.ClubMemberJoinResponse;
 import org.badminton.api.common.exception.club.ClubNotExistException;
-import org.badminton.api.common.exception.clubmember.ClubMemberExistInClubException;
+import org.badminton.api.common.exception.clubmember.ClubMemberDuplicateException;
 import org.badminton.api.common.exception.member.MemberNotExistException;
 import org.badminton.domain.club.entity.ClubEntity;
 import org.badminton.domain.club.repository.ClubRepository;
@@ -31,7 +31,7 @@ public class ClubMemberService {
 			.orElseThrow(() -> new MemberNotExistException(memberId));
 
 		if (clubMemberRepository.existsByMember_MemberId(memberId)) {
-			throw new ClubMemberExistInClubException(memberId);
+			throw new ClubMemberDuplicateException(clubId, memberId);
 		}
 
 		ClubMemberEntity clubMemberEntity = new ClubMemberEntity(clubEntity, memberEntity, ClubMemberRole.ROLE_USER);
