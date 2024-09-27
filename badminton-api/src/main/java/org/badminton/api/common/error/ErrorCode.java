@@ -32,16 +32,21 @@ public enum ErrorCode {
 	RESOURCE_NOT_EXIST(404, "특정 리소스를 찾을 수 없습니다."),
 	MEMBER_NOT_EXIST(404, "해당하는 회원이 존재하지 않습니다."),
 	CLUB_NOT_EXIST(404, "해당하는 동호회가 존재하지 않습니다."),
+	LEAGUE_NOT_EXIST(404, "해당하는 경기 일정이 존재하지 않습니다."),
+	CLUB_MEMBER_NOT_EXIST(404, "해당하는 회원은 해당 동호회에 아직 가입하지 않았습니다."),
 
 	// 409 Errors
 	CONFLICT(409, "리소스 충돌이 발생했습니다."),
 	ALREADY_EXIST(409, "리소스가 이미 존재합니다."),
-	MEMBER_ALREADY_EXIST_IN_CLUB(409, "동호회에 이미 멤버가 존재합니다"),
+	CLUB_MEMBER_ALREADY_EXIST(409, "이미 해당 동호회에 가입을 완료한 회원입니다."),
 
 	// RESOURCE_ALREADY_EXIST
 	RESOURCE_ALREADY_EXIST(409, "특정 리소스가 이미 존재합니다."),
 	CLUB_NAME_ALREADY_EXIST(409, "이미 존재하는 동호회 이름입니다."),
 	LEAGUE_ALREADY_EXIST(409, "이미 존재하는 경기 일정입니다."),
+	LEAGUE_ALREADY_PARTICIPATED(409, "이미 참여 신청을 완료한 경기 일정입니다."),
+	LEAGUE_NOT_PARTICIPATED(409, "참여 신청을 하지 않는 경기입니다."),
+	LEAGUE_PARTICIPATION_ALREADY_CANCELED(409, "이미 참여 신청을 취소한 경기 일정입니다."),
 
 	// 410 Errors
 	DELETED(410, "요청한 리소스가 삭제되었습니다."),
