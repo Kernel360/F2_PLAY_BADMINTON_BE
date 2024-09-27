@@ -52,7 +52,7 @@ public record LeagueReadResponse(
 			entity.getLeagueName(),
 			entity.getDescription(),
 			entity.getTierLimit(),
-			entity.getLeagueStatus(),
+			entity.getStatus(),
 			entity.getMatchType(),
 			entity.getLeagueAt(),
 			entity.getClosedAt(),

@@ -1,4 +1,4 @@
-package springproject.badmintonbatch.jpa;
+package springproject.badmintonbatch.config.jpa;
 
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Configuration;
