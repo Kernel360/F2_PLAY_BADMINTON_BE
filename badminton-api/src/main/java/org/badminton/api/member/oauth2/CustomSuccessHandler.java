@@ -67,11 +67,13 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
 		request.getSession().invalidate();
 
-		response.setHeader("Set-Cookie", "JSESSIONID=; HttpOnly; Path=/; Max-Age=0; SameSite=None;");
+		response.setHeader("Set-Cookie", "JSESSIONID=; HttpOnly; Path=/; Max-Age=0; SameS ite=None;");
 
 		response.addCookie(createCookie(token));
 
-		response.sendRedirect("http://localhost:3000?token=" + token + "&expires=" + EXPIRED_TIME);
+		// response.sendRedirect("http://localhost:3000?token=" + token + "&expires=" + EXPIRED_TIME);
+		response.sendRedirect("http://localhost:3000");
+
 	}
 
 	// JWT 쿠키 생성 메서드
