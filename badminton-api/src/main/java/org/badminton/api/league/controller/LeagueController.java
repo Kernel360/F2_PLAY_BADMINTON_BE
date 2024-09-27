@@ -3,8 +3,8 @@ package org.badminton.api.league.controller;
 import org.badminton.api.league.model.dto.LeagueCreateRequest;
 import org.badminton.api.league.model.dto.LeagueCreateResponse;
 import org.badminton.api.league.model.dto.LeagueReadResponse;
+import org.badminton.api.league.model.dto.LeagueStatusUpdateRequest;
 import org.badminton.api.league.model.dto.LeagueStatusUpdateResponse;
-import org.badminton.api.league.model.dto.LeagueUpdateRequest;
 import org.badminton.api.league.service.LeagueService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,12 +18,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/v1/club/{clubId}/league")
+@RequestMapping("/v1/league")
 public class LeagueController {
 	private final LeagueService leagueService;
 
@@ -33,10 +32,8 @@ public class LeagueController {
 		tags = {"league"}
 	)
 	@PostMapping
-	public ResponseEntity<LeagueCreateResponse> createLeague(
-		@PathVariable Long clubId,
-		@Valid @RequestBody LeagueCreateRequest leagueCreateRequest) {
-		return ResponseEntity.ok(leagueService.createLeague(clubId, leagueCreateRequest));
+	public ResponseEntity<LeagueCreateResponse> leagueCreate(@RequestBody LeagueCreateRequest request) {
+		return ResponseEntity.ok(leagueService.createLeague(request));
 	}
 
 	@Operation(
@@ -45,21 +42,19 @@ public class LeagueController {
 		tags = {"league"}
 	)
 	@GetMapping("/{leagueId}")
-	public ResponseEntity<LeagueReadResponse> leagueRead(@PathVariable Long clubId, @PathVariable Long leagueId) {
-		return ResponseEntity.ok(leagueService.getLeague(clubId, leagueId));
+	public ResponseEntity<LeagueReadResponse> leagueRead(@PathVariable("leagueId") Long leagueId) {
+		return ResponseEntity.ok(leagueService.getLeague(leagueId));
 	}
 
 	@Operation(
-		summary = "경기의 세부 정보를 변경합니다.",
-		description = "경기 제목, 경기 상태 등을 변경할 수 있습니다.",
+		summary = "특정 경기의 상태를 변경합니다.",
+		description = "특정 경기의 상태를 변경(진행 전, 진행 중, 취소, 진행완료)",
 		tags = {"league"}
 	)
 	@PatchMapping("/{leagueId}")
-	public ResponseEntity<LeagueStatusUpdateResponse> updateLeague(
-		@PathVariable Long clubId,
-		@PathVariable Long leagueId,
-		@Valid @RequestBody LeagueUpdateRequest leagueUpdateRequest) {
-		return ResponseEntity.ok(leagueService.updateLeague(clubId, leagueId, leagueUpdateRequest));
+	public ResponseEntity<LeagueStatusUpdateResponse> leagueChangeStatus(
+		@RequestBody LeagueStatusUpdateRequest request) {
+		return ResponseEntity.ok(leagueService.updateLeagueStatus(request));
 	}
 
 	@Operation(
@@ -67,12 +62,9 @@ public class LeagueController {
 		description = "특정 경기를 데이터베이스 테이블에서 제거합니다.",
 		tags = {"league"}
 	)
-
 	@DeleteMapping("/{leagueId}")
-	public ResponseEntity<HttpStatus> deleteLeague(
-		@PathVariable Long clubId,
-		@PathVariable Long leagueId) {
-		leagueService.deleteLeague(clubId, leagueId);
+	public ResponseEntity<HttpStatus> leagueDelete(@PathVariable("leagueId") Long leagueId) {
+		leagueService.deleteLeague(leagueId);
 		return ResponseEntity.ok(HttpStatus.OK);
 	}
 

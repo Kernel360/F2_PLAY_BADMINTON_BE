@@ -23,7 +23,7 @@ public record LeagueStatusUpdateResponse(
 	MemberTier tierLimit,
 
 	@Schema(description = "현재 경기 상태", example = "OPEN")
-	LeagueStatus leagueStatus,
+	LeagueStatus status,
 
 	@Schema(description = "경기 방식", example = "SINGLE")
 	MatchType matchType,
@@ -49,7 +49,7 @@ public record LeagueStatusUpdateResponse(
 			entity.getLeagueName(),
 			entity.getDescription(),
 			entity.getTierLimit(),
-			entity.getLeagueStatus(),
+			entity.getStatus(),
 			entity.getMatchType(),
 			entity.getLeagueAt(),
 			entity.getClosedAt(),
