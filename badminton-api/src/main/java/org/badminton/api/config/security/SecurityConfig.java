@@ -55,23 +55,20 @@ public class SecurityConfig {
 
 		http
 			.oauth2Login(oauth2 -> oauth2
-				.userInfoEndpoint(
-					userInfoEndpointConfig -> userInfoEndpointConfig.userService(customOAuth2MemberService))
+				.userInfoEndpoint(userInfoEndpointConfig ->
+					userInfoEndpointConfig.userService(customOAuth2MemberService))
 				.successHandler(customSuccessHandler));
 
 		http
 			.authorizeHttpRequests(auth -> auth
 				.requestMatchers("/", "/groups", "/oauth2/**", "/login/**", "/error", "/api/*", "/swagger-ui/**",
-					"/v3/api-docs/**")
-				.permitAll()
-				.anyRequest()
-				.authenticated());
+					"/v3/api-docs/**").permitAll()
+				.anyRequest().authenticated());
 
 		http
-			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+			.sessionManagement(session -> session
+				.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
 		return http.build();
 	}
-
 }
-
