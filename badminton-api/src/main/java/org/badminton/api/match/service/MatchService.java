@@ -7,15 +7,14 @@ import java.util.List;
 import org.badminton.api.common.error.ErrorCode;
 import org.badminton.api.common.exception.BadmintonException;
 import org.badminton.api.common.exception.league.InvalidPlayerCountException;
-import org.badminton.api.match.model.dto.DoublesMatchResponse;
 import org.badminton.api.match.model.dto.MatchResponse;
-import org.badminton.api.match.model.dto.SinglesMatchResponse;
 import org.badminton.domain.common.enums.MatchType;
 import org.badminton.domain.league.entity.LeagueEntity;
 import org.badminton.domain.league.entity.LeagueParticipantEntity;
 import org.badminton.domain.league.repository.LeagueParticipantRepository;
-import org.badminton.domain.match.entity.DoublesMatchEntity;
-import org.badminton.domain.match.entity.SinglesMatchEntity;
+import org.badminton.domain.match.model.entity.DoublesMatchEntity;
+import org.badminton.domain.match.model.entity.SinglesMatchEntity;
+import org.badminton.domain.match.model.vo.Team;
 import org.badminton.domain.match.repository.DoublesMatchRepository;
 import org.badminton.domain.match.repository.SinglesMatchRepository;
 import org.springframework.stereotype.Service;
@@ -40,21 +39,20 @@ public class MatchService {
 		checkPlayerCount(league, leagueParticipantList.size());
 
 		Collections.shuffle(leagueParticipantList);
-		if (matchType.equals(MatchType.SINGLE)) {
+		if (matchType == MatchType.SINGLE) {
 			List<SinglesMatchEntity> singlesMatches = makeSinglesMatches(leagueParticipantList, league);
 			return singlesMatches
 				.stream()
-				.map(singlesMatchEntity -> (MatchResponse)new SinglesMatchResponse(singlesMatchEntity))
+				.map(MatchResponse::entityToSinglesMatchResponse)
 				.toList();
-		} else if (matchType.equals(MatchType.DOUBLES)) {
+		} else if (matchType == MatchType.DOUBLES) {
 			List<DoublesMatchEntity> doublesMatches = makeDoublesMatches(leagueParticipantList, league);
 			return doublesMatches
 				.stream()
-				.map(doublesMatchEntity -> (MatchResponse)new DoublesMatchResponse(doublesMatchEntity))
+				.map(MatchResponse::entityToDoublesMatchResponse)
 				.toList();
 		} else
 			throw new BadmintonException(ErrorCode.BAD_REQUEST, "존재하지 않는 경기 타입입니다.");
-
 	}
 
 	private void checkPlayerCount(LeagueEntity league, int playerCount) {
@@ -83,11 +81,9 @@ public class MatchService {
 
 		List<DoublesMatchEntity> doublesMatches = new ArrayList<>();
 		for (int i = 0; i < leagueParticipantList.size() - 3; i += 4) {
-
-			DoublesMatchEntity doublesMatch = new DoublesMatchEntity(league, leagueParticipantList.get(i),
-				leagueParticipantList.get(i + 1),
-				leagueParticipantList.get(i + 2), leagueParticipantList.get(i + 3));
-
+			Team team1 = new Team(leagueParticipantList.get(i), leagueParticipantList.get(i + 1));
+			Team team2 = new Team(leagueParticipantList.get(i + 2), leagueParticipantList.get(i + 3));
+			DoublesMatchEntity doublesMatch = new DoublesMatchEntity(league, team1, team2);
 			doublesMatches.add(doublesMatch);
 			doublesMatchRepository.save(doublesMatch);
 		}

@@ -1,4 +1,4 @@
-package org.badminton.domain.match.entity;
+package org.badminton.domain.match.model.entity;
 
 import org.badminton.domain.common.BaseTimeEntity;
 import org.badminton.domain.league.entity.LeagueEntity;
@@ -17,14 +17,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "doubles_match")
+@Table(name = "singles_match")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class DoublesMatchEntity extends BaseTimeEntity {
+public class SinglesMatchEntity extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long doublesMatchId;
+	private Long singlesMatchId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "leagueId")
@@ -38,23 +38,11 @@ public class DoublesMatchEntity extends BaseTimeEntity {
 	@JoinColumn(name = "leagueParticipant2Id")
 	private LeagueParticipantEntity leagueParticipant2;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "leagueParticipant3Id")
-	private LeagueParticipantEntity leagueParticipant3;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "leagueParticipant4Id")
-	private LeagueParticipantEntity leagueParticipant4;
-
-	public DoublesMatchEntity(LeagueEntity league, LeagueParticipantEntity leagueParticipant1,
-		LeagueParticipantEntity leagueParticipant2,
-		LeagueParticipantEntity leagueParticipant3,
-		LeagueParticipantEntity leagueParticipant4) {
+	public SinglesMatchEntity(LeagueEntity league, LeagueParticipantEntity leagueParticipant1,
+		LeagueParticipantEntity leagueParticipant2) {
 		this.league = league;
 		this.leagueParticipant1 = leagueParticipant1;
 		this.leagueParticipant2 = leagueParticipant2;
-		this.leagueParticipant3 = leagueParticipant3;
-		this.leagueParticipant4 = leagueParticipant4;
 
 	}
 }
