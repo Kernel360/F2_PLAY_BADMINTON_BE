@@ -32,7 +32,7 @@ public record LeagueCreateResponse(
 	LocalDateTime closedAt,
 
 	@Schema(description = "참가 인원", example = "16")
-	Long playerCount,
+	int playerCount,
 
 	@Schema(description = "생성 일자", example = "2024-09-10T15:30:00")
 	LocalDateTime createdAt,
