@@ -36,6 +36,8 @@ public class MemberEntity extends BaseTimeEntity {
 
 	private LocalDateTime lastConnectionAt;
 
+	private String refreshToken;
+
 	public MemberEntity(String email, String name, String providerId, String profileImage,
 		MemberAuthorization authorization) {
 		this.email = email;
@@ -43,6 +45,10 @@ public class MemberEntity extends BaseTimeEntity {
 		this.providerId = providerId;
 		this.authorization = authorization.name();
 		this.profileImage = profileImage;
+	}
+
+	public void updateRefreshToken(String refreshToken) {
+		this.refreshToken = refreshToken;
 	}
 
 	public void updateMember(String profileImage) {
@@ -61,7 +67,7 @@ public class MemberEntity extends BaseTimeEntity {
 	public void reactivateMember() {
 		this.isDeleted = false;
 	}
-	
+
 	public boolean isMemberDeleted() {
 		return this.isDeleted;
 	}
