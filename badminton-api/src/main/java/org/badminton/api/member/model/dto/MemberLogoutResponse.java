@@ -9,7 +9,7 @@ public record MemberLogoutResponse(
 	@Schema(description = "회원 역할", example = "AUTHORIZATION_USER")
 	String authorization,
 
-	@Schema(description = "회원 이름", example = "이선우")
+	@Schema(description = "회원 이름", example = "김철수")
 	String name,
 
 	@Schema(description = "oAuth 로그인 이메일", example = "qosle@naver.com")
