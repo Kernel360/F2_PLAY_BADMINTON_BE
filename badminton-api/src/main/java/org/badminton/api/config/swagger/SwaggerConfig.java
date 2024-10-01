@@ -35,7 +35,9 @@ public class SwaggerConfig {
 	private Info apiInfo() {
 		return new Info()
 			.title("배드민턴 칠까 서비스 API 명세서")
-			.description("배드민턴 칠까? API 명세서")
+			.description("배드민턴 칠까? API 명세서<br><br>" +
+				"인증이 필요한 API의 경우, 우측 상단의 'Authorize' 버튼을 클릭하여 " +
+				"액세스 토큰을 입력해야 합니다. 토큰 형식: Bearer [your_token_here]")
 			.version("1.0.0");
 	}
 
