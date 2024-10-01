@@ -40,10 +40,10 @@ public class JwtFilter extends OncePerRequestFilter {
 			return;
 		}
 
-		String token = authHeader.substring(7).trim();
+		String token = authHeader.substring(7);
 
-		if (jwtUtil.isTokenExpired(token)) {
-			log.info("Access token expired");
+		if (!jwtUtil.validateToken(token)) {
+			log.info("Invalid token");
 			filterChain.doFilter(request, response);
 			return;
 		}

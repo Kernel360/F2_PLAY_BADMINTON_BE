@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -78,11 +79,10 @@ public class JwtUtil {
 	}
 
 	public String getDetail(String token, String details) {
-		String Token = deleteTrim(token);
 		return Jwts.parser()
 			.verifyWith(secretKey)
 			.build()
-			.parseSignedClaims(Token)
+			.parseSignedClaims(token)
 			.getPayload()
 			.get(details, String.class);
 	}
@@ -108,31 +108,15 @@ public class JwtUtil {
 	}
 
 	public boolean validateToken(String token) {
-		String Token = deleteTrim(token);
 		try {
-			Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(Token);
-			return !isTokenExpired(Token);
+			Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token);
+			return true;
+		} catch (ExpiredJwtException e) {
+			log.error("JWT token is expired: {}", e.getMessage());
+			return false;
 		} catch (Exception e) {
 			log.error("Invalid JWT token: {}", e.getMessage());
 			return false;
 		}
-	}
-
-	public Boolean isTokenExpired(String token) {
-		String Token = deleteTrim(token);
-		return Jwts.parser()
-			.verifyWith(secretKey)
-			.build()
-			.parseSignedClaims(Token)
-			.getPayload()
-			.getExpiration()
-			.before(new Date());
-	}
-
-	private String deleteTrim(String token) {
-		if (token != null) {
-			token = token.trim();
-		}
-		return token;
 	}
 }
