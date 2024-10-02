@@ -2,7 +2,6 @@ package org.badminton.api.member.service;
 
 import static org.badminton.api.member.model.dto.MemberResponse.*;
 
-import org.badminton.api.member.jwt.JwtUtil;
 import org.badminton.api.member.model.dto.MemberRequest;
 import org.badminton.api.member.model.dto.MemberResponse;
 import org.badminton.api.member.oauth2.dto.CustomOAuth2Member;
@@ -28,14 +27,10 @@ import lombok.extern.slf4j.Slf4j;
 public class CustomOAuth2MemberService extends DefaultOAuth2UserService {
 
 	private final MemberRepository memberRepository;
-	private final JwtUtil jwtUtil;
 
 	@Override
 	public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 		log.info("CustomOAuth2MemberService is being executed");
-
-		String accessToken = userRequest.getAccessToken().getTokenValue();
-		log.info("accessToken: {}", accessToken);
 
 		OAuth2User oAuth2User = super.loadUser(userRequest);
 		log.info("USer details: {}", oAuth2User);
@@ -52,47 +47,26 @@ public class CustomOAuth2MemberService extends DefaultOAuth2UserService {
 				return null;
 			}
 		}
-		log.info("attribute:{}", oAuth2User.getAttributes());
 
 		String providerId = oAuth2Response.getProviderId();
-		MemberEntity existData = memberRepository.findByProviderId(providerId).orElse(null);
+		MemberEntity memberEntity = memberRepository.findByProviderId(providerId).orElse(null);
 
-		MemberResponse memberResponse;
-
-		if (existData == null) {
+		if (memberEntity == null) {
 
 			MemberRequest memberRequest = new MemberRequest(MemberAuthorization.AUTHORIZATION_USER,
 				oAuth2Response.getName(),
 				oAuth2Response.getEmail(), providerId, oAuth2Response.getProfileImage());
 
-			MemberEntity memberEntity = memberRequest.memberRequestToEntity();
+			memberEntity = memberRequest.memberRequestToEntity();
 
-			memberRepository.save(memberEntity);
-			memberResponse = memberEntityToResponse(memberEntity);
-
-		} else {
-
-			if (existData.isDeleted()) {
-				existData.reactivateMember();
-				memberRepository.save(existData);
-			}
-
-			memberResponse = memberEntityToResponse(existData);
+		} else if (memberEntity.isDeleted()) {
+			memberEntity.reactivateMember();
 		}
-		String memberId = String.valueOf(memberResponse.memberId());
-		String jwt = jwtUtil.createJwt(
-			memberId,
-			providerId,
-			memberResponse.authorization(),
-			memberResponse.name(),
-			memberResponse.email(),
-			memberResponse.profileImage(),
-			accessToken,
-			registrationId,
-			24 * 60 * 60 * 1000L
-		);
 
-		log.info("jwt: {}", jwt);
-		return new CustomOAuth2Member(memberResponse, accessToken, registrationId);
+		memberRepository.save(memberEntity);
+
+		MemberResponse memberResponse = memberEntityToResponse(memberEntity);
+		return new CustomOAuth2Member(memberResponse, registrationId);
+
 	}
 }
