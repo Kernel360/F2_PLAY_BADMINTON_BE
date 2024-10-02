@@ -63,6 +63,7 @@ public class MemberService {
 		response.setHeader("Authorization", "");
 
 		clearRefreshCookie(response);
+		clearAccessCookie(response);
 
 		log.info("Logged out member: {}", memberId);
 	}
@@ -77,6 +78,7 @@ public class MemberService {
 		MemberDeleteResponse memberDeleteResponse = changeIsDeleted(memberId);
 
 		clearRefreshCookie(response);
+		clearAccessCookie(response);
 		response.setHeader("Authorization", "");
 
 		return memberDeleteResponse;
@@ -88,6 +90,13 @@ public class MemberService {
 		refreshTokenCookie.setMaxAge(0);
 		refreshTokenCookie.setPath("/");
 		response.addCookie(refreshTokenCookie);
+	}
+
+	public void clearAccessCookie(HttpServletResponse response) {
+		Cookie accessTokenCookie = new Cookie("access_token", null);
+		accessTokenCookie.setMaxAge(0);
+		accessTokenCookie.setPath("/");
+		response.addCookie(accessTokenCookie);
 	}
 
 	public MemberDeleteResponse changeIsDeleted(Long memberId) {

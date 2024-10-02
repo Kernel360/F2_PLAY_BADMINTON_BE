@@ -64,6 +64,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		clearSession(request, response);
 
 		jwtUtil.setAccessTokenHeader(response, accessToken);
+		jwtUtil.setAccessTokenCookie(response, accessToken);
 		jwtUtil.setRefreshTokenCookie(response, refreshToken);
 
 		response.sendRedirect("http://localhost:3000");

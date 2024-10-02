@@ -66,6 +66,17 @@ public class JwtUtil {
 		response.addHeader("Set-Cookie", cookie.toString());
 	}
 
+	public void setAccessTokenCookie(HttpServletResponse response, String accessToken) {
+		ResponseCookie cookie = ResponseCookie.from("access_token", accessToken)
+			.httpOnly(true)
+			// .secure(true)
+			.path("/")
+			.maxAge(ACCESS_TOKEN_EXPIRY) // 14일
+			.sameSite("Lax")
+			.build();
+		response.addHeader("Set-Cookie", cookie.toString());
+	}
+
 	public String getMemberId(String token) {
 		return getDetail(token, "memberId");
 	}
