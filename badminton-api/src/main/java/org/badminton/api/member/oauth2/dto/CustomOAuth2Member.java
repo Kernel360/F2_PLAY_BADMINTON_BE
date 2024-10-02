@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 public class CustomOAuth2Member implements OAuth2User {
 
 	private final MemberResponse memberResponse;
-	
+
 	@Getter
 	private final String registrationId;
 
@@ -35,7 +35,7 @@ public class CustomOAuth2Member implements OAuth2User {
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		Set<GrantedAuthority> authorities = new HashSet<>();
-		authorities.add(new SimpleGrantedAuthority(memberResponse.authorization()));
+		authorities.add(new SimpleGrantedAuthority(memberResponse.getAuthorization()));
 		if (clubRole != null && !clubRole.isEmpty()) {
 			authorities.add(new SimpleGrantedAuthority(clubRole));
 		}
@@ -44,27 +44,27 @@ public class CustomOAuth2Member implements OAuth2User {
 
 	@Override
 	public String getName() {
-		return memberResponse.name();
+		return memberResponse.getName();
 	}
 
 	public String getProviderId() {
-		return memberResponse.providerId();
+		return memberResponse.getProviderId();
 	}
 
 	public String getAuthorization() {
-		return memberResponse.authorization();
+		return memberResponse.getAuthorization();
 	}
 
 	public Long getMemberId() {
-		return memberResponse.memberId();
+		return memberResponse.getMemberId();
 	}
 
 	public String getEmail() {
-		return memberResponse.email();
+		return memberResponse.getEmail();
 	}
 
 	public String getProfileImage() {
-		return memberResponse.profileImage();
+		return memberResponse.getProfileImag();
 	}
 
 }

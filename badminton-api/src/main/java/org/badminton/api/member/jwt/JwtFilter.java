@@ -51,7 +51,7 @@ public class JwtFilter extends OncePerRequestFilter {
 		String memberId = jwtUtil.getMemberId(token);
 		String roles = jwtUtil.getRoles(token);
 
-		MemberResponse memberResponse = new MemberResponse(Long.valueOf(memberId), roles, null, null, null, null);
+		MemberResponse memberResponse = new MemberResponse(Long.valueOf(memberId), roles);
 		CustomOAuth2Member customOAuth2Member = new CustomOAuth2Member(memberResponse, null);
 
 		Authentication authToken = new UsernamePasswordAuthenticationToken(customOAuth2Member, null,
