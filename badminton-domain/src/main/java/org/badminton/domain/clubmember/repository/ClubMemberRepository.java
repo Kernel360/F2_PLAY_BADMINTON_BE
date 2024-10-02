@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface ClubMemberRepository extends JpaRepository<ClubMemberEntity, Long> {
 	Optional<List<ClubMemberEntity>> findAllByClub_ClubId(Long clubId);
 
-	Optional<ClubMemberEntity> findByMember_MemberId(Long memberId);
+	Optional<List<ClubMemberEntity>> findByMember_MemberId(Long memberId);
 
 	Optional<ClubMemberEntity> findByClub_ClubIdAndMember_MemberId(Long clubId, Long memberId);
 
