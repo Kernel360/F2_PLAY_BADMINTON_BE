@@ -30,6 +30,7 @@ public class MatchController {
 		@PathVariable Long clubId,
 		@PathVariable Long leagueId
 	) {
+		log.info("컨트롤러 진입");
 		List<MatchResponse> matchResponseList = matchService.makeMatches(leagueId);
 		return ResponseEntity.ok(matchResponseList);
 	}

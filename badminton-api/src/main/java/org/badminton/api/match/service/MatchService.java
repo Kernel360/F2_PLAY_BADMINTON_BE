@@ -7,6 +7,7 @@ import java.util.List;
 import org.badminton.api.common.error.ErrorCode;
 import org.badminton.api.common.exception.BadmintonException;
 import org.badminton.api.common.exception.league.InvalidPlayerCountException;
+import org.badminton.api.common.exception.match.MatchDuplicateException;
 import org.badminton.api.match.model.dto.MatchResponse;
 import org.badminton.domain.common.enums.MatchType;
 import org.badminton.domain.league.entity.LeagueEntity;
@@ -37,6 +38,7 @@ public class MatchService {
 		MatchType matchType = league.getMatchType();
 
 		checkPlayerCount(league, leagueParticipantList.size());
+		checkDuplicateMatchInLeague(leagueId, matchType);
 
 		Collections.shuffle(leagueParticipantList);
 		if (matchType == MatchType.SINGLE) {
@@ -55,11 +57,26 @@ public class MatchService {
 			throw new BadmintonException(ErrorCode.BAD_REQUEST, "존재하지 않는 경기 타입입니다.");
 	}
 
+	private void checkDuplicateMatchInLeague(Long leagueId, MatchType matchType) {
+		if (matchType == MatchType.SINGLE) {
+			singlesMatchRepository.findAllByLeague_LeagueId(leagueId).ifPresent(
+				singlesMatch -> {
+					throw new MatchDuplicateException(matchType, singlesMatch.getSinglesMatchId());
+				}
+			);
+		} else if (matchType == MatchType.DOUBLES) {
+			doublesMatchRepository.findAllByLeague_LeagueId(leagueId).ifPresent(
+				doublesMatch -> {
+					throw new MatchDuplicateException(matchType, doublesMatch.getDoublesMatchId());
+				}
+			);
+		}
+	}
+
 	private void checkPlayerCount(LeagueEntity league, int playerCount) {
 		if (league.getPlayerCount() != playerCount) {
 			throw new InvalidPlayerCountException(league.getLeagueId(), playerCount);
 		}
-
 	}
 
 	private List<SinglesMatchEntity> makeSinglesMatches(List<LeagueParticipantEntity> leagueParticipantList,
