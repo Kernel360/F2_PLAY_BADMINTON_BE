@@ -1,11 +1,7 @@
 package org.badminton.api.match.model.vo;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@Getter
-@AllArgsConstructor
-public class DoublesMatchResponse {
-	private TeamResponse team1;
-	private TeamResponse team2;
+public record DoublesMatchResponse(
+	TeamResponse team1,
+	TeamResponse team2
+) {
 }

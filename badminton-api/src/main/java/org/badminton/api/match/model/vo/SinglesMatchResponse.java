@@ -1,11 +1,8 @@
 package org.badminton.api.match.model.vo;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+public record SinglesMatchResponse(
+	Long participant1Id,
+	Long participant2Id
+) {
 
-@AllArgsConstructor
-@Getter
-public class SinglesMatchResponse {
-	private Long participant1Id;
-	private Long participant2Id;
 }
