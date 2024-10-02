@@ -66,5 +66,22 @@ spring:
         naver: "https://nid.naver.com/oauth2.0/token?grant_type=delete&client_id={client_id}&client_secret={client_secret}&access_token={access_token}&service_provider=NAVER"
         kakao: "https://kapi.kakao.com/v1/user/unlink"
         google: "https://accounts.google.com/o/oauth2/revoke?token={access_token}"
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 3MB
+      max-request-size: 3MB
 
+  # AWS S3
+cloud:
+  aws:
+    credentials:
+      access-key: ${S3_ACCESS_KEY}
+      secret-key: ${S3_SECRET_KEY}
+    region:
+      static: ap-northeast-2  # 버킷의 리전
+    s3:
+      bucket: badminton-team   # 버킷 이름
+    stack:
+      auto: false
 
