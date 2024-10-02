@@ -1,8 +1,6 @@
 package org.badminton.api.member.oauth2;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Objects;
 
 import org.badminton.api.common.exception.member.MemberNotExistException;
 import org.badminton.api.member.jwt.JwtUtil;
@@ -39,30 +37,27 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
 		CustomOAuth2Member customUserDetails = (CustomOAuth2Member)authentication.getPrincipal(); // 인증된 사용자 객체 가져오기
 
-		String memberId = String.valueOf(customUserDetails.getMemberId());
-		MemberEntity memberEntity = memberRepository.findByMemberId(Long.valueOf(memberId))
+		Long memberId = customUserDetails.getMemberId();
+		MemberEntity memberEntity = memberRepository.findByMemberId(memberId)
 			.orElseThrow(() -> new MemberNotExistException(memberId));
 
 		memberEntity.updateLastConnection();
 
 		String registrationId = customUserDetails.getRegistrationId();
 
-		List<ClubMemberEntity> clubMemberEntityList = clubMemberRepository.findByMember_MemberId(Long.valueOf(memberId))
+		ClubMemberEntity clubMemberEntity = clubMemberRepository.findByMember_MemberId(memberId)
 			.orElse(null);
-		ClubMemberEntity clubMemberEntity;
-		String clubRole = null;
-		if (Objects.nonNull(clubMemberEntityList) && !clubMemberEntityList.isEmpty()) {
-			clubMemberEntity = clubMemberEntityList.get(0);
-			clubRole = clubMemberEntity.getRole().name();
+		if (clubMemberEntity != null) {
+			String clubRole = clubMemberEntity.getRole().name();
 			customUserDetails.updateClubRole(clubRole);
 		}
 
 		String roles = String.join(",", customUserDetails.getAuthorities().stream()
 			.map(GrantedAuthority::getAuthority).toList());
 
-		String accessToken = jwtUtil.createAccessToken(memberId, roles, registrationId);
+		String accessToken = jwtUtil.createAccessToken(String.valueOf(memberId), roles, registrationId);
 
-		String refreshToken = jwtUtil.createRefreshToken(memberId, roles, registrationId);
+		String refreshToken = jwtUtil.createRefreshToken(String.valueOf(memberId), roles, registrationId);
 
 		memberEntity.updateRefreshToken(refreshToken);
 		memberRepository.save(memberEntity);
