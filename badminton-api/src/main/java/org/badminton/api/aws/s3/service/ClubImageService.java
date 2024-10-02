@@ -50,6 +50,6 @@ public class ClubImageService {
 	private String makeFileName(String originalFilename) {
 		String[] originFile = originalFilename.split("\\.");
 		String extension = originFile[originFile.length - 1];
-		return UUID.randomUUID() + "/" + "banner." + extension;
+		return "club-banner/" + UUID.randomUUID() + "/" + "banner." + extension;
 	}
 }
