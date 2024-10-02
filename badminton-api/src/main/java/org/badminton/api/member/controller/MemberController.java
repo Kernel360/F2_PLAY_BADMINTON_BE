@@ -72,7 +72,7 @@ public class MemberController {
 		tags = {"Member"}
 	)
 	@DeleteMapping
-	public ResponseEntity<MemberDeleteResponse> delete(HttpServletRequest request, HttpServletResponse response,
+	public ResponseEntity<MemberDeleteResponse> deleteMember(HttpServletRequest request, HttpServletResponse response,
 		@AuthenticationPrincipal CustomOAuth2Member member) {
 		MemberDeleteResponse deleteResponse = memberService.deleteMember(member, request, response);
 		return ResponseEntity.ok(deleteResponse);
