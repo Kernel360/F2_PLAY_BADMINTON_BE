@@ -27,7 +27,6 @@ public record ClubMemberInfoResponse(
 		);
 	}
 
-	// Correctly implement the methods from MemberDetailResponse
 	@Override
 	public Long getMemberId() {
 		return memberId;

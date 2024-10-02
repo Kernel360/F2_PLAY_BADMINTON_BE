@@ -17,7 +17,6 @@ public record MemberInfoResponse(
 		);
 	}
 
-	// Explicitly implement the methods from MemberDetailResponse
 	@Override
 	public Long getMemberId() {
 		return memberId;
