@@ -7,6 +7,7 @@ dependencies {
     implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.6.0'
     implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
     implementation group: 'me.paulschwarz', name: 'spring-dotenv', version: '4.0.0'
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.5.RELEASE'
 
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.3'
