@@ -9,6 +9,8 @@ import org.badminton.domain.club.repository.ClubRepository;
 import org.badminton.domain.clubmember.entity.ClubMemberEntity;
 import org.badminton.domain.clubmember.entity.ClubMemberRole;
 import org.badminton.domain.clubmember.repository.ClubMemberRepository;
+import org.badminton.domain.leaguerecord.entity.LeagueRecordEntity;
+import org.badminton.domain.leaguerecord.repository.LeagueRecordRepository;
 import org.badminton.domain.member.entity.MemberEntity;
 import org.badminton.domain.member.repository.MemberRepository;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,7 @@ public class ClubMemberService {
 	private final ClubMemberRepository clubMemberRepository;
 	private final ClubRepository clubRepository;
 	private final MemberRepository memberRepository;
+	private final LeagueRecordRepository leagueRecordRepository;
 
 	public ClubMemberJoinResponse joinClub(Long memberId, Long clubId) {
 		ClubEntity clubEntity = clubRepository.findByClubIdAndIsClubDeletedFalse(clubId)
@@ -37,6 +40,10 @@ public class ClubMemberService {
 		ClubMemberEntity clubMemberEntity = new ClubMemberEntity(clubEntity, memberEntity, ClubMemberRole.ROLE_USER);
 
 		clubMemberRepository.save(clubMemberEntity);
+
+		LeagueRecordEntity leagueRecord = new LeagueRecordEntity(clubMemberEntity);
+		leagueRecordRepository.save(leagueRecord);
+
 		return ClubMemberJoinResponse.clubMemberEntityToClubMemberJoinResponse(
 			clubMemberEntity);
 
