@@ -52,7 +52,7 @@ public class LeagueEntity extends BaseTimeEntity {
 
 	private LocalDateTime closedAt;
 
-	private Long playerCount;
+	private int playerCount;
 
 	private String matchingRequirement;
 
@@ -61,7 +61,7 @@ public class LeagueEntity extends BaseTimeEntity {
 	private ClubEntity club;
 
 	public LeagueEntity(String leagueName, String description, LocalDateTime leagueAt,
-		MemberTier tierLimit, LocalDateTime closedAt, LeagueStatus leagueStatus, Long playerCount,
+		MemberTier tierLimit, LocalDateTime closedAt, LeagueStatus leagueStatus, int playerCount,
 		MatchType matchType, String matchingRequirement, ClubEntity club) {
 		this.leagueName = leagueName;
 		this.description = description;
@@ -76,7 +76,7 @@ public class LeagueEntity extends BaseTimeEntity {
 	}
 
 	public void updateLeague(String leagueName, String description, MemberTier tierLimit, LocalDateTime leagueAt,
-		LocalDateTime closedAt, LeagueStatus leagueStatus, Long playerCount, MatchType matchType,
+		LocalDateTime closedAt, LeagueStatus leagueStatus, int playerCount, MatchType matchType,
 		String matchingRequirement) {
 		this.leagueName = leagueName;
 		this.description = description;

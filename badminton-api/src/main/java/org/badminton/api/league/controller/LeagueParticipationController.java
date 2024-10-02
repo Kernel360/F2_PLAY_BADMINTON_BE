@@ -1,7 +1,7 @@
 package org.badminton.api.league.controller;
 
+import org.badminton.api.league.model.dto.LeagueParticipantResponse;
 import org.badminton.api.league.model.dto.LeagueParticipationCancelResponse;
-import org.badminton.api.league.model.dto.LeagueParticipationResponse;
 import org.badminton.api.league.service.LeagueParticipationService;
 import org.badminton.api.member.oauth2.dto.CustomOAuth2Member;
 import org.springframework.http.ResponseEntity;
@@ -28,16 +28,16 @@ public class LeagueParticipationController {
 		tags = {"league"}
 	)
 	@PostMapping("{leagueId}/participation")
-	public ResponseEntity<LeagueParticipationResponse> participateInLeague(
+	public ResponseEntity<LeagueParticipantResponse> participateInLeague(
 		@PathVariable Long clubId,
 		@PathVariable Long leagueId,
 		Authentication authentication
 	) {
 		CustomOAuth2Member member = (CustomOAuth2Member)authentication.getPrincipal();
 		Long memberId = member.getMemberId();
-		LeagueParticipationResponse leagueParticipationResponse = leagueParticipationService.participateInLeague(clubId,
+		LeagueParticipantResponse leagueParticipantResponse = leagueParticipationService.participateInLeague(clubId,
 			leagueId, memberId);
-		return ResponseEntity.ok(leagueParticipationResponse);
+		return ResponseEntity.ok(leagueParticipantResponse);
 	}
 
 	@Operation(

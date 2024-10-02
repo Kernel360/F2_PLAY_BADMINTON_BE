@@ -17,14 +17,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "league_participation")
+@Table(name = "league_participant")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class LeagueParticipationEntity extends BaseTimeEntity {
+public class LeagueParticipantEntity extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long leagueParticipantionId;
+	private Long leagueParticipantId;
 
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "clubMemberId")
@@ -36,7 +36,7 @@ public class LeagueParticipationEntity extends BaseTimeEntity {
 
 	private boolean isCanceled;
 
-	public LeagueParticipationEntity(ClubMemberEntity clubMember, LeagueEntity league) {
+	public LeagueParticipantEntity(ClubMemberEntity clubMember, LeagueEntity league) {
 		this.clubMember = clubMember;
 		this.league = league;
 		this.isCanceled = false;

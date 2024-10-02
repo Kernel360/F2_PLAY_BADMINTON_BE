@@ -36,7 +36,7 @@ public record LeagueUpdateRequest(
 	LocalDateTime closedAt,
 
 	@Schema(description = "참가 인원", example = "16")
-	Long playerCount,
+	int playerCount,
 
 	@Schema(description = "매칭 조건", example = "TIER")
 	String matchingRequirement

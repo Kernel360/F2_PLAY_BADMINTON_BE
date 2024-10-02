@@ -1,5 +1,6 @@
 package org.badminton.api.league.service;
 
+import java.util.List;
 import java.util.Objects;
 
 import org.badminton.api.common.exception.clubmember.ClubMemberNotExistException;
@@ -7,13 +8,13 @@ import org.badminton.api.common.exception.league.LeagueNotExistException;
 import org.badminton.api.common.exception.league.LeagueParticipationAlreadyCanceledException;
 import org.badminton.api.common.exception.league.LeagueParticipationDuplicateException;
 import org.badminton.api.common.exception.league.LeagueParticipationNotExistException;
+import org.badminton.api.league.model.dto.LeagueParticipantResponse;
 import org.badminton.api.league.model.dto.LeagueParticipationCancelResponse;
-import org.badminton.api.league.model.dto.LeagueParticipationResponse;
 import org.badminton.domain.clubmember.entity.ClubMemberEntity;
 import org.badminton.domain.clubmember.repository.ClubMemberRepository;
 import org.badminton.domain.league.entity.LeagueEntity;
-import org.badminton.domain.league.entity.LeagueParticipationEntity;
-import org.badminton.domain.league.repository.LeagueParticipateRepository;
+import org.badminton.domain.league.entity.LeagueParticipantEntity;
+import org.badminton.domain.league.repository.LeagueParticipantRepository;
 import org.badminton.domain.league.repository.LeagueRepository;
 import org.springframework.stereotype.Service;
 
@@ -23,42 +24,52 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class LeagueParticipationService {
 
-	private final LeagueParticipateRepository leagueParticipateRepository;
+	private final LeagueParticipantRepository leagueParticipantRepository;
 	private final ClubMemberRepository clubMemberRepository;
 	private final LeagueRepository leagueRepository;
 
-	public LeagueParticipationResponse participateInLeague(Long clubId, Long leagueId, Long memberId) {
+	public List<LeagueParticipantResponse> findAllLeagueParticipantByLeague(Long leagueId) {
+		return leagueParticipantRepository.findAllByLeague_LeagueId(leagueId)
+			.stream()
+			.map(LeagueParticipantResponse::entityToLeagueParticipantResponse)
+			.toList();
+	}
+
+	public LeagueParticipantResponse participateInLeague(Long clubId, Long leagueId, Long memberId) {
 
 		ClubMemberEntity clubMember = provideClubMemberIfClubMemberInClub(clubId, memberId);
 		LeagueEntity league = provideLeagueIfClubMemberInLeague(clubId, leagueId);
 
 		checkIfClubMemberInLeague(leagueId, clubMember.getClubMemberId());
 
-		LeagueParticipationEntity leagueParticipation = new LeagueParticipationEntity(clubMember, league);
-		leagueParticipateRepository.save(leagueParticipation);
-		return LeagueParticipationResponse.entityToLeagueParticipateResponse(leagueParticipation);
+		LeagueParticipantEntity leagueParticipation = new LeagueParticipantEntity(clubMember, league);
+		leagueParticipantRepository.save(leagueParticipation);
+		return LeagueParticipantResponse.entityToLeagueParticipantResponse(leagueParticipation);
 	}
 
 	public LeagueParticipationCancelResponse cancelLeagueParticipation(Long clubId, Long leagueId, Long memberId) {
 
 		Long clubMemberId = provideClubMemberIfClubMemberInClub(clubId, memberId).getClubMemberId();
-		LeagueParticipationEntity leagueParticipation = provideLeagueParticipationIfClubMemberInLeague(leagueId,
+		LeagueParticipantEntity leagueParticipant = provideLeagueParticipantIfClubMemberInLeague(leagueId,
 			clubMemberId);
 
-		if (leagueParticipation.isCanceled())
+		if (leagueParticipant.isCanceled())
 			throw new LeagueParticipationAlreadyCanceledException(leagueId, memberId);
 
-		leagueParticipation.cancelLeagueParticipation();
-		leagueParticipateRepository.save(leagueParticipation);
+		leagueParticipant.cancelLeagueParticipation();
+		leagueParticipantRepository.save(leagueParticipant);
 
-		return LeagueParticipationCancelResponse.entityToLeagueParticipateCancelResponse(leagueParticipation);
+		return LeagueParticipationCancelResponse.entityToLeagueParticipationCancelResponse(leagueParticipant);
 	}
 
 	private void checkIfClubMemberInLeague(Long leagueId, Long clubMemberId) {
-		LeagueParticipationEntity leagueParticipation = leagueParticipateRepository.findByLeague_LeagueIdAndClubMember_ClubMemberId(
+		LeagueParticipantEntity leagueParticipant = leagueParticipantRepository.findByLeague_LeagueIdAndClubMember_ClubMemberId(
 			leagueId, clubMemberId).orElse(null);
-		if (Objects.nonNull(leagueParticipation) && leagueParticipation.isCanceled()) {
-			leagueParticipation.reactiveParticipation();
+		if (Objects.isNull(leagueParticipant)) {
+			return;
+		}
+		if (leagueParticipant.isCanceled()) {
+			leagueParticipant.reactiveParticipation();
 		} else
 			throw new LeagueParticipationDuplicateException(leagueId, clubMemberId);
 
@@ -69,8 +80,8 @@ public class LeagueParticipationService {
 			() -> new LeagueNotExistException(clubId, leagueId));
 	}
 
-	private LeagueParticipationEntity provideLeagueParticipationIfClubMemberInLeague(Long leagueId, Long clubMemberId) {
-		return leagueParticipateRepository.findByLeague_LeagueIdAndClubMember_ClubMemberId(leagueId, clubMemberId)
+	private LeagueParticipantEntity provideLeagueParticipantIfClubMemberInLeague(Long leagueId, Long clubMemberId) {
+		return leagueParticipantRepository.findByLeague_LeagueIdAndClubMember_ClubMemberId(leagueId, clubMemberId)
 			.orElseThrow(
 				() -> new LeagueParticipationNotExistException(leagueId, clubMemberId));
 	}
