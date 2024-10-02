@@ -36,9 +36,9 @@ public class CustomOAuth2Member implements OAuth2User {
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		Set<GrantedAuthority> authorities = new HashSet<>();
 		authorities.add(new SimpleGrantedAuthority(memberResponse.getAuthorization()));
-		// if (clubRole != null && !clubRole.isEmpty()) {
-		// 	authorities.add(new SimpleGrantedAuthority(clubRole));
-		// }
+		if (clubRole != null && !clubRole.isEmpty()) {
+			authorities.add(new SimpleGrantedAuthority(clubRole));
+		}
 		return authorities;
 	}
 
