@@ -3,13 +3,19 @@ package org.badminton.api.member.service;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Optional;
 
+import org.badminton.api.clubmember.model.dto.ClubMemberInfoResponse;
 import org.badminton.api.member.jwt.JwtUtil;
 import org.badminton.api.member.model.dto.MemberDeleteResponse;
+import org.badminton.api.member.model.dto.MemberDetailResponse;
+import org.badminton.api.member.model.dto.MemberInfoResponse;
 import org.badminton.api.member.model.dto.MemberUpdateRequest;
 import org.badminton.api.member.model.dto.MemberUpdateResponse;
 import org.badminton.api.member.oauth2.dto.CustomOAuth2Member;
 import org.badminton.api.member.validator.MemberValidator;
+import org.badminton.domain.clubmember.entity.ClubMemberEntity;
+import org.badminton.domain.clubmember.repository.ClubMemberRepository;
 import org.badminton.domain.member.entity.MemberEntity;
 import org.badminton.domain.member.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,6 +38,7 @@ public class MemberService {
 	private final JwtUtil jwtUtil;
 	private final MemberValidator memberValidator;
 	private final MemberRepository memberRepository;
+	private final ClubMemberRepository clubMemberRepository;
 
 	@Value("${spring.security.oauth2.revoke-url.naver}")
 	private String naverRevokeUrl;
@@ -47,6 +54,16 @@ public class MemberService {
 
 	@Value("${NAVER_CLIENT_SECRET}")
 	private String naverClientSecret;
+
+	public MemberDetailResponse getMemberInfo(Long memberId) {
+		MemberEntity memberEntity = memberValidator.findMemberByMemberId(memberId);
+		Optional<ClubMemberEntity> clubMemberEntity = clubMemberRepository.findByMember_MemberId(memberId);
+
+		return clubMemberEntity
+			.map(clubMember -> (MemberDetailResponse)ClubMemberInfoResponse.entityToClubMemberInfoResponse(memberEntity,
+				clubMember))
+			.orElseGet(() -> (MemberDetailResponse)MemberInfoResponse.entityToMemberInfoResponse(memberEntity));
+	}
 
 	public MemberUpdateResponse updateMember(Long memberId, MemberUpdateRequest memberUpdateRequest) {
 		MemberEntity memberEntity = memberValidator.findMemberByMemberId(memberId);
