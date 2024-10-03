@@ -3,12 +3,14 @@ package org.badminton.api.config.security;
 import java.util.Arrays;
 import java.util.Collections;
 
+import org.badminton.api.clubmember.service.ClubMemberService;
 import org.badminton.api.member.jwt.JwtFilter;
 import org.badminton.api.member.jwt.JwtUtil;
 import org.badminton.api.member.oauth2.CustomSuccessHandler;
 import org.badminton.api.member.service.CustomOAuth2MemberService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -29,6 +31,7 @@ public class SecurityConfig {
 	private final CustomOAuth2MemberService customOAuth2MemberService;
 	private final CustomSuccessHandler customSuccessHandler;
 	private final JwtUtil jwtUtil;
+	private final ClubMemberService clubMemberService;
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -50,7 +53,7 @@ public class SecurityConfig {
 			.csrf(AbstractHttpConfigurer::disable)
 			.formLogin(AbstractHttpConfigurer::disable)
 			.httpBasic(AbstractHttpConfigurer::disable)
-			.addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
+			.addFilterBefore(new JwtFilter(jwtUtil, clubMemberService), UsernamePasswordAuthenticationFilter.class);
 
 		http
 			.oauth2Login(oauth2 -> oauth2
@@ -63,6 +66,20 @@ public class SecurityConfig {
 				.requestMatchers("/", "/groups", "/oauth2/**", "/login/**", "/error", "/api/*", "/swagger-ui/**",
 					"/v3/api-docs/**")
 				.permitAll()
+				.requestMatchers(HttpMethod.DELETE, "/v1/club")
+				.hasRole("OWNER")
+				.requestMatchers(HttpMethod.POST, "/v1/club/{clubId}/league")
+				.hasAnyRole("OWNER", "MANAGER")
+				.requestMatchers(HttpMethod.DELETE, "/v1/club/{clubId}/league/{leagueId}")
+				.hasAnyRole("OWNER", "MANAGER")
+				.requestMatchers(HttpMethod.PATCH, "/v1/club", "/v1/club/{clubId}/league/{leagueId}")
+				.hasAnyRole("OWNER", "MANAGER")
+				.requestMatchers(HttpMethod.POST, "/v1/club/{clubId}/league/{leagueId}/participation")
+				.hasAnyRole("OWNER", "MANAGER", "USER")
+				.requestMatchers(HttpMethod.DELETE, "/v1/club/{clubId}/league/{leagueId}/participation")
+				.hasAnyRole("OWNER", "MANAGER", "USER")
+				.requestMatchers(HttpMethod.GET, "/v1/club/{clubId}/league/{leagueId}/participation")
+				.hasAnyRole("OWNER", "MANAGER", "USER")
 				.anyRequest()
 				.authenticated());
 
