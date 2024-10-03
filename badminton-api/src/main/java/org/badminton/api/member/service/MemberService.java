@@ -3,6 +3,7 @@ package org.badminton.api.member.service;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 import java.util.Optional;
 
 import org.badminton.api.clubmember.model.dto.ClubMemberInfoResponse;
@@ -136,7 +137,7 @@ public class MemberService {
 		String refreshToken = jwtUtil.extractRefreshTokenFromCookie(request);
 		if (refreshToken != null && jwtUtil.validateToken(refreshToken)) {
 			String memberId = jwtUtil.getMemberId(refreshToken);
-			String roles = jwtUtil.getRoles(refreshToken);
+			List<String> roles = jwtUtil.getRoles(refreshToken);
 			String registrationId = jwtUtil.getRegistrationId(refreshToken);
 
 			String newAccessToken = jwtUtil.createAccessToken(memberId, roles, registrationId);
