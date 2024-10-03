@@ -45,42 +45,6 @@ public class LeagueRecordEntity extends BaseTimeEntity {
 	@JoinColumn(name = "clubMemberId")
 	private ClubMemberEntity clubMember;
 
-	public void addWind() {
-		this.winCount++;
-		this.matchCount++;
-		updateTier();
-	}
-
-	public void addLose() {
-		this.loseCount++;
-		this.matchCount++;
-		updateTier();
-	}
-
-	public void addDraw() {
-		this.drawCount++;
-		this.matchCount++;
-		updateTier();
-	}
-
-	public double getWinRate() {
-		if (matchCount == 0) {
-			return 0.0;
-		}
-		return (double)winCount / matchCount * 100;
-	}
-
-	private void updateTier() {
-		double winRate = getWinRate();
-		if (matchCount >= 20 && winRate >= 80) {
-			tier = MemberTier.GOLD;
-		} else if (matchCount >= 10 && matchCount < 20 && winRate >= 60) {
-			tier = MemberTier.SILVER;
-		} else {
-			tier = MemberTier.BRONZE;
-		}
-	}
-
 	public LeagueRecordEntity(ClubMemberEntity clubMember) {
 		this.clubMember = clubMember;
 		this.winCount = 0;
@@ -90,4 +54,23 @@ public class LeagueRecordEntity extends BaseTimeEntity {
 		this.tier = MemberTier.BRONZE;
 	}
 
+	public void updateWinCount(int winCount) {
+		this.winCount = winCount;
+	}
+
+	public void updateLoseCount(int loseCount) {
+		this.loseCount = loseCount;
+	}
+
+	public void updateDrawCount(int drawCount) {
+		this.drawCount = drawCount;
+	}
+
+	public void updateMatchCount(int matchCount) {
+		this.matchCount = matchCount;
+	}
+
+	public void updateTier(MemberTier tier) {
+		this.tier = tier;
+	}
 }
