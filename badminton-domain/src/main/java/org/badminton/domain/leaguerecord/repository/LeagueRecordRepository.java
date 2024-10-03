@@ -14,4 +14,6 @@ public interface LeagueRecordRepository extends JpaRepository<LeagueRecordEntity
 	List<LeagueRecordEntity> findTop10ByOrderByWinCountDesc();
 
 	List<LeagueRecordEntity> findAllByTier(MemberTier tier);
+
+	Optional<LeagueRecordEntity> findByClubMember_ClubMemberId(Long clubMemberId);
 }

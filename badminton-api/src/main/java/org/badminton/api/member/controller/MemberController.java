@@ -1,5 +1,6 @@
 package org.badminton.api.member.controller;
 
+import org.badminton.api.leaguerecord.service.LeagueRecordService;
 import org.badminton.api.member.jwt.JwtUtil;
 import org.badminton.api.member.model.dto.MemberDeleteResponse;
 import org.badminton.api.member.model.dto.MemberDetailResponse;
@@ -8,6 +9,7 @@ import org.badminton.api.member.model.dto.MemberUpdateResponse;
 import org.badminton.api.member.oauth2.dto.CustomOAuth2Member;
 import org.badminton.api.member.service.MemberService;
 import org.badminton.domain.clubmember.repository.ClubMemberRepository;
+import org.badminton.domain.leaguerecord.repository.LeagueRecordRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -33,6 +35,36 @@ public class MemberController {
 	private final MemberService memberService;
 	private final JwtUtil jwtUtil;
 	private final ClubMemberRepository clubMemberRepository;
+	private final LeagueRecordService leagueRecordService;
+	private final LeagueRecordRepository leagueRecordRepository;
+
+	//TODO: 티어 정상 작동 테스트용, 지울예정입니다
+	@Operation(
+		summary = "승리 기록 추가",
+		description = "회원의 리그 기록에 승리를 추가합니다",
+		tags = {"LeagueRecord"}
+	)
+	@PostMapping("/win")
+	public ResponseEntity<String> addWin(@AuthenticationPrincipal CustomOAuth2Member member) {
+		Long memberId = member.getMemberId();
+		Long clubMemberId = clubMemberRepository.findByMember_MemberId(memberId).get().getClubMemberId();
+		leagueRecordService.addWin(clubMemberId);
+		return ResponseEntity.ok("Win added successfully");
+	}
+
+	//TODO: 티어 정상 작동 테스트용, 지울예정입니다
+	@Operation(
+		summary = "패배 기록 추가",
+		description = "회원의 리그 기록에 패배를 추가합니다",
+		tags = {"LeagueRecord"}
+	)
+	@PostMapping("/lose")
+	public ResponseEntity<String> addLose(@AuthenticationPrincipal CustomOAuth2Member member) {
+		Long memberId = member.getMemberId();
+		Long clubMemberId = clubMemberRepository.findByMember_MemberId(memberId).get().getClubMemberId();
+		leagueRecordService.addLose(clubMemberId);
+		return ResponseEntity.ok("Loss added successfully");
+	}
 
 	@Operation(
 		summary = "액세스 토큰을 재발급합니다",
