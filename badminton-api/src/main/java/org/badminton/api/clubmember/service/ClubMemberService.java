@@ -1,5 +1,7 @@
 package org.badminton.api.clubmember.service;
 
+import java.util.Optional;
+
 import org.badminton.api.clubmember.model.dto.ClubMemberJoinResponse;
 import org.badminton.api.common.exception.club.ClubNotExistException;
 import org.badminton.api.common.exception.clubmember.ClubMemberDuplicateException;
@@ -47,6 +49,10 @@ public class ClubMemberService {
 		return ClubMemberJoinResponse.clubMemberEntityToClubMemberJoinResponse(
 			clubMemberEntity);
 
+	}
+
+	public Optional<ClubMemberEntity> findClubMemberByMemberId(String memberId) {
+		return clubMemberRepository.findByMember_MemberId(Long.valueOf(memberId));
 	}
 
 }
