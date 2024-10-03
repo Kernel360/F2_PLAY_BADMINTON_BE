@@ -45,6 +45,8 @@ public enum ErrorCode {
 	RESOURCE_ALREADY_EXIST(409, "특정 리소스가 이미 존재합니다."),
 	CLUB_NAME_ALREADY_EXIST(409, "이미 존재하는 동호회 이름입니다."),
 	LEAGUE_ALREADY_EXIST(409, "이미 존재하는 경기 일정입니다."),
+	MATCH_ALREADY_EXIST(409, "이미 대진표가 만들어졌습니다."),
+
 	LEAGUE_ALREADY_PARTICIPATED(409, "이미 참여 신청을 완료한 경기 일정입니다."),
 	LEAGUE_NOT_PARTICIPATED(409, "참여 신청을 하지 않는 경기입니다."),
 	LEAGUE_PARTICIPATION_ALREADY_CANCELED(409, "이미 참여 신청을 취소한 경기 일정입니다."),

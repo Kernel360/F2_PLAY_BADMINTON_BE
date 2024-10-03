@@ -1,4 +1,4 @@
-package org.badminton.api.match.model.vo;
+package org.badminton.api.match.model.dto;
 
 import org.badminton.domain.match.model.vo.Team;
 
