@@ -11,27 +11,34 @@ import org.badminton.api.member.service.CustomOAuth2MemberService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authorization.AuthorizationDecision;
+import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
+@Slf4j
 public class SecurityConfig {
 
 	private final CustomOAuth2MemberService customOAuth2MemberService;
 	private final CustomSuccessHandler customSuccessHandler;
 	private final JwtUtil jwtUtil;
 	private final ClubMemberService clubMemberService;
+	private final ClubPermissionEvaluator clubPermissionEvaluator;
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -67,19 +74,19 @@ public class SecurityConfig {
 					"/v3/api-docs/**")
 				.permitAll()
 				.requestMatchers(HttpMethod.DELETE, "/v1/club")
-				.hasRole("OWNER")
+				.access(hasClubRole("OWNER"))
 				.requestMatchers(HttpMethod.POST, "/v1/club/{clubId}/league")
-				.hasAnyRole("OWNER", "MANAGER")
+				.access(hasClubRole("OWNER", "MANAGER"))
 				.requestMatchers(HttpMethod.DELETE, "/v1/club/{clubId}/league/{leagueId}")
-				.hasAnyRole("OWNER", "MANAGER")
+				.access(hasClubRole("OWNER", "MANAGER"))
 				.requestMatchers(HttpMethod.PATCH, "/v1/club", "/v1/club/{clubId}/league/{leagueId}")
-				.hasAnyRole("OWNER", "MANAGER")
+				.access(hasClubRole("OWNER", "MANAGER"))
 				.requestMatchers(HttpMethod.POST, "/v1/club/{clubId}/league/{leagueId}/participation")
-				.hasAnyRole("OWNER", "MANAGER", "USER")
+				.access(hasClubRole("OWNER", "MANAGER", "USER"))
 				.requestMatchers(HttpMethod.DELETE, "/v1/club/{clubId}/league/{leagueId}/participation")
-				.hasAnyRole("OWNER", "MANAGER", "USER")
+				.access(hasClubRole("OWNER", "MANAGER", "USER"))
 				.requestMatchers(HttpMethod.GET, "/v1/club/{clubId}/league/{leagueId}/participation")
-				.hasAnyRole("OWNER", "MANAGER", "USER")
+				.access(hasClubRole("OWNER", "MANAGER", "USER"))
 				.anyRequest()
 				.authenticated());
 
@@ -87,6 +94,43 @@ public class SecurityConfig {
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
 		return http.build();
+	}
+
+	private AuthorizationManager<RequestAuthorizationContext> hasClubRole(String... roles) {
+		return (authentication, context) -> {
+			Authentication auth = authentication.get();
+			if (auth == null || !auth.isAuthenticated()) {
+				return new AuthorizationDecision(false);
+			}
+
+			String clubId = getClubIdFromContext(context);
+			if (clubId == null) {
+				return new AuthorizationDecision(false);
+			}
+
+			boolean hasRole = clubPermissionEvaluator.hasClubRole(auth, Long.parseLong(clubId), roles);
+
+			log.info("Checking roles for clubId: {}", clubId);
+			log.info("User authorities: {}", auth.getAuthorities());
+			log.info("Required roles: {}", Arrays.toString(roles));
+			log.info("Has required role: {}", hasRole);
+
+			return new AuthorizationDecision(hasRole);
+		};
+	}
+
+	private String getClubIdFromContext(RequestAuthorizationContext context) {
+		String clubId = context.getVariables().get("clubId");
+		if (clubId != null) {
+			return clubId;
+		}
+
+		HttpServletRequest request = context.getRequest();
+		String paramClubId = request.getParameter("clubId");
+		if (paramClubId != null && !paramClubId.isEmpty()) {
+			return paramClubId;
+		}
+		return null;
 	}
 
 }
