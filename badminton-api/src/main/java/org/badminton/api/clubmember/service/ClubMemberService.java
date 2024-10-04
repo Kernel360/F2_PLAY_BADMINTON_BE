@@ -1,5 +1,6 @@
 package org.badminton.api.clubmember.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.badminton.api.clubmember.model.dto.ClubMemberJoinResponse;
@@ -53,6 +54,10 @@ public class ClubMemberService {
 
 	public Optional<ClubMemberEntity> findClubMemberByMemberId(String memberId) {
 		return clubMemberRepository.findByMember_MemberId(Long.valueOf(memberId));
+	}
+
+	public List<ClubMemberEntity> findAllClubMembersByMemberId(Long memberId) {
+		return clubMemberRepository.findAllByMember_MemberId(memberId);
 	}
 
 }
