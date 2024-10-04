@@ -1,7 +1,7 @@
 package org.badminton.api.member.jwt;
 
 import java.io.IOException;
-import java.util.Optional;
+import java.util.List;
 
 import org.badminton.api.clubmember.service.ClubMemberService;
 import org.badminton.api.member.model.dto.MemberResponse;
@@ -41,38 +41,27 @@ public class JwtFilter extends OncePerRequestFilter {
 
 		String token = jwtUtil.extractAccessTokenFromCookie(request);
 
-		if (token == null) {
-			log.info("No token found");
-			filterChain.doFilter(request, response);
-			return;
+		if (token != null && jwtUtil.validateToken(token)) {
+			String memberId = jwtUtil.getMemberId(token);
+			List<ClubMemberEntity> clubMemberEntities = clubMemberService.findAllClubMembersByMemberId(
+				Long.valueOf(memberId));
+
+			MemberResponse memberResponse = new MemberResponse(Long.valueOf(memberId),
+				MemberAuthorization.AUTHORIZATION_USER.toString());
+			CustomOAuth2Member customOAuth2Member = new CustomOAuth2Member(memberResponse,
+				jwtUtil.getRegistrationId(token));
+
+			for (ClubMemberEntity clubMember : clubMemberEntities) {
+				customOAuth2Member.addClubRole(clubMember.getClub().getClubId(), clubMember.getRole().name());
+			}
+
+			Authentication authToken = new UsernamePasswordAuthenticationToken(customOAuth2Member, null,
+				customOAuth2Member.getAuthorities());
+
+			SecurityContextHolder.getContext().setAuthentication(authToken);
 		}
 
-		if (!jwtUtil.validateToken(token)) {
-			log.info("Invalid token");
-			filterChain.doFilter(request, response);
-			return;
-		}
-
-		String memberId = jwtUtil.getMemberId(token);
-
-		Optional<ClubMemberEntity> clubMemberEntity = clubMemberService.findClubMemberByMemberId(memberId);
-
-		MemberResponse memberResponse = new MemberResponse(Long.valueOf(memberId),
-			MemberAuthorization.AUTHORIZATION_USER.toString());
-		CustomOAuth2Member customOAuth2Member = new CustomOAuth2Member(memberResponse, null);
-		if (clubMemberEntity.isPresent()) {
-			String clubMemberRole = clubMemberEntity.get().getRole().name();
-			log.info("Club member role: {}", clubMemberRole);
-			customOAuth2Member.updateClubRole(clubMemberRole);
-		}
-
-		Authentication authToken = new UsernamePasswordAuthenticationToken(customOAuth2Member, null,
-			customOAuth2Member.getAuthorities());
-
-		SecurityContextHolder.getContext().setAuthentication(authToken);
-
-		log.info("현재 사용자의 ROLE: {}", authToken.getAuthorities());
 		filterChain.doFilter(request, response);
-
 	}
 }
+
