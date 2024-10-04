@@ -1,8 +1,5 @@
 package org.badminton.api.match.model.dto;
 
-import org.badminton.api.match.model.vo.DoublesMatchResponse;
-import org.badminton.api.match.model.vo.SinglesMatchResponse;
-import org.badminton.api.match.model.vo.TeamResponse;
 import org.badminton.domain.common.enums.MatchType;
 import org.badminton.domain.match.model.entity.DoublesMatchEntity;
 import org.badminton.domain.match.model.entity.SinglesMatchEntity;

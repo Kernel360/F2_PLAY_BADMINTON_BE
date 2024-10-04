@@ -1,4 +1,4 @@
-package org.badminton.api.match.model.vo;
+package org.badminton.api.match.model.dto;
 
 public record DoublesMatchResponse(
 	TeamResponse team1,
