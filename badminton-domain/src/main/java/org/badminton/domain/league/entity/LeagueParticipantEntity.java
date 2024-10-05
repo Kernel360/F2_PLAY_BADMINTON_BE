@@ -2,9 +2,12 @@ package org.badminton.domain.league.entity;
 
 import org.badminton.domain.clubmember.entity.ClubMemberEntity;
 import org.badminton.domain.common.BaseTimeEntity;
+import org.badminton.domain.common.enums.MatchResult;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -36,6 +39,9 @@ public class LeagueParticipantEntity extends BaseTimeEntity {
 
 	private boolean isCanceled;
 
+	@Enumerated(EnumType.STRING)
+	private MatchResult matchResult = MatchResult.NONE;
+
 	public LeagueParticipantEntity(ClubMemberEntity clubMember, LeagueEntity league) {
 		this.clubMember = clubMember;
 		this.league = league;
@@ -48,6 +54,10 @@ public class LeagueParticipantEntity extends BaseTimeEntity {
 
 	public void reactiveParticipation() {
 		this.isCanceled = false;
+	}
+
+	public void declareMatchResult(MatchResult matchResult) {
+		this.matchResult = matchResult;
 	}
 
 }

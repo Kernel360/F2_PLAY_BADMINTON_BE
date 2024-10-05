@@ -24,7 +24,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class MatchService {
+public class MatchCreateService {
 
 	private final DoublesMatchRepository doublesMatchRepository;
 	private final SinglesMatchRepository singlesMatchRepository;
