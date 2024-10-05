@@ -1,5 +1,8 @@
 package org.badminton.domain.match.model.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.badminton.domain.common.BaseTimeEntity;
 import org.badminton.domain.league.entity.LeagueEntity;
 import org.badminton.domain.match.model.vo.Team;
@@ -14,6 +17,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -47,9 +51,17 @@ public class DoublesMatchEntity extends BaseTimeEntity {
 	})
 	private Team team2;
 
+	@OneToMany(mappedBy = "doublesMatch")
+	List<DoublesSetEntity> doublesSets;
+
 	public DoublesMatchEntity(LeagueEntity league, Team team1, Team team2) {
 		this.league = league;
 		this.team1 = team1;
 		this.team2 = team2;
+		this.doublesSets = new ArrayList<>();
+	}
+
+	public void addSet(DoublesSetEntity doublesSet) {
+		this.doublesSets.add(doublesSet);
 	}
 }

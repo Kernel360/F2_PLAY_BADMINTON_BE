@@ -59,13 +59,13 @@ public class MatchCreateService {
 
 	private void checkDuplicateMatchInLeague(Long leagueId, MatchType matchType) {
 		if (matchType == MatchType.SINGLE) {
-			singlesMatchRepository.findAllByLeague_LeagueId(leagueId).ifPresent(
+			singlesMatchRepository.findByLeague_LeagueId(leagueId).ifPresent(
 				singlesMatch -> {
 					throw new MatchDuplicateException(matchType, singlesMatch.getSinglesMatchId());
 				}
 			);
 		} else if (matchType == MatchType.DOUBLES) {
-			doublesMatchRepository.findAllByLeague_LeagueId(leagueId).ifPresent(
+			doublesMatchRepository.findByLeague_LeagueId(leagueId).ifPresent(
 				doublesMatch -> {
 					throw new MatchDuplicateException(matchType, doublesMatch.getDoublesMatchId());
 				}
