@@ -31,10 +31,15 @@ public class DoublesSetEntity extends BaseTimeEntity {
 	private int team1Score;
 	private int team2Score;
 
-	public DoublesSetEntity(DoublesMatchEntity doublesMatch) {
+	public DoublesSetEntity(DoublesMatchEntity doublesMatch, int setIndex) {
 		this.doublesMatch = doublesMatch;
-		this.setIndex = 0;
+		this.setIndex = setIndex;
 		this.team1Score = 0;
 		this.team2Score = 0;
+	}
+
+	public void saveSetScore(int team1Score, int team2Score) {
+		this.team1Score = team1Score;
+		this.team2Score = team2Score;
 	}
 }

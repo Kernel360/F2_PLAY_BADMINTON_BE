@@ -32,10 +32,15 @@ public class SinglesSetEntity extends BaseTimeEntity {
 	private int player1Score;
 	private int player2Score;
 
-	public SinglesSetEntity(SinglesMatchEntity singlesMatch) {
+	public SinglesSetEntity(SinglesMatchEntity singlesMatch, int setIndex) {
 		this.singlesMatch = singlesMatch;
-		this.set_index = 0;
+		this.set_index = setIndex;
 		this.player1Score = 0;
 		this.player2Score = 0;
+	}
+
+	public void saveSetScore(int player1Score, int player2Score) {
+		this.player1Score = player1Score;
+		this.player2Score = player2Score;
 	}
 }

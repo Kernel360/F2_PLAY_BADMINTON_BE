@@ -34,6 +34,8 @@ public enum ErrorCode {
 	MEMBER_NOT_EXIST(404, "해당하는 회원이 존재하지 않습니다."),
 	CLUB_NOT_EXIST(404, "해당하는 동호회가 존재하지 않습니다."),
 	LEAGUE_NOT_EXIST(404, "해당하는 경기 일정이 존재하지 않습니다."),
+	MATCH_NOT_EXIST(404, "해당하는 대진이 존재하지 않습니다."),
+	SET_NOT_EXIST(404, "해당하는 세트는 존재하지 않습니다."),
 	CLUB_MEMBER_NOT_EXIST(404, "해당하는 회원은 해당 동호회에 아직 가입하지 않았습니다."),
 
 	// 409 Errors
