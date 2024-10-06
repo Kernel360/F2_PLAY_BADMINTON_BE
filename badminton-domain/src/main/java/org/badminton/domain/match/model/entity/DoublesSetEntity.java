@@ -2,7 +2,6 @@ package org.badminton.domain.match.model.entity;
 
 import org.badminton.domain.common.BaseTimeEntity;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -23,7 +22,7 @@ public class DoublesSetEntity extends BaseTimeEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long doublesSetId;
 
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "doublesMatchId")
 	private DoublesMatchEntity doublesMatch;
 
@@ -34,6 +33,7 @@ public class DoublesSetEntity extends BaseTimeEntity {
 	public DoublesSetEntity(DoublesMatchEntity doublesMatch, int setIndex) {
 		this.doublesMatch = doublesMatch;
 		this.setIndex = setIndex;
+		// TODO: 상수
 		this.team1Score = 0;
 		this.team2Score = 0;
 	}

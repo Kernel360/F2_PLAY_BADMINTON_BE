@@ -11,6 +11,7 @@ import org.badminton.domain.common.enums.MatchStatus;
 import org.badminton.domain.league.entity.LeagueEntity;
 import org.badminton.domain.league.entity.LeagueParticipantEntity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -60,7 +61,7 @@ public class SinglesMatchEntity extends BaseTimeEntity {
 	@Enumerated(EnumType.STRING)
 	private MatchStatus matchStatus = MatchStatus.NOT_STARTED;
 
-	@OneToMany(mappedBy = "singlesMatch")
+	@OneToMany(mappedBy = "singlesMatch", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<SinglesSetEntity> singlesSets;
 
 	public SinglesMatchEntity(LeagueEntity league, LeagueParticipantEntity leagueParticipant1,

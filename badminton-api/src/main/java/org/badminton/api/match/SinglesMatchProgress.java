@@ -17,7 +17,9 @@ import org.badminton.domain.match.model.entity.SinglesSetEntity;
 import org.badminton.domain.match.repository.SinglesMatchRepository;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @AllArgsConstructor
 public class SinglesMatchProgress implements MatchProgress {
 
@@ -67,11 +69,9 @@ public class SinglesMatchProgress implements MatchProgress {
 
 	@Override
 	public void checkDuplicateMatchInLeague(Long leagueId, MatchType matchType) {
-		singlesMatchRepository.findByLeague_LeagueId(leagueId).ifPresent(
-			singlesMatch -> {
-				throw new MatchDuplicateException(matchType, singlesMatch.getSinglesMatchId());
-			}
-		);
+		List<SinglesMatchEntity> singlesMatchEntityList = singlesMatchRepository.findAllByLeague_LeagueId(leagueId);
+		if (!singlesMatchEntityList.isEmpty())
+			throw new MatchDuplicateException(matchType, leagueId);
 	}
 
 	private SinglesMatchEntity initSinglesMatch(SinglesMatchEntity singlesMatch) {

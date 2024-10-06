@@ -31,6 +31,7 @@ public class MatchCreateService {
 	private final LeagueRepository leagueRepository;
 
 	public List<MatchResponse> makeMatches(Long leagueId) {
+		// TODO: 만약 리스트에 아무것도 없으면!?
 		List<LeagueParticipantEntity> leagueParticipantList =
 			leagueParticipantRepository.findAllByLeague_LeagueId(leagueId);
 
@@ -55,7 +56,7 @@ public class MatchCreateService {
 		MatchType matchType = league.getMatchType();
 
 		MatchProgress matchProgress = createMatchProgress(matchType);
-		return matchProgress.initDetails(clubId);
+		return matchProgress.initDetails(leagueId);
 	}
 
 	private void checkPlayerCount(LeagueEntity league, int playerCount) {

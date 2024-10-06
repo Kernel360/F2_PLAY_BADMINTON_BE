@@ -35,7 +35,6 @@ public class DoublesMatchProgress implements MatchProgress {
 	@Override
 	public List<MatchDetailsResponse> initDetails(Long leagueId) {
 		List<DoublesMatchEntity> doublesMatchList = doublesMatchRepository.findAllByLeague_LeagueId(leagueId);
-
 		return doublesMatchList.stream()
 			.map(this::initDoublesMatch)
 			.map(MatchDetailsResponse::entityToDoublesMatchDetailsResponse).toList();
@@ -67,11 +66,9 @@ public class DoublesMatchProgress implements MatchProgress {
 
 	@Override
 	public void checkDuplicateMatchInLeague(Long leagueId, MatchType matchType) {
-		doublesMatchRepository.findByLeague_LeagueId(leagueId).ifPresent(
-			doublesMatch -> {
-				throw new MatchDuplicateException(matchType, doublesMatch.getDoublesMatchId());
-			}
-		);
+		List<DoublesMatchEntity> doublesMatchEntityList = doublesMatchRepository.findAllByLeague_LeagueId(leagueId);
+		if (!doublesMatchEntityList.isEmpty())
+			throw new MatchDuplicateException(matchType, leagueId);
 	}
 
 	private DoublesMatchEntity initDoublesMatch(DoublesMatchEntity doublesMatch) {
