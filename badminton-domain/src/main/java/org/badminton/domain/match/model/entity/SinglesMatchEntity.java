@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.badminton.domain.common.BaseTimeEntity;
 import org.badminton.domain.common.enums.MatchResult;
+import org.badminton.domain.common.enums.MatchStatus;
 import org.badminton.domain.league.entity.LeagueEntity;
 import org.badminton.domain.league.entity.LeagueParticipantEntity;
 
@@ -54,6 +55,9 @@ public class SinglesMatchEntity extends BaseTimeEntity {
 	@Enumerated(EnumType.STRING)
 	private MatchResult player2MatchResult = MatchResult.NONE;
 
+	@Enumerated(EnumType.STRING)
+	private MatchStatus matchStatus = MatchStatus.NOT_STARTED;
+
 	@OneToMany(mappedBy = "singlesMatch")
 	private List<SinglesSetEntity> singlesSets;
 
@@ -76,6 +80,7 @@ public class SinglesMatchEntity extends BaseTimeEntity {
 		if (player1WinSetCount == 2) {
 			this.player1MatchResult = MatchResult.WIN;
 			this.player2MatchResult = MatchResult.LOSE;
+			this.matchStatus = MatchStatus.COMPLETED;
 		}
 	}
 
@@ -83,6 +88,8 @@ public class SinglesMatchEntity extends BaseTimeEntity {
 		this.player2WinSetCount++;
 		if (player2WinSetCount == 2) {
 			this.player2MatchResult = MatchResult.WIN;
+			this.player1MatchResult = MatchResult.LOSE;
+			this.matchStatus = MatchStatus.COMPLETED;
 		}
 	}
 }

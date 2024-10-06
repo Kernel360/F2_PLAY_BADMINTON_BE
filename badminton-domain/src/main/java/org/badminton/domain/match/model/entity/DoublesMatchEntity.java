@@ -87,7 +87,7 @@ public class DoublesMatchEntity extends BaseTimeEntity {
 		}
 	}
 
-	public void player2WinSet() {
+	public void team2WinSet() {
 		this.team2WinSetCount++;
 		if (team2WinSetCount == 2) {
 			this.team2MatchResult = MatchResult.WIN;
