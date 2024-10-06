@@ -38,7 +38,7 @@ public class MatchProgressService {
 		// 경기 타입을 구분하여 처리하기 위해
 		MatchType matchType = league.getMatchType();
 
-		if (matchType == MatchType.SINGLE) {
+		if (matchType == MatchType.SINGLES) {
 			List<SinglesMatchEntity> singlesMatchList = singlesMatchRepository.findAllByLeague_LeagueId(leagueId);
 
 			return singlesMatchList.stream()
@@ -96,7 +96,7 @@ public class MatchProgressService {
 		MatchType matchType = league.getMatchType();
 
 		// 경기 타입이 단식이면,
-		if (matchType == MatchType.SINGLE) {
+		if (matchType == MatchType.SINGLES) {
 			// SinglesSetEntity를 꺼내온다.
 			SinglesMatchEntity singlesMatch = singlesMatchRepository.findById(matchId).orElseThrow(
 				() -> new MatchNotExistException(clubId, leagueId, matchId, matchType)

@@ -41,7 +41,7 @@ public class MatchCreateService {
 		checkDuplicateMatchInLeague(leagueId, matchType);
 
 		Collections.shuffle(leagueParticipantList);
-		if (matchType == MatchType.SINGLE) {
+		if (matchType == MatchType.SINGLES) {
 			List<SinglesMatchEntity> singlesMatches = makeSinglesMatches(leagueParticipantList, league);
 			return singlesMatches
 				.stream()
@@ -55,28 +55,6 @@ public class MatchCreateService {
 				.toList();
 		} else
 			throw new BadmintonException(ErrorCode.BAD_REQUEST, "존재하지 않는 경기 타입입니다.");
-	}
-
-	private void checkDuplicateMatchInLeague(Long leagueId, MatchType matchType) {
-		if (matchType == MatchType.SINGLE) {
-			singlesMatchRepository.findByLeague_LeagueId(leagueId).ifPresent(
-				singlesMatch -> {
-					throw new MatchDuplicateException(matchType, singlesMatch.getSinglesMatchId());
-				}
-			);
-		} else if (matchType == MatchType.DOUBLES) {
-			doublesMatchRepository.findByLeague_LeagueId(leagueId).ifPresent(
-				doublesMatch -> {
-					throw new MatchDuplicateException(matchType, doublesMatch.getDoublesMatchId());
-				}
-			);
-		}
-	}
-
-	private void checkPlayerCount(LeagueEntity league, int playerCount) {
-		if (league.getPlayerCount() != playerCount) {
-			throw new InvalidPlayerCountException(league.getLeagueId(), playerCount);
-		}
 	}
 
 	private List<SinglesMatchEntity> makeSinglesMatches(List<LeagueParticipantEntity> leagueParticipantList,
@@ -105,5 +83,27 @@ public class MatchCreateService {
 			doublesMatchRepository.save(doublesMatch);
 		}
 		return doublesMatches;
+	}
+
+	private void checkDuplicateMatchInLeague(Long leagueId, MatchType matchType) {
+		if (matchType == MatchType.SINGLES) {
+			singlesMatchRepository.findByLeague_LeagueId(leagueId).ifPresent(
+				singlesMatch -> {
+					throw new MatchDuplicateException(matchType, singlesMatch.getSinglesMatchId());
+				}
+			);
+		} else if (matchType == MatchType.DOUBLES) {
+			doublesMatchRepository.findByLeague_LeagueId(leagueId).ifPresent(
+				doublesMatch -> {
+					throw new MatchDuplicateException(matchType, doublesMatch.getDoublesMatchId());
+				}
+			);
+		}
+	}
+
+	private void checkPlayerCount(LeagueEntity league, int playerCount) {
+		if (league.getPlayerCount() != playerCount) {
+			throw new InvalidPlayerCountException(league.getLeagueId(), playerCount);
+		}
 	}
 }
