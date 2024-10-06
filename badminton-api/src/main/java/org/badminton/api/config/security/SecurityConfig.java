@@ -2,6 +2,7 @@ package org.badminton.api.config.security;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Optional;
 
 import org.badminton.api.clubmember.service.ClubMemberService;
 import org.badminton.api.member.jwt.JwtFilter;
@@ -110,10 +111,13 @@ public class SecurityConfig {
 
 			boolean hasRole = clubPermissionEvaluator.hasClubRole(auth, Long.parseLong(clubId), roles);
 
-			log.info("Checking roles for clubId: {}", clubId);
-			log.info("User authorities: {}", auth.getAuthorities());
-			log.info("Required roles: {}", Arrays.toString(roles));
-			log.info("Has required role: {}", hasRole);
+			log.info("""
+				  Checking roles for clubId: {}
+				  User authorities: {}
+				  Required roles: {}
+				  Has required role: {}
+				""", clubId, auth.getAuthorities(), Arrays.toString(roles), hasRole
+			);
 
 			return new AuthorizationDecision(hasRole);
 		};
@@ -124,13 +128,10 @@ public class SecurityConfig {
 		if (clubId != null) {
 			return clubId;
 		}
-
 		HttpServletRequest request = context.getRequest();
-		String paramClubId = request.getParameter("clubId");
-		if (paramClubId != null && !paramClubId.isEmpty()) {
-			return paramClubId;
-		}
-		return null;
+		return Optional.ofNullable(request.getParameter("clubId"))
+			.filter(s -> !s.isEmpty())
+			.orElse(null);
 	}
 
 }

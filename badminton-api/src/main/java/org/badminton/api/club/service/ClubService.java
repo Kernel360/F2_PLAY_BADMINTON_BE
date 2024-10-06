@@ -48,15 +48,24 @@ public class ClubService {
 		ClubEntity club = new ClubEntity(clubAddRequest.clubName(), clubAddRequest.clubDescription(),
 			clubAddRequest.clubImage());
 
-		ClubMemberEntity clubMemberEntity = new ClubMemberEntity(club, memberEntity, ClubMemberRole.ROLE_OWNER);
-		clubMemberRepository.save(clubMemberEntity);
-
 		clubValidator.saveClub(club);
 
-		LeagueRecordEntity leagueRecord = new LeagueRecordEntity(clubMemberEntity);
-		leagueRecordRepository.save(leagueRecord);
+		ClubMemberEntity clubMemberEntity = createClubMember(club, memberEntity);
+
+		createLeagueRecord(clubMemberEntity);
 
 		return ClubCreateResponse.clubEntityToClubCreateResponse(club);
+	}
+
+	private ClubMemberEntity createClubMember(ClubEntity club, MemberEntity memberEntity) {
+		ClubMemberEntity clubMemberEntity = new ClubMemberEntity(club, memberEntity, ClubMemberRole.ROLE_OWNER);
+		clubMemberRepository.save(clubMemberEntity);
+		return clubMemberEntity;
+	}
+
+	private void createLeagueRecord(ClubMemberEntity clubMemberEntity) {
+		LeagueRecordEntity leagueRecord = new LeagueRecordEntity(clubMemberEntity);
+		leagueRecordRepository.save(leagueRecord);
 	}
 
 	@Transactional

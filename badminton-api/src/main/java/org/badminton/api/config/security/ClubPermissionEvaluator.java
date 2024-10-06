@@ -38,7 +38,8 @@ public class ClubPermissionEvaluator implements PermissionEvaluator {
 			.map(GrantedAuthority::getAuthority)
 			.anyMatch(authority -> {
 				for (String role : roles) {
-					String expectedAuthority = clubId + ":" + (role.startsWith("ROLE_") ? role : "ROLE_" + role);
+					String expectedAuthority = String.format("%s:%s", clubId,
+						(role.startsWith("ROLE_") ? role : "ROLE_" + role));
 					if (authority.equals(expectedAuthority)) {
 						return true;
 					}
