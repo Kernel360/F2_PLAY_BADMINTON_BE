@@ -1,29 +1,37 @@
 package org.badminton.api.match.model.dto;
 
+import java.util.List;
+
 import org.badminton.domain.common.enums.MatchType;
 import org.badminton.domain.match.model.entity.DoublesMatchEntity;
 import org.badminton.domain.match.model.entity.SinglesMatchEntity;
 
-public record MatchResponse(
+public record MatchDetailsResponse(
 	Long matchId,
 	Long leagueId,
 	MatchType matchType,
 	SinglesMatchResponse singlesMatch,
-	DoublesMatchResponse doublesMatch
+	DoublesMatchResponse doublesMatch,
+	List<SinglesSetResponse> singlesSets,
+	List<DoublesSetResponse> doublesSets
 ) {
 
-	public static MatchResponse entityToSinglesMatchResponse(SinglesMatchEntity singlesMatch) {
-		return new MatchResponse(singlesMatch.getSinglesMatchId(), singlesMatch.getLeague().getLeagueId(),
+	public static MatchDetailsResponse entityToSinglesMatchDetailsResponse(SinglesMatchEntity singlesMatch) {
+
+		return new MatchDetailsResponse(singlesMatch.getSinglesMatchId(), singlesMatch.getLeague().getLeagueId(),
 			MatchType.SINGLES,
 			new SinglesMatchResponse(
 				singlesMatch.getLeagueParticipant1().getLeagueParticipantId(),
 				singlesMatch.getLeagueParticipant2().getLeagueParticipantId()),
+			null,
+			SinglesSetResponse.entityToSinglesSetResponse(singlesMatch.getSinglesSets()),
 			null
 		);
 	}
 
-	public static MatchResponse entityToDoublesMatchResponse(DoublesMatchEntity doublesMatch) {
-		return new MatchResponse(
+	public static MatchDetailsResponse entityToDoublesMatchDetailsResponse(DoublesMatchEntity doublesMatch) {
+
+		return new MatchDetailsResponse(
 			doublesMatch.getDoublesMatchId(),
 			doublesMatch.getLeague().getLeagueId(),
 			MatchType.DOUBLES,
@@ -31,7 +39,11 @@ public record MatchResponse(
 			new DoublesMatchResponse(
 				TeamResponse.teamToTeamResponse(doublesMatch.getTeam1()),
 				TeamResponse.teamToTeamResponse(doublesMatch.getTeam2())
-			)
+			),
+			null,
+			DoublesSetResponse.entityToDoublesSetResponse(doublesMatch.getDoublesSets())
 		);
+
 	}
+
 }

@@ -1,7 +1,7 @@
 package org.badminton.domain.common.enums;
 
 public enum MatchType {
-	SINGLE("단식 게임"),
+	SINGLES("단식 게임"),
 	DOUBLES("복식 게임");
 
 	private final String description;

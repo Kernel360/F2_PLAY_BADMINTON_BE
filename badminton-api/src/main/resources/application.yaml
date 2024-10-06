@@ -17,7 +17,7 @@ spring:
     basename: messages
   sql:
     init:
-      mode: never
+      mode: always
   datasource:
     url: ${DATABASE_URL}
     username: ${DATABASE_USER_NAME}
