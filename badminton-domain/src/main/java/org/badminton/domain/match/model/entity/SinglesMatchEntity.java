@@ -1,5 +1,7 @@
 package org.badminton.domain.match.model.entity;
 
+import static org.badminton.domain.common.consts.Constants.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,8 +69,8 @@ public class SinglesMatchEntity extends BaseTimeEntity {
 		this.leagueParticipant1 = leagueParticipant1;
 		this.leagueParticipant2 = leagueParticipant2;
 		this.singlesSets = new ArrayList<>();
-		this.player1WinSetCount = 0;
-		this.player2WinSetCount = 0;
+		this.player1WinSetCount = INITIAL_WIN_SET_COUNT;
+		this.player2WinSetCount = INITIAL_WIN_SET_COUNT;
 	}
 
 	public void addSet(SinglesSetEntity singlesSet) {
@@ -77,7 +79,7 @@ public class SinglesMatchEntity extends BaseTimeEntity {
 
 	public void player1WinSet() {
 		this.player1WinSetCount++;
-		if (player1WinSetCount == 2) {
+		if (player1WinSetCount == SETS_REQUIRED_TO_WIN_MATCH) {
 			this.player1MatchResult = MatchResult.WIN;
 			this.player2MatchResult = MatchResult.LOSE;
 			this.matchStatus = MatchStatus.COMPLETED;
@@ -86,7 +88,7 @@ public class SinglesMatchEntity extends BaseTimeEntity {
 
 	public void player2WinSet() {
 		this.player2WinSetCount++;
-		if (player2WinSetCount == 2) {
+		if (player2WinSetCount == SETS_REQUIRED_TO_WIN_MATCH) {
 			this.player2MatchResult = MatchResult.WIN;
 			this.player1MatchResult = MatchResult.LOSE;
 			this.matchStatus = MatchStatus.COMPLETED;
