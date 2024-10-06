@@ -6,9 +6,11 @@ import org.badminton.api.club.model.dto.ClubDeleteResponse;
 import org.badminton.api.club.model.dto.ClubReadResponse;
 import org.badminton.api.club.model.dto.ClubUpdateRequest;
 import org.badminton.api.club.model.dto.ClubUpdateResponse;
-import org.badminton.api.club.validator.ClubValidator;
+import org.badminton.api.common.exception.club.ClubNameDuplicateException;
+import org.badminton.api.common.exception.club.ClubNotExistException;
 import org.badminton.api.common.exception.member.MemberNotExistException;
 import org.badminton.domain.club.entity.ClubEntity;
+import org.badminton.domain.club.repository.ClubRepository;
 import org.badminton.domain.clubmember.entity.ClubMemberEntity;
 import org.badminton.domain.clubmember.entity.ClubMemberRole;
 import org.badminton.domain.clubmember.repository.ClubMemberRepository;
@@ -27,13 +29,13 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class ClubService {
 
-	private final ClubValidator clubValidator;
+	private final ClubRepository clubRepository;
 	private final ClubMemberRepository clubMemberRepository;
 	private final MemberRepository memberRepository;
 	private final LeagueRecordRepository leagueRecordRepository;
 
 	public ClubReadResponse readClub(Long clubId) {
-		ClubEntity club = clubValidator.provideClubByClubId(clubId);
+		ClubEntity club = findClubByClubId(clubId);
 		return ClubReadResponse.clubEntityToClubReadResponse(club);
 	}
 
@@ -44,11 +46,11 @@ public class ClubService {
 		MemberEntity memberEntity = memberRepository.findByMemberId(memberId)
 			.orElseThrow(() -> new MemberNotExistException(memberId));
 
-		clubValidator.checkIfClubNameDuplicate(clubAddRequest.clubName());
+		checkClubNameDuplicate(clubAddRequest.clubName());
 		ClubEntity club = new ClubEntity(clubAddRequest.clubName(), clubAddRequest.clubDescription(),
 			clubAddRequest.clubImage());
 
-		clubValidator.saveClub(club);
+		clubRepository.save(club);
 
 		ClubMemberEntity clubMemberEntity = createClubMember(club, memberEntity);
 
@@ -70,18 +72,30 @@ public class ClubService {
 
 	@Transactional
 	public ClubUpdateResponse updateClub(ClubUpdateRequest clubUpdateRequest, Long clubId) {
-		ClubEntity club = clubValidator.provideClubByClubId(clubId);
+		ClubEntity club = findClubByClubId(clubId);
 		club.updateClub(clubUpdateRequest.clubName(), clubUpdateRequest.clubDescription(),
 			clubUpdateRequest.clubDescription());
-		clubValidator.saveClub(club);
+		clubRepository.save(club);
 		return ClubUpdateResponse.clubEntityToClubUpdateResponse(club);
 	}
 
 	@Transactional
 	public ClubDeleteResponse deleteClub(Long clubId) {
-		ClubEntity club = clubValidator.provideClubByClubId(clubId);
+		ClubEntity club = findClubByClubId(clubId);
 		club.doWithdrawal();
 		return ClubDeleteResponse.clubEntityToClubDeleteResponse(club);
+	}
+
+	private void checkClubNameDuplicate(String clubName) {
+		clubRepository.findByClubNameAndIsClubDeletedFalse(clubName).ifPresent(club -> {
+			throw new ClubNameDuplicateException(clubName);
+		});
+	}
+
+	private ClubEntity findClubByClubId(Long clubId) {
+		return clubRepository.findByClubIdAndIsClubDeletedFalse(clubId)
+			.orElseThrow(
+				() -> new ClubNotExistException(clubId));
 	}
 
 }
