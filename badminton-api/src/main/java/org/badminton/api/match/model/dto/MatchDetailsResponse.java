@@ -19,7 +19,7 @@ public record MatchDetailsResponse(
 	public static MatchDetailsResponse entityToSinglesMatchDetailsResponse(SinglesMatchEntity singlesMatch) {
 
 		return new MatchDetailsResponse(singlesMatch.getSinglesMatchId(), singlesMatch.getLeague().getLeagueId(),
-			MatchType.SINGLE,
+			MatchType.SINGLES,
 			new SinglesMatchResponse(
 				singlesMatch.getLeagueParticipant1().getLeagueParticipantId(),
 				singlesMatch.getLeagueParticipant2().getLeagueParticipantId()),

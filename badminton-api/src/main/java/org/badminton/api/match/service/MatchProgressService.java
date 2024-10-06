@@ -1,11 +1,7 @@
 package org.badminton.api.match.service;
 
-import java.util.List;
-
-import org.badminton.api.common.error.ErrorCode;
-import org.badminton.api.common.exception.BadmintonException;
+import lombok.RequiredArgsConstructor;
 import org.badminton.api.common.exception.league.LeagueNotExistException;
-import org.badminton.api.common.exception.match.MatchNotExistException;
 import org.badminton.api.match.DoublesMatchProgress;
 import org.badminton.api.match.MatchProgress;
 import org.badminton.api.match.SinglesMatchProgress;
@@ -15,15 +11,11 @@ import org.badminton.api.match.model.dto.SetScoreUpdateResponse;
 import org.badminton.domain.common.enums.MatchType;
 import org.badminton.domain.league.entity.LeagueEntity;
 import org.badminton.domain.league.repository.LeagueRepository;
-import org.badminton.domain.match.model.entity.DoublesMatchEntity;
-import org.badminton.domain.match.model.entity.DoublesSetEntity;
-import org.badminton.domain.match.model.entity.SinglesMatchEntity;
-import org.badminton.domain.match.model.entity.SinglesSetEntity;
 import org.badminton.domain.match.repository.DoublesMatchRepository;
 import org.badminton.domain.match.repository.SinglesMatchRepository;
 import org.springframework.stereotype.Service;
 
-import lombok.RequiredArgsConstructor;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -40,10 +32,9 @@ public class MatchProgressService {
 
         // 경기 타입을 구분하여 처리하기 위해
         MatchType matchType = league.getMatchType();
-
-        MatchProgress matchProgress = createMatchProgress(matchType);
-        return matchProgress.initDetails(leagueId);
-    }
+		MatchProgress matchProgress = createMatchProgress(matchType);
+		return matchProgress.initDetails(clubId);
+	}
 
     // 한 세트가 끝나고 세트 결과를 저장
     public SetScoreUpdateResponse updateSetScore(Long clubId, Long leagueId, Long matchId, int setIndex,
@@ -52,18 +43,16 @@ public class MatchProgressService {
         LeagueEntity league = leagueRepository.findById(leagueId)
                 .orElseThrow(() -> new LeagueNotExistException(clubId, leagueId));
 
-        // 경기 타입을 구분하여 처리하기 위해
-        MatchType matchType = league.getMatchType();
+		// 경기 타입을 구분하여 처리하기 위해
+		MatchType matchType = league.getMatchType();
+		MatchProgress matchProgress = createMatchProgress(matchType);
+		return matchProgress.updateSetScore(matchId, setIndex, setScoreUpdateRequest);
+	}
 
-        MatchProgress matchProgress = createMatchProgress(matchType);
-        return matchProgress.updateSetScore(matchId, setIndex, setScoreUpdateRequest);
-    }
-
-    private MatchProgress createMatchProgress(MatchType matchType) {
-        return switch (matchType) {
-            case SINGLE -> new SinglesMatchProgress(singlesMatchRepository);
-            case DOUBLES -> new DoublesMatchProgress(doublesMatchRepository);
-        };
-    }
-
+	private MatchProgress createMatchProgress(MatchType matchType) {
+		return switch (matchType) {
+			case SINGLES -> new SinglesMatchProgress(singlesMatchRepository);
+			case DOUBLES -> new DoublesMatchProgress(doublesMatchRepository);
+		};
+	}
 }

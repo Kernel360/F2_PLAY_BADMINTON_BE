@@ -12,7 +12,7 @@ public record SetScoreUpdateResponse(
 
 	public static SetScoreUpdateResponse singlesSetentityToSetScoreUpdateResponse(SinglesSetEntity singlesSetEntity) {
 		return new SetScoreUpdateResponse(singlesSetEntity.getPlayer1Score(), singlesSetEntity.getPlayer2Score(),
-			MatchType.SINGLE);
+			MatchType.SINGLES);
 	}
 
 	public static SetScoreUpdateResponse doublesSetEntityToSetScoreUpdateResponse(DoublesSetEntity doublesSetEntity) {

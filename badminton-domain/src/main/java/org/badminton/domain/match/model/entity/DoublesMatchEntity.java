@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.badminton.domain.common.BaseTimeEntity;
+import org.badminton.domain.common.enums.MatchResult;
 import org.badminton.domain.league.entity.LeagueEntity;
 import org.badminton.domain.match.model.vo.Team;
 
@@ -11,6 +12,8 @@ import jakarta.persistence.AssociationOverride;
 import jakarta.persistence.AssociationOverrides;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -51,6 +54,15 @@ public class DoublesMatchEntity extends BaseTimeEntity {
 	})
 	private Team team2;
 
+	private int team1WinSetCount;
+	private int team2WinSetCount;
+
+	@Enumerated(EnumType.STRING)
+	private MatchResult team1MatchResult = MatchResult.NONE;
+
+	@Enumerated(EnumType.STRING)
+	private MatchResult team2MatchResult = MatchResult.NONE;
+
 	@OneToMany(mappedBy = "doublesMatch")
 	List<DoublesSetEntity> doublesSets;
 
@@ -59,9 +71,27 @@ public class DoublesMatchEntity extends BaseTimeEntity {
 		this.team1 = team1;
 		this.team2 = team2;
 		this.doublesSets = new ArrayList<>();
+		this.team1WinSetCount = 0;
+		this.team2WinSetCount = 0;
 	}
 
 	public void addSet(DoublesSetEntity doublesSet) {
 		this.doublesSets.add(doublesSet);
+	}
+
+	public void team1WinSet() {
+		this.team1WinSetCount++;
+		if (team1WinSetCount == 2) {
+			this.team1MatchResult = MatchResult.WIN;
+			this.team2MatchResult = MatchResult.LOSE;
+		}
+	}
+
+	public void player2WinSet() {
+		this.team2WinSetCount++;
+		if (team2WinSetCount == 2) {
+			this.team2MatchResult = MatchResult.WIN;
+			this.team1MatchResult = MatchResult.LOSE;
+		}
 	}
 }

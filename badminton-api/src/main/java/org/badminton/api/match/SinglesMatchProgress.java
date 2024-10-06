@@ -29,7 +29,7 @@ public class SinglesMatchProgress implements MatchProgress {
     public SetScoreUpdateResponse updateSetScore(Long matchId, int setIndex, SetScoreUpdateRequest setScoreUpdateRequest) {
         // SinglesSetEntity를 꺼내온다.
         SinglesMatchEntity singlesMatch = singlesMatchRepository.findById(matchId).orElseThrow(
-                () -> new MatchNotExistException(matchId, MatchType.SINGLE)
+                () -> new MatchNotExistException(matchId, MatchType.SINGLES)
         );
 
         // 세트 스코어를 기록한다.
