@@ -1,14 +1,20 @@
 package org.badminton.api.match;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.badminton.api.common.exception.match.MatchDuplicateException;
 import org.badminton.api.common.exception.match.MatchNotExistException;
 import org.badminton.api.match.model.dto.MatchDetailsResponse;
+import org.badminton.api.match.model.dto.MatchResponse;
 import org.badminton.api.match.model.dto.SetScoreUpdateRequest;
 import org.badminton.api.match.model.dto.SetScoreUpdateResponse;
 import org.badminton.domain.common.enums.MatchType;
+import org.badminton.domain.league.entity.LeagueEntity;
+import org.badminton.domain.league.entity.LeagueParticipantEntity;
 import org.badminton.domain.match.model.entity.DoublesMatchEntity;
 import org.badminton.domain.match.model.entity.DoublesSetEntity;
+import org.badminton.domain.match.model.vo.Team;
 import org.badminton.domain.match.repository.DoublesMatchRepository;
 
 import lombok.AllArgsConstructor;
@@ -16,6 +22,15 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class DoublesMatchProgress implements MatchProgress {
 	private DoublesMatchRepository doublesMatchRepository;
+
+	@Override
+	public List<MatchResponse> makeMatches(LeagueEntity league, List<LeagueParticipantEntity> leagueParticipantList) {
+		List<DoublesMatchEntity> doublesMatches = makeDoublesMatches(leagueParticipantList, league);
+		return doublesMatches
+			.stream()
+			.map(MatchResponse::entityToDoublesMatchResponse)
+			.toList();
+	}
 
 	@Override
 	public List<MatchDetailsResponse> initDetails(Long leagueId) {
@@ -38,9 +53,25 @@ public class DoublesMatchProgress implements MatchProgress {
 		doublesMatch.getDoublesSets()
 			.get(setIndex - 1)
 			.saveSetScore(setScoreUpdateRequest.score1(), setScoreUpdateRequest.score2());
+
+		// 승자에 따라 Match에 이긴 세트수를 업데이트해준다. 만약 2번을 모두 이긴 팀이 있다면 해당 Match는 종료된다.
+		if (setScoreUpdateRequest.score1() > setScoreUpdateRequest.score2()) {
+			doublesMatch.team1WinSet();
+		} else
+			doublesMatch.team2WinSet();
+
 		doublesMatchRepository.save(doublesMatch);
 		return SetScoreUpdateResponse.doublesSetEntityToSetScoreUpdateResponse(
 			doublesMatch.getDoublesSets().get(setIndex - 1));
+	}
+
+	@Override
+	public void checkDuplicateMatchInLeague(Long leagueId, MatchType matchType) {
+		doublesMatchRepository.findByLeague_LeagueId(leagueId).ifPresent(
+			doublesMatch -> {
+				throw new MatchDuplicateException(matchType, doublesMatch.getDoublesMatchId());
+			}
+		);
 	}
 
 	private DoublesMatchEntity initDoublesMatch(DoublesMatchEntity doublesMatch) {
@@ -56,5 +87,19 @@ public class DoublesMatchProgress implements MatchProgress {
 
 		doublesMatchRepository.save(doublesMatch);
 		return doublesMatch;
+	}
+
+	private List<DoublesMatchEntity> makeDoublesMatches(List<LeagueParticipantEntity> leagueParticipantList,
+		LeagueEntity league) {
+
+		List<DoublesMatchEntity> doublesMatches = new ArrayList<>();
+		for (int i = 0; i < leagueParticipantList.size() - 3; i += 4) {
+			Team team1 = new Team(leagueParticipantList.get(i), leagueParticipantList.get(i + 1));
+			Team team2 = new Team(leagueParticipantList.get(i + 2), leagueParticipantList.get(i + 3));
+			DoublesMatchEntity doublesMatch = new DoublesMatchEntity(league, team1, team2);
+			doublesMatches.add(doublesMatch);
+			doublesMatchRepository.save(doublesMatch);
+		}
+		return doublesMatches;
 	}
 }

@@ -1,21 +1,20 @@
 package org.badminton.api.match.service;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.badminton.api.common.error.ErrorCode;
-import org.badminton.api.common.exception.BadmintonException;
 import org.badminton.api.common.exception.league.InvalidPlayerCountException;
-import org.badminton.api.common.exception.match.MatchDuplicateException;
+import org.badminton.api.common.exception.league.LeagueNotExistException;
+import org.badminton.api.match.DoublesMatchProgress;
+import org.badminton.api.match.MatchProgress;
+import org.badminton.api.match.SinglesMatchProgress;
+import org.badminton.api.match.model.dto.MatchDetailsResponse;
 import org.badminton.api.match.model.dto.MatchResponse;
 import org.badminton.domain.common.enums.MatchType;
 import org.badminton.domain.league.entity.LeagueEntity;
 import org.badminton.domain.league.entity.LeagueParticipantEntity;
 import org.badminton.domain.league.repository.LeagueParticipantRepository;
-import org.badminton.domain.match.model.entity.DoublesMatchEntity;
-import org.badminton.domain.match.model.entity.SinglesMatchEntity;
-import org.badminton.domain.match.model.vo.Team;
+import org.badminton.domain.league.repository.LeagueRepository;
 import org.badminton.domain.match.repository.DoublesMatchRepository;
 import org.badminton.domain.match.repository.SinglesMatchRepository;
 import org.springframework.stereotype.Service;
@@ -29,81 +28,46 @@ public class MatchCreateService {
 	private final DoublesMatchRepository doublesMatchRepository;
 	private final SinglesMatchRepository singlesMatchRepository;
 	private final LeagueParticipantRepository leagueParticipantRepository;
+	private final LeagueRepository leagueRepository;
 
 	public List<MatchResponse> makeMatches(Long leagueId) {
 		List<LeagueParticipantEntity> leagueParticipantList =
 			leagueParticipantRepository.findAllByLeague_LeagueId(leagueId);
 
 		LeagueEntity league = leagueParticipantList.get(0).getLeague();
-		MatchType matchType = league.getMatchType();
-
 		checkPlayerCount(league, leagueParticipantList.size());
-		checkDuplicateMatchInLeague(leagueId, matchType);
+
+		MatchType matchType = league.getMatchType();
+		MatchProgress matchProgress = createMatchProgress(matchType);
+
+		matchProgress.checkDuplicateMatchInLeague(leagueId, matchType);
 
 		Collections.shuffle(leagueParticipantList);
-		if (matchType == MatchType.SINGLES) {
-			List<SinglesMatchEntity> singlesMatches = makeSinglesMatches(leagueParticipantList, league);
-			return singlesMatches
-				.stream()
-				.map(MatchResponse::entityToSinglesMatchResponse)
-				.toList();
-		} else if (matchType == MatchType.DOUBLES) {
-			List<DoublesMatchEntity> doublesMatches = makeDoublesMatches(leagueParticipantList, league);
-			return doublesMatches
-				.stream()
-				.map(MatchResponse::entityToDoublesMatchResponse)
-				.toList();
-		} else
-			throw new BadmintonException(ErrorCode.BAD_REQUEST, "존재하지 않는 경기 타입입니다.");
+
+		return matchProgress.makeMatches(league, leagueParticipantList);
 	}
 
-	private List<SinglesMatchEntity> makeSinglesMatches(List<LeagueParticipantEntity> leagueParticipantList,
-		LeagueEntity league) {
+	public List<MatchDetailsResponse> initMatchDetails(Long clubId, Long leagueId) {
+		// 경기 일정이 있는지 확인하고 꺼내기
+		LeagueEntity league = leagueRepository.findById(leagueId)
+			.orElseThrow(() -> new LeagueNotExistException(clubId, leagueId));
 
-		List<SinglesMatchEntity> singlesMatches = new ArrayList<>();
-		for (int i = 0; i < leagueParticipantList.size() - 1; i += 2) {
-			SinglesMatchEntity singlesMatch = new SinglesMatchEntity(
-				league, leagueParticipantList.get(i), leagueParticipantList.get(i + 1)
-			);
-			singlesMatches.add(singlesMatch);
-			singlesMatchRepository.save(singlesMatch);
-		}
-		return singlesMatches;
-	}
+		MatchType matchType = league.getMatchType();
 
-	private List<DoublesMatchEntity> makeDoublesMatches(List<LeagueParticipantEntity> leagueParticipantList,
-		LeagueEntity league) {
-
-		List<DoublesMatchEntity> doublesMatches = new ArrayList<>();
-		for (int i = 0; i < leagueParticipantList.size() - 3; i += 4) {
-			Team team1 = new Team(leagueParticipantList.get(i), leagueParticipantList.get(i + 1));
-			Team team2 = new Team(leagueParticipantList.get(i + 2), leagueParticipantList.get(i + 3));
-			DoublesMatchEntity doublesMatch = new DoublesMatchEntity(league, team1, team2);
-			doublesMatches.add(doublesMatch);
-			doublesMatchRepository.save(doublesMatch);
-		}
-		return doublesMatches;
-	}
-
-	private void checkDuplicateMatchInLeague(Long leagueId, MatchType matchType) {
-		if (matchType == MatchType.SINGLES) {
-			singlesMatchRepository.findByLeague_LeagueId(leagueId).ifPresent(
-				singlesMatch -> {
-					throw new MatchDuplicateException(matchType, singlesMatch.getSinglesMatchId());
-				}
-			);
-		} else if (matchType == MatchType.DOUBLES) {
-			doublesMatchRepository.findByLeague_LeagueId(leagueId).ifPresent(
-				doublesMatch -> {
-					throw new MatchDuplicateException(matchType, doublesMatch.getDoublesMatchId());
-				}
-			);
-		}
+		MatchProgress matchProgress = createMatchProgress(matchType);
+		return matchProgress.initDetails(clubId);
 	}
 
 	private void checkPlayerCount(LeagueEntity league, int playerCount) {
 		if (league.getPlayerCount() != playerCount) {
 			throw new InvalidPlayerCountException(league.getLeagueId(), playerCount);
 		}
+	}
+
+	private MatchProgress createMatchProgress(MatchType matchType) {
+		return switch (matchType) {
+			case SINGLES -> new SinglesMatchProgress(singlesMatchRepository);
+			case DOUBLES -> new DoublesMatchProgress(doublesMatchRepository);
+		};
 	}
 }
