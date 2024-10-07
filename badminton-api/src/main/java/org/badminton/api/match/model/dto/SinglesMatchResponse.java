@@ -5,8 +5,6 @@ public record SinglesMatchResponse(
 	String participant1Image,
 	String participant2Name,
 	String participant2Image
-	// Long participant1Id,
-	// Long participant2Id
 ) {
 
 }
