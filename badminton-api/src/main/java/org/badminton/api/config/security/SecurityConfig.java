@@ -1,7 +1,6 @@
 package org.badminton.api.config.security;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Optional;
 
 import org.badminton.api.clubmember.service.ClubMemberService;
@@ -44,6 +43,12 @@ public class SecurityConfig {
 	private final ClubPermissionEvaluator clubPermissionEvaluator;
 	@Value("${custom.server.front}")
 	private String frontUrl;
+
+	@Value("${custom.server.https}")
+	private String serverUrl;
+
+	@Value("${custom.server.local}")
+	private String serverLocal;
 
 	// OAuth2 로그인 및 공개 경로: 인증 없이 접근 가능하며, OAuth2 로그인 설정 포함
 	@Bean
@@ -150,7 +155,7 @@ public class SecurityConfig {
 	private void corsConfigurer(CorsConfigurer<HttpSecurity> corsConfigurer) {
 		corsConfigurer.configurationSource(request -> {
 			CorsConfiguration configuration = new CorsConfiguration();
-			configuration.setAllowedOrigins(Collections.singletonList(frontUrl));
+			configuration.setAllowedOrigins(Arrays.asList(frontUrl, serverUrl, serverLocal));
 			configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 			configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
 			configuration.setAllowCredentials(true);
