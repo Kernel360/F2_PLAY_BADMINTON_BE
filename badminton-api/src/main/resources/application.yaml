@@ -90,3 +90,4 @@ custom:
     https: ${SERVER_URL}
     front: ${FRONT_URL}
     local: ${LOCAL_HOST}
+    domain: ${DOMAIN}
