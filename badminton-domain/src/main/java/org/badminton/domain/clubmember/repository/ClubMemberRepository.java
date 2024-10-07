@@ -7,7 +7,8 @@ import org.badminton.domain.clubmember.entity.ClubMemberEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ClubMemberRepository extends JpaRepository<ClubMemberEntity, Long> {
-	Optional<List<ClubMemberEntity>> findAllByClub_ClubId(Long clubId);
+
+	List<ClubMemberEntity> findAllByClub_ClubId(Long clubId);
 
 	Optional<ClubMemberEntity> findByMember_MemberId(Long memberId);
 

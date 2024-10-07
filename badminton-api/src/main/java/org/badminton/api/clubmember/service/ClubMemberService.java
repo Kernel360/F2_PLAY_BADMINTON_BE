@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.badminton.api.clubmember.model.dto.ClubMemberJoinResponse;
+import org.badminton.api.clubmember.model.dto.ClubMemberResponse;
 import org.badminton.api.common.exception.club.ClubNotExistException;
 import org.badminton.api.common.exception.clubmember.ClubMemberDuplicateException;
 import org.badminton.api.common.exception.member.MemberNotExistException;
@@ -60,4 +61,9 @@ public class ClubMemberService {
 		return clubMemberRepository.findAllByMember_MemberId(memberId);
 	}
 
+	public List<ClubMemberResponse> findAllClubMembers(Long clubId) {
+		return clubMemberRepository.findAllByClub_ClubId(clubId).stream()
+			.map(ClubMemberResponse::entityToClubMemberResponse)
+			.toList();
+	}
 }
