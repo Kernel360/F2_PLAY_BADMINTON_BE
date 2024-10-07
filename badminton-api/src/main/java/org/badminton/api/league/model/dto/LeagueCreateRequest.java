@@ -28,7 +28,7 @@ public record LeagueCreateRequest(
 	LeagueStatus leagueStatus,
 
 	@Pattern(regexp = "SINGLE|DOUBLES", message = "경기 방식 값이 올바르지 않습니다.")
-	@Schema(description = "경기 방식", example = "SINGLE")
+	@Schema(description = "경기 방식", example = "SINGLES")
 	MatchType matchType,
 
 	// TODO: 시간 예쁘게 만들기

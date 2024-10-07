@@ -6,7 +6,6 @@ import java.util.Optional;
 
 import org.badminton.api.clubmember.service.ClubMemberService;
 import org.badminton.api.filter.ClubMembershipFilter;
-import org.badminton.api.filter.ClubRoleAuthorizationFilter;
 import org.badminton.api.filter.JwtAuthenticationFilter;
 import org.badminton.api.member.jwt.JwtUtil;
 import org.badminton.api.member.oauth2.CustomSuccessHandler;
@@ -85,7 +84,7 @@ public class SecurityConfig {
 			.addFilterBefore(new JwtAuthenticationFilter(jwtUtil, clubMemberService),
 				UsernamePasswordAuthenticationFilter.class)
 			.addFilterAfter(new ClubMembershipFilter(clubMemberService), JwtAuthenticationFilter.class)
-			.addFilterAfter(new ClubRoleAuthorizationFilter(clubPermissionEvaluator), ClubMembershipFilter.class)
+			// .addFilterAfter(new ClubRoleAuthorizationFilter(clubPermissionEvaluator), ClubMembershipFilter.class)
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.authorizeHttpRequests(auth -> auth
 				.requestMatchers(HttpMethod.DELETE, "/v1/club/handle")
@@ -108,54 +107,6 @@ public class SecurityConfig {
 				.authenticated());
 		return http.build();
 	}
-
-	// // 클럽 멤버 권한이 필요한 경로
-	// @Bean
-	// public SecurityFilterChain clubMemberFilterChain(HttpSecurity http) throws Exception {
-	// 	http
-	// 		.securityMatcher("/v1/club/{clubId}/**")
-	// 		.csrf(AbstractHttpConfigurer::disable)
-	// 		.cors(this::corsConfigurer)
-	// 		.addFilterBefore(new JwtAuthenticationFilter(jwtUtil, clubMemberService),
-	// 			UsernamePasswordAuthenticationFilter.class)
-	// 		.addFilterAfter(new ClubMembershipFilter(clubMemberService), JwtAuthenticationFilter.class)
-	// 		.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-	// 		.authorizeHttpRequests(auth -> auth
-	// 			.requestMatchers(HttpMethod.GET, "/v1/club/{clubId}/**").authenticated()
-	// 			.anyRequest().access(hasClubRole("OWNER", "MANAGER", "USER")));
-	// 	return http.build();
-	// }
-	//
-	// @Bean
-	// public SecurityFilterChain clubRoleFilterChain(HttpSecurity http) throws Exception {
-	// 	http
-	// 		.securityMatcher("/v1/club/**", "/v1/club/{clubId}/league/**", "/v1/club/{clubId}/participation/**")
-	// 		.csrf(AbstractHttpConfigurer::disable)
-	// 		.cors(this::corsConfigurer)
-	// 		.addFilterBefore(new JwtAuthenticationFilter(jwtUtil, clubMemberService),
-	// 			UsernamePasswordAuthenticationFilter.class)
-	// 		.addFilterAfter(new ClubMembershipFilter(clubMemberService), JwtAuthenticationFilter.class)
-	// 		.addFilterAfter(new ClubRoleAuthorizationFilter(clubPermissionEvaluator), ClubMembershipFilter.class)
-	// 		.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-	// 		.authorizeHttpRequests(auth -> auth
-	// 			.requestMatchers(HttpMethod.DELETE, "/v1/club")
-	// 			.access(hasClubRole("OWNER"))
-	// 			.requestMatchers(HttpMethod.POST, "/v1/club/{clubId}/league")
-	// 			.access(hasClubRole("OWNER", "MANAGER"))
-	// 			.requestMatchers(HttpMethod.DELETE, "/v1/club/{clubId}/league/{leagueId}")
-	// 			.access(hasClubRole("OWNER", "MANAGER"))
-	// 			.requestMatchers(HttpMethod.PATCH, "/v1/club/{clubId}/league/{leagueId}")
-	// 			.access(hasClubRole("OWNER", "MANAGER"))
-	// 			.requestMatchers(HttpMethod.POST, "/v1/club/{clubId}/league/{leagueId}/participation")
-	// 			.access(hasClubRole("OWNER", "MANAGER", "USER"))
-	// 			.requestMatchers(HttpMethod.DELETE, "/v1/club/{clubId}/league/{leagueId}/participation")
-	// 			.access(hasClubRole("OWNER", "MANAGER", "USER"))
-	// 			.requestMatchers(HttpMethod.GET, "/v1/club/{clubId}/league/{leagueId}/participation")
-	// 			.access(hasClubRole("OWNER", "MANAGER", "USER"))
-	// 			.anyRequest()
-	// 			.authenticated());
-	// 	return http.build();
-	// }
 
 	private AuthorizationManager<RequestAuthorizationContext> hasClubRole(String... roles) {
 		return (authentication, context) -> {
