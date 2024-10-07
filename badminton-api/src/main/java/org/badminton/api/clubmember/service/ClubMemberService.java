@@ -61,6 +61,10 @@ public class ClubMemberService {
 		return clubMemberRepository.findAllByMember_MemberId(memberId);
 	}
 
+	public boolean isMemberOfClub(Long memberId, Long clubId) {
+		return clubMemberRepository.existsByMember_MemberIdAndClub_ClubId(memberId, clubId);
+	}
+
 	public List<ClubMemberResponse> findAllClubMembers(Long clubId) {
 		return clubMemberRepository.findAllByClub_ClubId(clubId).stream()
 			.map(ClubMemberResponse::entityToClubMemberResponse)
