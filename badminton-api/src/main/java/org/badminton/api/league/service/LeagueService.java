@@ -28,7 +28,8 @@ public class LeagueService {
 
 		// TODO: 개선 방법
 		LeagueEntity league = new LeagueEntity(leagueCreateRequest.leagueName(),
-			leagueCreateRequest.description(), leagueCreateRequest.leagueAt(), leagueCreateRequest.tierLimit(),
+			leagueCreateRequest.description(), leagueCreateRequest.leagueLocation(), leagueCreateRequest.leagueAt(),
+			leagueCreateRequest.tierLimit(),
 			leagueCreateRequest.closedAt(), leagueCreateRequest.leagueStatus(), leagueCreateRequest.playerCount(),
 			leagueCreateRequest.matchType(), leagueCreateRequest.matchingRequirement(), club);
 
@@ -47,7 +48,7 @@ public class LeagueService {
 
 		// TODO: 개선 방법
 		league.updateLeague(leagueUpdateRequest.leagueName(),
-			leagueUpdateRequest.description(), leagueUpdateRequest.tierLimit(),
+			leagueUpdateRequest.description(), leagueUpdateRequest.leagueLocation(), leagueUpdateRequest.tierLimit(),
 			leagueUpdateRequest.leagueAt(), leagueUpdateRequest.closedAt(), leagueUpdateRequest.leagueStatus(),
 			leagueUpdateRequest.playerCount(),
 			leagueUpdateRequest.matchType(), leagueUpdateRequest.matchingRequirement());

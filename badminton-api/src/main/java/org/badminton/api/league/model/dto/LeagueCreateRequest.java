@@ -18,6 +18,9 @@ public record LeagueCreateRequest(
 	@Schema(description = "경기 설명", example = "이 경기는 지역 예선 경기입니다.")
 	String description,
 
+	@Schema(description = "경기 장소", example = "성동구 서울숲 체육센터")
+	String leagueLocation,
+
 	//TODO: DTO 마다 검증 로직을 두지 않는 방법 알아보기
 	@Pattern(regexp = "GOLD|SILVER|BRONZE", message = "리그 상태 값이 올바르지 않습니다.")
 	@Schema(description = "최소 티어", example = "GOLD")
