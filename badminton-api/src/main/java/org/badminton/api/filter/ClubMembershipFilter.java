@@ -31,18 +31,25 @@ public class ClubMembershipFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
-
 		String clubId = SecurityUtil.extractClubIdFromRequest(request);
-		if (clubId != null) {
-			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-			if (auth != null && auth.getPrincipal() instanceof CustomOAuth2Member) {
-				CustomOAuth2Member member = (CustomOAuth2Member)auth.getPrincipal();
-				if (!clubMemberService.isMemberOfClub(member.getMemberId(), Long.valueOf(clubId))) {
-					response.sendError(HttpServletResponse.SC_FORBIDDEN, "You are not a member of this club");
-					return;
-				}
-			}
+
+		if (clubId != null && !isClubMember(clubId)) {
+			response.sendError(HttpServletResponse.SC_FORBIDDEN, "You are not a member of this club");
+			return;
 		}
+
 		filterChain.doFilter(request, response);
 	}
+
+	private boolean isClubMember(String clubId) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if (auth == null || !(auth.getPrincipal() instanceof CustomOAuth2Member)) {
+			return false;
+		}
+
+		CustomOAuth2Member member = (CustomOAuth2Member)auth.getPrincipal();
+		return clubMemberService.isMemberOfClub(member.getMemberId(), Long.valueOf(clubId));
+	}
 }
+
+
