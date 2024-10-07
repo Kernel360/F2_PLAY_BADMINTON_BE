@@ -1,6 +1,7 @@
 package org.badminton.api.club.service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.badminton.api.club.model.dto.ClubCreateRequest;
@@ -9,14 +10,17 @@ import org.badminton.api.club.model.dto.ClubDeleteResponse;
 import org.badminton.api.club.model.dto.ClubReadResponse;
 import org.badminton.api.club.model.dto.ClubUpdateRequest;
 import org.badminton.api.club.model.dto.ClubUpdateResponse;
+import org.badminton.api.club.model.dto.ClubsReadResponse;
 import org.badminton.api.common.exception.club.ClubNameDuplicateException;
 import org.badminton.api.common.exception.club.ClubNotExistException;
 import org.badminton.api.common.exception.member.MemberNotExistException;
+import org.badminton.api.leaguerecord.service.LeagueRecordService;
 import org.badminton.domain.club.entity.ClubEntity;
 import org.badminton.domain.club.repository.ClubRepository;
 import org.badminton.domain.clubmember.entity.ClubMemberEntity;
 import org.badminton.domain.clubmember.entity.ClubMemberRole;
 import org.badminton.domain.clubmember.repository.ClubMemberRepository;
+import org.badminton.domain.common.enums.MemberTier;
 import org.badminton.domain.leaguerecord.entity.LeagueRecordEntity;
 import org.badminton.domain.leaguerecord.repository.LeagueRecordRepository;
 import org.badminton.domain.member.entity.MemberEntity;
@@ -36,16 +40,21 @@ public class ClubService {
 	private final ClubMemberRepository clubMemberRepository;
 	private final MemberRepository memberRepository;
 	private final LeagueRecordRepository leagueRecordRepository;
+	private final LeagueRecordService leagueRecordService;
 
 	public ClubReadResponse readClub(Long clubId) {
 		ClubEntity club = findClubByClubId(clubId);
 		return ClubReadResponse.clubEntityToClubReadResponse(club);
 	}
 
-	public List<ClubReadResponse> readAllClub() {
+	public List<ClubsReadResponse> readAllClub() {
 		List<ClubEntity> clubs = clubRepository.findAllByIsClubDeletedIsFalse();
+
 		return clubs.stream()
-			.map(ClubReadResponse::clubEntityToClubReadResponse)
+			.map(club -> {
+				Map<MemberTier, Long> tierCounts = leagueRecordService.getMemberCountByTierInClub(club.getClubId());
+				return ClubsReadResponse.clubEntityToClubsReadResponse(club, tierCounts);
+			})
 			.collect(Collectors.toList());
 	}
 

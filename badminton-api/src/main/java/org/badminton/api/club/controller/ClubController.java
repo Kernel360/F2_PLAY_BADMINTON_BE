@@ -8,6 +8,7 @@ import org.badminton.api.club.model.dto.ClubDeleteResponse;
 import org.badminton.api.club.model.dto.ClubReadResponse;
 import org.badminton.api.club.model.dto.ClubUpdateRequest;
 import org.badminton.api.club.model.dto.ClubUpdateResponse;
+import org.badminton.api.club.model.dto.ClubsReadResponse;
 import org.badminton.api.club.service.ClubService;
 import org.badminton.api.member.oauth2.dto.CustomOAuth2Member;
 import org.springframework.http.ResponseEntity;
@@ -76,7 +77,7 @@ public class ClubController {
 	@Operation(summary = "전체 동호회 조회",
 		description = "전체 동호회를 조회합니다.",
 		tags = {"Club"})
-	public ResponseEntity<List<ClubReadResponse>> readAllClub() {
+	public ResponseEntity<List<ClubsReadResponse>> readAllClub() {
 
 		return ResponseEntity.ok(clubService.readAllClub());
 	}
