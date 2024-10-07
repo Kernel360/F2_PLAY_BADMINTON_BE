@@ -30,6 +30,16 @@ public class MatchCreateService {
 	private final LeagueParticipantRepository leagueParticipantRepository;
 	private final LeagueRepository leagueRepository;
 
+	public List<MatchResponse> getMatches(Long clubId, Long leagueId) {
+
+		LeagueEntity league = checkIfLeaguePresent(clubId, leagueId);
+		MatchType matchType = league.getMatchType();
+
+		MatchProgress matchProgress = createMatchProgress(matchType);
+
+		return matchProgress.getMatches(leagueId);
+	}
+
 	public List<MatchResponse> makeMatches(Long leagueId) {
 		// TODO: 만약 리스트에 아무것도 없으면!?
 		List<LeagueParticipantEntity> leagueParticipantList =
@@ -50,9 +60,7 @@ public class MatchCreateService {
 
 	public List<MatchDetailsResponse> initMatchDetails(Long clubId, Long leagueId) {
 		// 경기 일정이 있는지 확인하고 꺼내기
-		LeagueEntity league = leagueRepository.findById(leagueId)
-			.orElseThrow(() -> new LeagueNotExistException(clubId, leagueId));
-
+		LeagueEntity league = checkIfLeaguePresent(clubId, leagueId);
 		MatchType matchType = league.getMatchType();
 
 		MatchProgress matchProgress = createMatchProgress(matchType);
@@ -70,5 +78,10 @@ public class MatchCreateService {
 			case SINGLES -> new SinglesMatchProgress(singlesMatchRepository);
 			case DOUBLES -> new DoublesMatchProgress(doublesMatchRepository);
 		};
+	}
+
+	private LeagueEntity checkIfLeaguePresent(Long clubId, Long leagueId) {
+		return leagueRepository.findById(leagueId)
+			.orElseThrow(() -> new LeagueNotExistException(clubId, leagueId));
 	}
 }

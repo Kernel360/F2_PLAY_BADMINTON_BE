@@ -26,6 +26,13 @@ public class SinglesMatchProgress implements MatchProgress {
 	private SinglesMatchRepository singlesMatchRepository;
 
 	@Override
+	public List<MatchResponse> getMatches(Long leagueId) {
+		return singlesMatchRepository.findAllByLeague_LeagueId(leagueId).stream()
+			.map(MatchResponse::entityToSinglesMatchResponse)
+			.toList();
+	}
+
+	@Override
 	public List<MatchResponse> makeMatches(LeagueEntity league, List<LeagueParticipantEntity> leagueParticipantList) {
 		List<SinglesMatchEntity> singlesMatches = makeSinglesMatches(leagueParticipantList, league);
 		return singlesMatches

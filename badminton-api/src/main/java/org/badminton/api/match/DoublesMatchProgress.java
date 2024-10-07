@@ -24,6 +24,13 @@ public class DoublesMatchProgress implements MatchProgress {
 	private DoublesMatchRepository doublesMatchRepository;
 
 	@Override
+	public List<MatchResponse> getMatches(Long leagueId) {
+		return doublesMatchRepository.findAllByLeague_LeagueId(leagueId).stream()
+			.map(MatchResponse::entityToDoublesMatchResponse)
+			.toList();
+	}
+
+	@Override
 	public List<MatchResponse> makeMatches(LeagueEntity league, List<LeagueParticipantEntity> leagueParticipantList) {
 		List<DoublesMatchEntity> doublesMatches = makeDoublesMatches(leagueParticipantList, league);
 		return doublesMatches
