@@ -88,4 +88,5 @@ cloud:
 custom:
   server:
     https: ${SERVER_URL}
+    front: ${FRONT_URL}
     local: ${LOCAL_HOST}
