@@ -47,7 +47,7 @@ public class SecurityConfig {
 	public SecurityFilterChain publicFilterChain(HttpSecurity http) throws Exception {
 		http
 			.securityMatcher("/", "/oauth2/**", "/login/**", "/error",
-				"/swagger-ui/**", "/v1/club/all", "/v1/club")
+				"/swagger-ui/**", "/v1/clubs")
 			.csrf(AbstractHttpConfigurer::disable)
 			.cors(this::corsConfigurer)
 			.authorizeHttpRequests(auth -> auth
@@ -64,7 +64,7 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain jwtOnlyFilterChain(HttpSecurity http) throws Exception {
 		http
-			.securityMatcher("/v1/member/**", "/v1/clubMember", "/v1/club/create")
+			.securityMatcher("/v1/member/**", "/v1/clubMember")
 			.csrf(AbstractHttpConfigurer::disable)
 			.cors(this::corsConfigurer)
 			.addFilterBefore(new JwtAuthenticationFilter(jwtUtil, clubMemberService),
@@ -78,19 +78,18 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain clubFilterChain(HttpSecurity http) throws Exception {
 		http
-			.securityMatcher("/v1/club/{clubId}/league/**", "/v1/club/handle")
+			.securityMatcher("/v1/club/**")
 			.csrf(AbstractHttpConfigurer::disable)
 			.cors(this::corsConfigurer)
 			.addFilterBefore(new JwtAuthenticationFilter(jwtUtil, clubMemberService),
 				UsernamePasswordAuthenticationFilter.class)
 			.addFilterAfter(new ClubMembershipFilter(clubMemberService), JwtAuthenticationFilter.class)
-			// .addFilterAfter(new ClubRoleAuthorizationFilter(clubPermissionEvaluator), ClubMembershipFilter.class)
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.authorizeHttpRequests(auth -> auth
-				.requestMatchers(HttpMethod.DELETE, "/v1/club/handle")
-				.access(hasClubRole("OWNER"))
-				.requestMatchers(HttpMethod.PATCH, "/v1/club/handle")
-				.access(hasClubRole("OWNER", "MANAGER"))
+				.requestMatchers(HttpMethod.GET, "/v1/club").permitAll()
+				.requestMatchers(HttpMethod.POST, "/v1/club").authenticated()
+				.requestMatchers(HttpMethod.DELETE, "/v1/club").access(hasClubRole("OWNER"))
+				.requestMatchers(HttpMethod.PATCH, "/v1/club").access(hasClubRole("OWNER", "MANAGER"))
 				.requestMatchers(HttpMethod.GET, "/v1/club/{clubId}/**")
 				.authenticated()
 				.requestMatchers(HttpMethod.POST, "/v1/club/{clubId}/league")

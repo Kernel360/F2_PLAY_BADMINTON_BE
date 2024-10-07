@@ -28,12 +28,12 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/v1/club")
+@RequestMapping("/v1")
 public class ClubController {
 
 	private final ClubService clubService;
 
-	@GetMapping
+	@GetMapping("/club")
 	@Operation(summary = "동호회 조회",
 		description = "동호회를 조회합니다.",
 		tags = {"Club"})
@@ -42,7 +42,7 @@ public class ClubController {
 		return ResponseEntity.ok(clubReadResponse);
 	}
 
-	@PostMapping("/create")
+	@PostMapping("/club")
 	@Operation(summary = "동호회 추가",
 		description = "동호회를 추가합니다.",
 		tags = {"Club"})
@@ -54,7 +54,7 @@ public class ClubController {
 		return ResponseEntity.ok(clubAddResponse);
 	}
 
-	@PatchMapping("/handle")
+	@PatchMapping("/club")
 	@Operation(summary = "동호회 수정",
 		description = "동호회를 수정합니다.",
 		tags = {"Club"})
@@ -64,7 +64,7 @@ public class ClubController {
 		return ResponseEntity.ok(clubUpdateResponse);
 	}
 
-	@DeleteMapping("/handle")
+	@DeleteMapping("/club")
 	@Operation(summary = "동호회 삭제",
 		description = "동호회를 삭제합니다.",
 		tags = {"Club"})
@@ -73,7 +73,7 @@ public class ClubController {
 		return ResponseEntity.ok(clubDeleteResponse);
 	}
 
-	@GetMapping("/all")
+	@GetMapping("/clubs")
 	@Operation(summary = "전체 동호회 조회",
 		description = "전체 동호회를 조회합니다.",
 		tags = {"Club"})
