@@ -1,5 +1,7 @@
 package org.badminton.api.club.controller;
 
+import java.util.List;
+
 import org.badminton.api.club.model.dto.ClubCreateRequest;
 import org.badminton.api.club.model.dto.ClubCreateResponse;
 import org.badminton.api.club.model.dto.ClubDeleteResponse;
@@ -39,7 +41,7 @@ public class ClubController {
 		return ResponseEntity.ok(clubReadResponse);
 	}
 
-	@PostMapping
+	@PostMapping("/create")
 	@Operation(summary = "동호회 추가",
 		description = "동호회를 추가합니다.",
 		tags = {"Club"})
@@ -51,7 +53,7 @@ public class ClubController {
 		return ResponseEntity.ok(clubAddResponse);
 	}
 
-	@PatchMapping
+	@PatchMapping("/handle")
 	@Operation(summary = "동호회 수정",
 		description = "동호회를 수정합니다.",
 		tags = {"Club"})
@@ -61,13 +63,22 @@ public class ClubController {
 		return ResponseEntity.ok(clubUpdateResponse);
 	}
 
-	@DeleteMapping
+	@DeleteMapping("/handle")
 	@Operation(summary = "동호회 삭제",
 		description = "동호회를 삭제합니다.",
 		tags = {"Club"})
 	public ResponseEntity<ClubDeleteResponse> deleteClub(@RequestParam Long clubId) {
 		ClubDeleteResponse clubDeleteResponse = clubService.deleteClub(clubId);
 		return ResponseEntity.ok(clubDeleteResponse);
+	}
+
+	@GetMapping("/all")
+	@Operation(summary = "전체 동호회 조회",
+		description = "전체 동호회를 조회합니다.",
+		tags = {"Club"})
+	public ResponseEntity<List<ClubReadResponse>> readAllClub() {
+
+		return ResponseEntity.ok(clubService.readAllClub());
 	}
 
 }

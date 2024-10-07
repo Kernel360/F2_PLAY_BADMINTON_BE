@@ -1,5 +1,8 @@
 package org.badminton.api.club.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.badminton.api.club.model.dto.ClubCreateRequest;
 import org.badminton.api.club.model.dto.ClubCreateResponse;
 import org.badminton.api.club.model.dto.ClubDeleteResponse;
@@ -37,6 +40,13 @@ public class ClubService {
 	public ClubReadResponse readClub(Long clubId) {
 		ClubEntity club = findClubByClubId(clubId);
 		return ClubReadResponse.clubEntityToClubReadResponse(club);
+	}
+
+	public List<ClubReadResponse> readAllClub() {
+		List<ClubEntity> clubs = clubRepository.findAllByIsClubDeletedIsFalse();
+		return clubs.stream()
+			.map(ClubReadResponse::clubEntityToClubReadResponse)
+			.collect(Collectors.toList());
 	}
 
 	// TODO: clubAddRequest에 이미지가 없으면 default 이미지를 넣어주도록 구현

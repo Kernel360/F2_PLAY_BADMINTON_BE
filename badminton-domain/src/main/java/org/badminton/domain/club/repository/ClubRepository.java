@@ -1,5 +1,6 @@
 package org.badminton.domain.club.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.badminton.domain.club.entity.ClubEntity;
@@ -10,4 +11,7 @@ public interface ClubRepository extends JpaRepository<ClubEntity, Long> {
 	Optional<ClubEntity> findByClubNameAndIsClubDeletedFalse(String clubName);
 
 	Optional<ClubEntity> findByClubIdAndIsClubDeletedFalse(Long clubId);
+
+	List<ClubEntity> findAllByIsClubDeletedIsFalse();
 }
+

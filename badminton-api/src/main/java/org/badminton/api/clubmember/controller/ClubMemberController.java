@@ -5,7 +5,7 @@ import org.badminton.api.clubmember.service.ClubMemberService;
 import org.badminton.api.member.oauth2.dto.CustomOAuth2Member;
 import org.badminton.domain.member.repository.MemberRepository;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,10 +26,9 @@ public class ClubMemberController {
 		description = "동호회에 가입을 신청합니다.",
 		tags = {"ClubMember"})
 	@PostMapping
-	public ResponseEntity<ClubMemberJoinResponse> joinClub(Authentication authentication,
+	public ResponseEntity<ClubMemberJoinResponse> joinClub(@AuthenticationPrincipal CustomOAuth2Member member,
 		@Parameter(description = "동호회 ID", example = "1") @RequestParam Long clubId) {
 
-		CustomOAuth2Member member = (CustomOAuth2Member)authentication.getPrincipal();
 		Long memberId = member.getMemberId();
 
 		ClubMemberJoinResponse clubMemberJoinResponse = clubMemberService.joinClub(memberId, clubId);
@@ -38,4 +37,3 @@ public class ClubMemberController {
 
 	}
 }
-
