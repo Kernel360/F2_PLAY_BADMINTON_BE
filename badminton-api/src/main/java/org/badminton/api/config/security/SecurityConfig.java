@@ -9,6 +9,7 @@ import org.badminton.api.member.jwt.JwtFilter;
 import org.badminton.api.member.jwt.JwtUtil;
 import org.badminton.api.member.oauth2.CustomSuccessHandler;
 import org.badminton.api.member.service.CustomOAuth2MemberService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -41,6 +42,9 @@ public class SecurityConfig {
 	private final ClubMemberService clubMemberService;
 	private final ClubPermissionEvaluator clubPermissionEvaluator;
 
+	@Value("${custom.server.front}")
+	private String frontUrl;
+
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http
@@ -48,7 +52,7 @@ public class SecurityConfig {
 				@Override
 				public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
 					CorsConfiguration configuration = new CorsConfiguration();
-					configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
+					configuration.setAllowedOrigins(Collections.singletonList(frontUrl));
 					configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 					configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
 					configuration.setAllowCredentials(true);
