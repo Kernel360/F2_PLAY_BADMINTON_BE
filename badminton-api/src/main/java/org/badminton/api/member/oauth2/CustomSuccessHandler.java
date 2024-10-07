@@ -1,11 +1,11 @@
 package org.badminton.api.member.oauth2;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.badminton.api.common.exception.member.MemberNotExistException;
 import org.badminton.api.member.jwt.JwtUtil;
 import org.badminton.api.member.oauth2.dto.CustomOAuth2Member;
-import org.badminton.domain.clubmember.entity.ClubMemberEntity;
 import org.badminton.domain.clubmember.repository.ClubMemberRepository;
 import org.badminton.domain.member.entity.MemberEntity;
 import org.badminton.domain.member.repository.MemberRepository;
@@ -45,15 +45,17 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
 		String registrationId = customUserDetails.getRegistrationId();
 
-		ClubMemberEntity clubMemberEntity = clubMemberRepository.findByMember_MemberId(memberId)
-			.orElse(null);
-		if (clubMemberEntity != null) {
-			String clubRole = clubMemberEntity.getRole().name();
-			customUserDetails.updateClubRole(clubRole);
-		}
+		// ClubMemberEntity clubMemberEntity = clubMemberRepository.findByMember_MemberId(memberId)
+		// 	.orElse(null);
+		// String clubRole = (clubMemberEntity != null) ? clubMemberEntity.getRole().name() : "ROLE_NOUSER";
+		//
+		// customUserDetails.updateClubRole(clubRole);
 
-		String roles = String.join(",", customUserDetails.getAuthorities().stream()
-			.map(GrantedAuthority::getAuthority).toList());
+		List<String> roles = customUserDetails.getAuthorities().stream()
+			.map(GrantedAuthority::getAuthority)
+			.toList();
+
+		log.info("roles: {}", roles);
 
 		String accessToken = jwtUtil.createAccessToken(String.valueOf(memberId), roles, registrationId);
 

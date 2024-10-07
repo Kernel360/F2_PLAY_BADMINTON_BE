@@ -1,5 +1,8 @@
 package org.badminton.api.clubmember.service;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.badminton.api.clubmember.model.dto.ClubMemberJoinResponse;
 import org.badminton.api.common.exception.club.ClubNotExistException;
 import org.badminton.api.common.exception.clubmember.ClubMemberDuplicateException;
@@ -9,6 +12,8 @@ import org.badminton.domain.club.repository.ClubRepository;
 import org.badminton.domain.clubmember.entity.ClubMemberEntity;
 import org.badminton.domain.clubmember.entity.ClubMemberRole;
 import org.badminton.domain.clubmember.repository.ClubMemberRepository;
+import org.badminton.domain.leaguerecord.entity.LeagueRecordEntity;
+import org.badminton.domain.leaguerecord.repository.LeagueRecordRepository;
 import org.badminton.domain.member.entity.MemberEntity;
 import org.badminton.domain.member.repository.MemberRepository;
 import org.springframework.stereotype.Service;
@@ -22,6 +27,7 @@ public class ClubMemberService {
 	private final ClubMemberRepository clubMemberRepository;
 	private final ClubRepository clubRepository;
 	private final MemberRepository memberRepository;
+	private final LeagueRecordRepository leagueRecordRepository;
 
 	public ClubMemberJoinResponse joinClub(Long memberId, Long clubId) {
 		ClubEntity clubEntity = clubRepository.findByClubIdAndIsClubDeletedFalse(clubId)
@@ -37,9 +43,21 @@ public class ClubMemberService {
 		ClubMemberEntity clubMemberEntity = new ClubMemberEntity(clubEntity, memberEntity, ClubMemberRole.ROLE_USER);
 
 		clubMemberRepository.save(clubMemberEntity);
+
+		LeagueRecordEntity leagueRecord = new LeagueRecordEntity(clubMemberEntity);
+		leagueRecordRepository.save(leagueRecord);
+
 		return ClubMemberJoinResponse.clubMemberEntityToClubMemberJoinResponse(
 			clubMemberEntity);
 
+	}
+
+	public Optional<ClubMemberEntity> findClubMemberByMemberId(String memberId) {
+		return clubMemberRepository.findByMember_MemberId(Long.valueOf(memberId));
+	}
+
+	public List<ClubMemberEntity> findAllClubMembersByMemberId(Long memberId) {
+		return clubMemberRepository.findAllByMember_MemberId(memberId);
 	}
 
 }

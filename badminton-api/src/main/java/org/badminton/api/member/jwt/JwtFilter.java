@@ -1,9 +1,13 @@
 package org.badminton.api.member.jwt;
 
 import java.io.IOException;
+import java.util.List;
 
+import org.badminton.api.clubmember.service.ClubMemberService;
 import org.badminton.api.member.model.dto.MemberResponse;
 import org.badminton.api.member.oauth2.dto.CustomOAuth2Member;
+import org.badminton.domain.clubmember.entity.ClubMemberEntity;
+import org.badminton.domain.member.entity.MemberAuthorization;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 public class JwtFilter extends OncePerRequestFilter {
 
 	private final JwtUtil jwtUtil;
+	private final ClubMemberService clubMemberService;
 
 	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) {
@@ -33,32 +38,29 @@ public class JwtFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
 
-		String authHeader = request.getHeader("Authorization");
-		if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-			filterChain.doFilter(request, response);
-			return;
+		String token = jwtUtil.extractAccessTokenFromCookie(request);
+
+		if (token != null && jwtUtil.validateToken(token)) {
+			String memberId = jwtUtil.getMemberId(token);
+			List<ClubMemberEntity> clubMemberEntities = clubMemberService.findAllClubMembersByMemberId(
+				Long.valueOf(memberId));
+
+			MemberResponse memberResponse = new MemberResponse(Long.valueOf(memberId),
+				MemberAuthorization.AUTHORIZATION_USER.toString());
+			CustomOAuth2Member customOAuth2Member = new CustomOAuth2Member(memberResponse,
+				jwtUtil.getRegistrationId(token));
+
+			for (ClubMemberEntity clubMember : clubMemberEntities) {
+				customOAuth2Member.addClubRole(clubMember.getClub().getClubId(), clubMember.getRole().name());
+			}
+
+			Authentication authToken = new UsernamePasswordAuthenticationToken(customOAuth2Member, null,
+				customOAuth2Member.getAuthorities());
+
+			SecurityContextHolder.getContext().setAuthentication(authToken);
 		}
-
-		String token = authHeader.substring(7);
-
-		if (!jwtUtil.validateToken(token)) {
-			log.info("Invalid token");
-			filterChain.doFilter(request, response);
-			return;
-		}
-
-		String memberId = jwtUtil.getMemberId(token);
-		String roles = jwtUtil.getRoles(token);
-
-		MemberResponse memberResponse = new MemberResponse(Long.valueOf(memberId), roles);
-		CustomOAuth2Member customOAuth2Member = new CustomOAuth2Member(memberResponse, null);
-
-		Authentication authToken = new UsernamePasswordAuthenticationToken(customOAuth2Member, null,
-			customOAuth2Member.getAuthorities());
-
-		SecurityContextHolder.getContext().setAuthentication(authToken);
 
 		filterChain.doFilter(request, response);
-
 	}
 }
+
