@@ -3,6 +3,7 @@ package org.badminton.api.member.service;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 import java.util.Optional;
 
 import org.badminton.api.clubmember.model.dto.ClubMemberInfoResponse;
@@ -16,6 +17,8 @@ import org.badminton.api.member.oauth2.dto.CustomOAuth2Member;
 import org.badminton.api.member.validator.MemberValidator;
 import org.badminton.domain.clubmember.entity.ClubMemberEntity;
 import org.badminton.domain.clubmember.repository.ClubMemberRepository;
+import org.badminton.domain.leaguerecord.entity.LeagueRecordEntity;
+import org.badminton.domain.leaguerecord.repository.LeagueRecordRepository;
 import org.badminton.domain.member.entity.MemberEntity;
 import org.badminton.domain.member.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,6 +42,7 @@ public class MemberService {
 	private final MemberValidator memberValidator;
 	private final MemberRepository memberRepository;
 	private final ClubMemberRepository clubMemberRepository;
+	private final LeagueRecordRepository leagueRecordRepository;
 
 	@Value("${spring.security.oauth2.revoke-url.naver}")
 	private String naverRevokeUrl;
@@ -60,8 +64,13 @@ public class MemberService {
 		Optional<ClubMemberEntity> clubMemberEntity = clubMemberRepository.findByMember_MemberId(memberId);
 
 		return clubMemberEntity
-			.map(clubMember -> (MemberDetailResponse)ClubMemberInfoResponse.entityToClubMemberInfoResponse(memberEntity,
-				clubMember))
+			.map(clubMember -> {
+				LeagueRecordEntity leagueRecordEntity = leagueRecordRepository.findByClubMember(clubMember)
+					.orElse(new LeagueRecordEntity(clubMember));
+
+				return (MemberDetailResponse)ClubMemberInfoResponse.entityToClubMemberInfoResponse(memberEntity,
+					clubMember, leagueRecordEntity);
+			})
 			.orElseGet(() -> (MemberDetailResponse)MemberInfoResponse.entityToMemberInfoResponse(memberEntity));
 	}
 
@@ -128,7 +137,7 @@ public class MemberService {
 		String refreshToken = jwtUtil.extractRefreshTokenFromCookie(request);
 		if (refreshToken != null && jwtUtil.validateToken(refreshToken)) {
 			String memberId = jwtUtil.getMemberId(refreshToken);
-			String roles = jwtUtil.getRoles(refreshToken);
+			List<String> roles = jwtUtil.getRoles(refreshToken);
 			String registrationId = jwtUtil.getRegistrationId(refreshToken);
 
 			String newAccessToken = jwtUtil.createAccessToken(memberId, roles, registrationId);

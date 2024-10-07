@@ -1,7 +1,9 @@
 package org.badminton.api.member.jwt;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -30,10 +32,10 @@ public class JwtUtil {
 			Jwts.SIG.HS256.key().build().getAlgorithm()); // 비밀 키 생성
 	}
 
-	public String createAccessToken(String memberId, String roles, String registrationId) {
+	public String createAccessToken(String memberId, List<String> roles, String registrationId) {
 		return Jwts.builder()
 			.claim("memberId", memberId)
-			.claim("roles", roles)
+			.claim("roles", String.join(",", roles)) // List<String>을 String으로 변환하여 JWT에 추가
 			.claim("registrationId", registrationId)
 			.issuedAt(new Date(System.currentTimeMillis())) // 토큰 발행 시각 설정
 			.expiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRY)) // 만료 시각 설정 (현재 시각 + expiredMs)
@@ -41,10 +43,10 @@ public class JwtUtil {
 			.compact(); // Jwt 를 문자열로 변환
 	}
 
-	public String createRefreshToken(String memberId, String roles, String registrationId) {
+	public String createRefreshToken(String memberId, List<String> roles, String registrationId) {
 		return Jwts.builder()
 			.claim("memberId", memberId)
-			.claim("roles", roles)
+			.claim("roles", String.join(",", roles)) // List<String>을 String으로 변환하여 JWT에 추가
 			.claim("registrationId", registrationId)
 			.expiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRY))
 			.signWith(secretKey)
@@ -85,8 +87,9 @@ public class JwtUtil {
 		return getDetail(token, "registrationId");
 	}
 
-	public String getRoles(String token) {
-		return getDetail(token, "roles");
+	public List<String> getRoles(String token) {
+		String rolesString = getDetail(token, "roles");
+		return (rolesString != null) ? List.of(rolesString.split(",")) : Collections.emptyList(); // 문자열을 List로 변환
 	}
 
 	public String getDetail(String token, String details) {
@@ -111,6 +114,18 @@ public class JwtUtil {
 		if (cookies != null) {
 			for (Cookie cookie : cookies) {
 				if ("refresh_token".equals(cookie.getName())) {
+					return cookie.getValue();
+				}
+			}
+		}
+		return null;
+	}
+
+	public String extractAccessTokenFromCookie(HttpServletRequest request) {
+		Cookie[] cookies = request.getCookies();
+		if (cookies != null) {
+			for (Cookie cookie : cookies) {
+				if ("access_token".equals(cookie.getName())) {
 					return cookie.getValue();
 				}
 			}
