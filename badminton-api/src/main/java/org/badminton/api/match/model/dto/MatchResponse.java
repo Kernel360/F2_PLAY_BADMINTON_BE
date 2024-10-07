@@ -16,8 +16,11 @@ public record MatchResponse(
 		return new MatchResponse(singlesMatch.getSinglesMatchId(), singlesMatch.getLeague().getLeagueId(),
 			MatchType.SINGLES,
 			new SinglesMatchResponse(
-				singlesMatch.getLeagueParticipant1().getLeagueParticipantId(),
-				singlesMatch.getLeagueParticipant2().getLeagueParticipantId()),
+				singlesMatch.getLeagueParticipant1().getMember().getName(),
+				singlesMatch.getLeagueParticipant1().getMember().getProfileImage(),
+				singlesMatch.getLeagueParticipant2().getMember().getName(),
+				singlesMatch.getLeagueParticipant2().getMember().getProfileImage()
+			),
 			null
 		);
 	}
