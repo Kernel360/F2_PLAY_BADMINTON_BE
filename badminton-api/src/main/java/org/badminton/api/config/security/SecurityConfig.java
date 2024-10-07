@@ -10,6 +10,7 @@ import org.badminton.api.filter.JwtAuthenticationFilter;
 import org.badminton.api.member.jwt.JwtUtil;
 import org.badminton.api.member.oauth2.CustomSuccessHandler;
 import org.badminton.api.member.service.CustomOAuth2MemberService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -41,6 +42,8 @@ public class SecurityConfig {
 	private final JwtUtil jwtUtil;
 	private final ClubMemberService clubMemberService;
 	private final ClubPermissionEvaluator clubPermissionEvaluator;
+	@Value("${custom.server.front}")
+	private String frontUrl;
 
 	// OAuth2 로그인 및 공개 경로: 인증 없이 접근 가능하며, OAuth2 로그인 설정 포함
 	@Bean
@@ -147,7 +150,7 @@ public class SecurityConfig {
 	private void corsConfigurer(CorsConfigurer<HttpSecurity> corsConfigurer) {
 		corsConfigurer.configurationSource(request -> {
 			CorsConfiguration configuration = new CorsConfiguration();
-			configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
+			configuration.setAllowedOrigins(Collections.singletonList(frontUrl));
 			configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 			configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
 			configuration.setAllowCredentials(true);
