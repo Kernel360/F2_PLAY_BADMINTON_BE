@@ -22,6 +22,8 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @Slf4j
 public class JwtUtil {
+	@Value("${custom.server.domain}")
+	private String domain;
 
 	private final SecretKey secretKey;
 	private static final long ACCESS_TOKEN_EXPIRY = 60 * 60 * 1000L; // 1시간
@@ -60,10 +62,11 @@ public class JwtUtil {
 	public void setRefreshTokenCookie(HttpServletResponse response, String refreshToken) {
 		ResponseCookie cookie = ResponseCookie.from("refresh_token", refreshToken)
 			.httpOnly(true)
-			// .secure(true)
+			.secure(true)
 			.path("/")
 			.maxAge(REFRESH_TOKEN_EXPIRY) // 14일
-			.sameSite("Lax")
+			.sameSite("None")
+			.domain(domain)
 			.build();
 		response.addHeader("Set-Cookie", cookie.toString());
 	}
@@ -71,10 +74,11 @@ public class JwtUtil {
 	public void setAccessTokenCookie(HttpServletResponse response, String accessToken) {
 		ResponseCookie cookie = ResponseCookie.from("access_token", accessToken)
 			.httpOnly(true)
-			// .secure(true)
+			.secure(true)
 			.path("/")
 			.maxAge(ACCESS_TOKEN_EXPIRY) // 14일
-			.sameSite("Lax")
+			.sameSite("None")
+			.domain(domain)
 			.build();
 		response.addHeader("Set-Cookie", cookie.toString());
 	}
