@@ -1,5 +1,8 @@
 package org.badminton.api.config.swagger;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -11,9 +14,14 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.servers.Server;
 
 @Configuration
 public class SwaggerConfig {
+	@Value("${custom.server.https}")
+	private String https;
+	@Value("${custom.server.local}")
+	private String localhost;
 
 	@Bean
 	public OpenAPI openAPI() {
@@ -24,12 +32,20 @@ public class SwaggerConfig {
 			.in(SecurityScheme.In.HEADER)
 			.name("Authorization");
 
+		Server httpsServer = new Server();
+		httpsServer.setUrl(https);
+		httpsServer.setDescription("badminton https 서버입니다.");
+
+		Server localServer = new Server();
+		localServer.setUrl(localhost);
+		localServer.setDescription("local 서버입니다.");
+
 		SecurityRequirement securityRequirement = new SecurityRequirement().addList("Authorization");
 
 		return new OpenAPI()
 			.components(new Components().addSecuritySchemes("Authorization", securityScheme))
 			.addSecurityItem(securityRequirement)
-			.info(apiInfo());
+			.info(apiInfo()).servers(List.of(httpsServer, localServer));
 	}
 
 	private Info apiInfo() {
