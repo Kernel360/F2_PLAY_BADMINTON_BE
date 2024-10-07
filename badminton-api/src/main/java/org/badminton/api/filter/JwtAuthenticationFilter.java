@@ -1,9 +1,10 @@
-package org.badminton.api.member.jwt;
+package org.badminton.api.filter;
 
 import java.io.IOException;
 import java.util.List;
 
 import org.badminton.api.clubmember.service.ClubMemberService;
+import org.badminton.api.member.jwt.JwtUtil;
 import org.badminton.api.member.model.dto.MemberResponse;
 import org.badminton.api.member.oauth2.dto.CustomOAuth2Member;
 import org.badminton.domain.clubmember.entity.ClubMemberEntity;
@@ -22,23 +23,14 @@ import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
 @Slf4j
-public class JwtFilter extends OncePerRequestFilter {
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private final JwtUtil jwtUtil;
 	private final ClubMemberService clubMemberService;
 
 	@Override
-	protected boolean shouldNotFilter(HttpServletRequest request) {
-		String path = request.getRequestURI();
-		return path.equals("/") || path.equals("/groups") || path.startsWith("/oauth2") || path.startsWith("/login")
-			|| path.startsWith("/api") || path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs");
-
-	}
-
-	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
-
 		String token = jwtUtil.extractAccessTokenFromCookie(request);
 
 		if (token != null && jwtUtil.validateToken(token)) {
@@ -63,5 +55,13 @@ public class JwtFilter extends OncePerRequestFilter {
 
 		filterChain.doFilter(request, response);
 	}
-}
 
+	@Override
+	protected boolean shouldNotFilter(HttpServletRequest request) {
+		String path = request.getRequestURI();
+		return path.equals("/") || path.equals("/groups") || path.startsWith("/oauth2") || path.startsWith("/login")
+			|| path.startsWith("/api") || path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs")
+			|| path.equals("/v1/club/all");
+	}
+
+}

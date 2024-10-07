@@ -12,6 +12,7 @@ import org.badminton.domain.club.repository.ClubRepository;
 import org.badminton.domain.league.entity.LeagueEntity;
 import org.badminton.domain.league.repository.LeagueRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 
@@ -55,6 +56,7 @@ public class LeagueService {
 		return new LeagueStatusUpdateResponse(league);
 	}
 
+	@Transactional
 	public void deleteLeague(Long clubId, Long leagueId) {
 		LeagueEntity league = provideLeagueIfLeagueInClub(clubId, leagueId);
 		leagueRepository.deleteByLeagueId(league.getLeagueId());

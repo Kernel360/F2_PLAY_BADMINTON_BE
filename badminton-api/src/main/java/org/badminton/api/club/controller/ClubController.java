@@ -1,11 +1,14 @@
 package org.badminton.api.club.controller;
 
+import java.util.List;
+
 import org.badminton.api.club.model.dto.ClubCreateRequest;
 import org.badminton.api.club.model.dto.ClubCreateResponse;
 import org.badminton.api.club.model.dto.ClubDeleteResponse;
 import org.badminton.api.club.model.dto.ClubReadResponse;
 import org.badminton.api.club.model.dto.ClubUpdateRequest;
 import org.badminton.api.club.model.dto.ClubUpdateResponse;
+import org.badminton.api.club.model.dto.ClubsReadResponse;
 import org.badminton.api.club.service.ClubService;
 import org.badminton.api.member.oauth2.dto.CustomOAuth2Member;
 import org.springframework.http.ResponseEntity;
@@ -25,12 +28,12 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/v1/club")
+@RequestMapping("/v1")
 public class ClubController {
 
 	private final ClubService clubService;
 
-	@GetMapping
+	@GetMapping("/club")
 	@Operation(summary = "동호회 조회",
 		description = "동호회를 조회합니다.",
 		tags = {"Club"})
@@ -39,7 +42,7 @@ public class ClubController {
 		return ResponseEntity.ok(clubReadResponse);
 	}
 
-	@PostMapping
+	@PostMapping("/club")
 	@Operation(summary = "동호회 추가",
 		description = "동호회를 추가합니다.",
 		tags = {"Club"})
@@ -51,7 +54,7 @@ public class ClubController {
 		return ResponseEntity.ok(clubAddResponse);
 	}
 
-	@PatchMapping
+	@PatchMapping("/club")
 	@Operation(summary = "동호회 수정",
 		description = "동호회를 수정합니다.",
 		tags = {"Club"})
@@ -61,13 +64,22 @@ public class ClubController {
 		return ResponseEntity.ok(clubUpdateResponse);
 	}
 
-	@DeleteMapping
+	@DeleteMapping("/club")
 	@Operation(summary = "동호회 삭제",
 		description = "동호회를 삭제합니다.",
 		tags = {"Club"})
 	public ResponseEntity<ClubDeleteResponse> deleteClub(@RequestParam Long clubId) {
 		ClubDeleteResponse clubDeleteResponse = clubService.deleteClub(clubId);
 		return ResponseEntity.ok(clubDeleteResponse);
+	}
+
+	@GetMapping("/clubs")
+	@Operation(summary = "전체 동호회 조회",
+		description = "전체 동호회를 조회합니다.",
+		tags = {"Club"})
+	public ResponseEntity<List<ClubsReadResponse>> readAllClub() {
+
+		return ResponseEntity.ok(clubService.readAllClub());
 	}
 
 }
