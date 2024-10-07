@@ -34,11 +34,13 @@ public class JwtUtil {
 			Jwts.SIG.HS256.key().build().getAlgorithm()); // 비밀 키 생성
 	}
 
-	public String createAccessToken(String memberId, List<String> roles, String registrationId) {
+	public String createAccessToken(String memberId, List<String> roles, String registrationId, String oAuthAccessToken) {
+
 		return Jwts.builder()
 			.claim("memberId", memberId)
 			.claim("roles", String.join(",", roles)) // List<String>을 String으로 변환하여 JWT에 추가
 			.claim("registrationId", registrationId)
+			.claim("oAuthAccessToken", oAuthAccessToken)
 			.issuedAt(new Date(System.currentTimeMillis())) // 토큰 발행 시각 설정
 			.expiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRY)) // 만료 시각 설정 (현재 시각 + expiredMs)
 			.signWith(secretKey) // secretKey 로 서명
@@ -50,6 +52,7 @@ public class JwtUtil {
 			.claim("memberId", memberId)
 			.claim("roles", String.join(",", roles)) // List<String>을 String으로 변환하여 JWT에 추가
 			.claim("registrationId", registrationId)
+			// .claim("oAuthAccessToken", oAuthAccessToken)
 			.expiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRY))
 			.signWith(secretKey)
 			.compact();
@@ -61,24 +64,24 @@ public class JwtUtil {
 
 	public void setRefreshTokenCookie(HttpServletResponse response, String refreshToken) {
 		ResponseCookie cookie = ResponseCookie.from("refresh_token", refreshToken)
-			.httpOnly(true)
-			.secure(true)
+			// .httpOnly(true)
+			// .secure(true)
+			// .sameSite("None")
+			// .domain(domain)
 			.path("/")
 			.maxAge(REFRESH_TOKEN_EXPIRY) // 14일
-			.sameSite("None")
-			.domain(domain)
 			.build();
 		response.addHeader("Set-Cookie", cookie.toString());
 	}
 
 	public void setAccessTokenCookie(HttpServletResponse response, String accessToken) {
 		ResponseCookie cookie = ResponseCookie.from("access_token", accessToken)
-			.httpOnly(true)
-			.secure(true)
+			// .httpOnly(true)
+			// .secure(true)
+			// .sameSite("None")
+			// .domain(domain)
 			.path("/")
 			.maxAge(ACCESS_TOKEN_EXPIRY) // 14일
-			.sameSite("None")
-			.domain(domain)
 			.build();
 		response.addHeader("Set-Cookie", cookie.toString());
 	}
@@ -89,8 +92,12 @@ public class JwtUtil {
 
 	public String getRegistrationId(String token) {
 		return getDetail(token, "registrationId");
+
 	}
 
+	public String getOAuthToken(String token) {
+		return getDetail(token, "oAuthAccessToken");
+	}
 	public List<String> getRoles(String token) {
 		String rolesString = getDetail(token, "roles");
 		return (rolesString != null) ? List.of(rolesString.split(",")) : Collections.emptyList(); // 문자열을 List로 변환

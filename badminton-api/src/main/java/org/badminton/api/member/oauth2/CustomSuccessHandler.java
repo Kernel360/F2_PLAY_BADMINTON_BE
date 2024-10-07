@@ -49,19 +49,20 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
 		String registrationId = customUserDetails.getRegistrationId();
 
-		// ClubMemberEntity clubMemberEntity = clubMemberRepository.findByMember_MemberId(memberId)
-		// 	.orElse(null);
-		// String clubRole = (clubMemberEntity != null) ? clubMemberEntity.getRole().name() : "ROLE_NOUSER";
-		//
-		// customUserDetails.updateClubRole(clubRole);
+		String oAuthAccessToken = customUserDetails.getOAuthAccessToken();
 
 		List<String> roles = customUserDetails.getAuthorities().stream()
 			.map(GrantedAuthority::getAuthority)
 			.toList();
 
+
+
 		log.info("roles: {}", roles);
 
-		String accessToken = jwtUtil.createAccessToken(String.valueOf(memberId), roles, registrationId);
+		String accessToken = jwtUtil.createAccessToken(String.valueOf(memberId), roles, registrationId, oAuthAccessToken);
+
+		log.info("Extracted from JWT - registrationId: {}, oAuthAccessToken: {}",
+			jwtUtil.getRegistrationId(accessToken), jwtUtil.getOAuthToken(accessToken));
 
 		String refreshToken = jwtUtil.createRefreshToken(String.valueOf(memberId), roles, registrationId);
 

@@ -19,8 +19,15 @@ public class CustomOAuth2Member implements OAuth2User {
 
 	private final MemberResponse memberResponse;
 
+
 	@Getter
 	private final String registrationId;
+
+	private final String oAuthAccessToken;
+
+	public String getOAuthAccessToken() {
+		return this.oAuthAccessToken;
+	}
 
 	private Map<Long, String> clubRoles = new HashMap<>();
 
