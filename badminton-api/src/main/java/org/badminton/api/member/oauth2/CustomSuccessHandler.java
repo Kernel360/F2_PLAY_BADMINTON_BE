@@ -9,6 +9,7 @@ import org.badminton.api.member.oauth2.dto.CustomOAuth2Member;
 import org.badminton.domain.clubmember.repository.ClubMemberRepository;
 import org.badminton.domain.member.entity.MemberEntity;
 import org.badminton.domain.member.repository.MemberRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -28,6 +29,9 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 	private final JwtUtil jwtUtil;
 	private final MemberRepository memberRepository;
 	private final ClubMemberRepository clubMemberRepository;
+
+	@Value("${custom.server.front}")
+	private String frontUrl;
 
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -70,7 +74,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		jwtUtil.setAccessTokenCookie(response, accessToken);
 		jwtUtil.setRefreshTokenCookie(response, refreshToken);
 
-		response.sendRedirect("http://localhost:3000");
+		response.sendRedirect(frontUrl);
 
 	}
 
