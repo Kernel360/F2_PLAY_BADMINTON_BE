@@ -1,5 +1,7 @@
 package org.badminton.domain.match.model.entity;
 
+import static org.badminton.domain.common.consts.Constants.*;
+
 import org.badminton.domain.common.BaseTimeEntity;
 
 import jakarta.persistence.CascadeType;
@@ -35,8 +37,8 @@ public class SinglesSetEntity extends BaseTimeEntity {
 	public SinglesSetEntity(SinglesMatchEntity singlesMatch, int setIndex) {
 		this.singlesMatch = singlesMatch;
 		this.set_index = setIndex;
-		this.player1Score = 0;
-		this.player2Score = 0;
+		this.player1Score = INITIAL_SET_SCORE;
+		this.player2Score = INITIAL_SET_SCORE;
 	}
 
 	public void saveSetScore(int player1Score, int player2Score) {
