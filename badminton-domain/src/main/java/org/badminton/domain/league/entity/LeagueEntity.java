@@ -38,8 +38,10 @@ public class LeagueEntity extends BaseTimeEntity {
 
 	private String description;
 
+	private String leagueLocation;
+
 	@Enumerated(EnumType.STRING)
-	private MemberTier tierLimit;
+	private MemberTier requiredTier;
 
 	@Enumerated(EnumType.STRING)
 	private LeagueStatus leagueStatus;
@@ -60,13 +62,14 @@ public class LeagueEntity extends BaseTimeEntity {
 	@JoinColumn(name = "clubId")
 	private ClubEntity club;
 
-	public LeagueEntity(String leagueName, String description, LocalDateTime leagueAt,
+	public LeagueEntity(String leagueName, String description, String leagueLocation, LocalDateTime leagueAt,
 		MemberTier tierLimit, LocalDateTime closedAt, LeagueStatus leagueStatus, int playerCount,
 		MatchType matchType, String matchingRequirement, ClubEntity club) {
 		this.leagueName = leagueName;
 		this.description = description;
+		this.leagueLocation = leagueLocation;
 		this.leagueAt = leagueAt;
-		this.tierLimit = tierLimit;
+		this.requiredTier = tierLimit;
 		this.closedAt = closedAt;
 		this.leagueStatus = leagueStatus;
 		this.playerCount = playerCount;
@@ -75,13 +78,15 @@ public class LeagueEntity extends BaseTimeEntity {
 		this.club = club;
 	}
 
-	public void updateLeague(String leagueName, String description, MemberTier tierLimit, LocalDateTime leagueAt,
+	public void updateLeague(String leagueName, String description, String leagueLocation, MemberTier requiredTier,
+		LocalDateTime leagueAt,
 		LocalDateTime closedAt, LeagueStatus leagueStatus, int playerCount, MatchType matchType,
 		String matchingRequirement) {
 		this.leagueName = leagueName;
 		this.description = description;
+		this.leagueLocation = leagueLocation;
 		this.leagueAt = leagueAt;
-		this.tierLimit = tierLimit;
+		this.requiredTier = requiredTier;
 		this.closedAt = closedAt;
 		this.leagueStatus = leagueStatus;
 		this.playerCount = playerCount;
