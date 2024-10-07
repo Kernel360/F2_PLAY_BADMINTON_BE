@@ -85,3 +85,7 @@ cloud:
     stack:
       auto: false
 
+custom:
+  server:
+    https: ${SERVER_URL}
+    local: ${LOCAL_HOST}
