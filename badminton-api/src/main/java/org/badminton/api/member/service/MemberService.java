@@ -24,11 +24,13 @@ import org.badminton.domain.member.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -163,7 +165,8 @@ public class MemberService {
 		}
 	}
 
-	public void unLinkOAuth(String registrationId, String accessToken, HttpServletRequest request, HttpServletResponse response) {
+	public void unLinkOAuth(String registrationId, String accessToken, HttpServletRequest request,
+		HttpServletResponse response) {
 		log.info("Unlinking OAuth for provider: {}", registrationId);
 
 		try {
@@ -188,26 +191,57 @@ public class MemberService {
 	}
 
 	private void unlinkGoogle(String accessToken) {
-		String unlinkUrl = "https://accounts.google.com/o/oauth2/revoke?token=" + accessToken;
-		restTemplate.getForObject(unlinkUrl, String.class);
+		String unlinkUrl = UriComponentsBuilder.fromHttpUrl(googleRevokeUrl)
+			.queryParam("token", accessToken)
+			.build()
+			.toUriString();
+
+		ResponseEntity<String> response = restTemplate.getForEntity(unlinkUrl, String.class);
+			if (response.getStatusCode().is2xxSuccessful()) {
+				log.info("Successfully unlinked Google account");
+			} else {
+				log.error("Failed to unlink Google account. Status: {}, Body: {}",
+					response.getStatusCode(), response.getBody());
+			}
 	}
 
 	private void unlinkNaver(String accessToken) {
-		String unlinkUrl = "https://nid.naver.com/oauth2.0/token" +
-			"?grant_type=delete" +
-			"&client_id=" + naverClientId +
-			"&client_secret=" + naverClientSecret +
-			"&access_token=" + accessToken +
-			"&service_provider=NAVER";
-		restTemplate.getForObject(unlinkUrl, String.class);
+		String unlinkUrl = UriComponentsBuilder.fromHttpUrl(naverRevokeUrl)
+			.queryParam("grant_type", "delete")
+			.queryParam("client_id", naverClientId)
+			.queryParam("client_secret", naverClientSecret)
+			.queryParam("access_token", accessToken)
+			.queryParam("service_provider", "NAVER")
+			.build()
+			.toUriString();
+
+		log.info("Sending request to unlink Naver account: {}", unlinkUrl);
+
+			ResponseEntity<String> response = restTemplate.getForEntity(unlinkUrl, String.class);
+			if (response.getStatusCode().is2xxSuccessful()) {
+				log.info("Successfully unlinked Naver account");
+			} else {
+				log.error("Failed to unlink Naver account. Status: {}, Body: {}",
+					response.getStatusCode(), response.getBody());
+			}
+
 	}
 
 	private void unlinkKakao(String accessToken) {
-		String unlinkUrl = "https://kapi.kakao.com/v1/user/unlink";
+		String unlinkUrl = UriComponentsBuilder.fromHttpUrl(kakaoRevokeUrl)
+			.build()
+			.toUriString();
+
 		HttpHeaders headers = new HttpHeaders();
 		headers.setBearerAuth(accessToken);
 		HttpEntity<String> entity = new HttpEntity<>("", headers);
-		restTemplate.postForObject(unlinkUrl, entity, String.class);
-	}
 
+			ResponseEntity<String> response = restTemplate.exchange(unlinkUrl, HttpMethod.POST, entity, String.class);
+			if (response.getStatusCode().is2xxSuccessful()) {
+				log.info("Successfully unlinked Kakao account");
+			} else {
+				log.error("Failed to unlink Kakao account. Status: {}, Body: {}",
+					response.getStatusCode(), response.getBody());
+			}
+	}
 }
