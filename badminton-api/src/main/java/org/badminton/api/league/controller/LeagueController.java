@@ -1,5 +1,7 @@
 package org.badminton.api.league.controller;
 
+import java.util.List;
+
 import org.badminton.api.league.model.dto.LeagueCreateRequest;
 import org.badminton.api.league.model.dto.LeagueCreateResponse;
 import org.badminton.api.league.model.dto.LeagueReadResponse;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,6 +29,18 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/v1/clubs/{clubId}/leagues")
 public class LeagueController {
 	private final LeagueService leagueService;
+
+	@Operation(
+		summary = "년, 월별로 검색합니다.",
+		description = "검색조건에 따라 경기를 검색합니다.",
+		tags = {"league"}
+	)
+	@GetMapping()
+	public ResponseEntity<List<LeagueReadResponse>> leagueReadByCondition(@PathVariable Long clubId,
+		@RequestParam Integer year,
+		@RequestParam Integer month) {
+		return ResponseEntity.ok(leagueService.getLeagues(clubId, year, month));
+	}
 
 	@Operation(
 		summary = "경기를 생성합니다.",
