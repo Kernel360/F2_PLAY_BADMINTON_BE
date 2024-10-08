@@ -1,6 +1,13 @@
 package org.badminton.api.league.service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.badminton.api.common.exception.club.ClubNotExistException;
+import org.badminton.api.common.exception.league.InvalidDateTimeException;
 import org.badminton.api.common.exception.league.LeagueNotExistException;
 import org.badminton.api.league.model.dto.LeagueCreateRequest;
 import org.badminton.api.league.model.dto.LeagueCreateResponse;
@@ -13,12 +20,17 @@ import org.badminton.domain.league.entity.LeagueEntity;
 import org.badminton.domain.league.repository.LeagueRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
+@Validated
 @RequiredArgsConstructor
 public class LeagueService {
+	private static final Integer START_MONTH = 1;
+	private static final Integer JANUARY = 1;
+	private static final Integer DECEMBER = 12;
 	private final LeagueRepository leagueRepository;
 	private final ClubRepository clubRepository;
 
@@ -72,4 +84,33 @@ public class LeagueService {
 		return clubRepository.findByClubIdAndIsClubDeletedFalse(clubId).orElseThrow(
 			() -> new ClubNotExistException(clubId));
 	}
+
+	public List<LeagueReadResponse> getLeagues(Long clubId, Integer year, Integer month) {
+		if (!validateDate(year, month)) {
+			throw new InvalidDateTimeException(year, month);
+		}
+
+		LocalDateTime startOfMonth = LocalDateTime.of(LocalDate.of(year, month, START_MONTH), LocalTime.MIN);
+
+		LocalDateTime endOfMonth = LocalDateTime.of(
+			LocalDate.of(year, month, startOfMonth.toLocalDate().lengthOfMonth()), LocalTime.MAX);
+
+		List<LeagueEntity> result = leagueRepository.findAllByClubClubIdAndLeagueAtBetween(clubId, startOfMonth,
+			endOfMonth);
+
+		return result.stream()
+			.map(LeagueReadResponse::leagueReadEntityToResponse)
+			.collect(
+				Collectors.toList());
+	}
+
+	private boolean validateDate(Integer year, Integer month) {
+		int yearsPrevCompare = LocalDate.now().minusYears(20).getYear();
+		int yearsNextCompare = LocalDate.now().plusYears(20).getYear();
+		if (yearsPrevCompare > year || yearsNextCompare < year) {
+			return false;
+		}
+		return month >= JANUARY && month <= DECEMBER;
+	}
+
 }
