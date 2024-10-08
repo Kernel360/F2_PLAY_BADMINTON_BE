@@ -11,8 +11,11 @@ import org.badminton.api.club.model.dto.ClubUpdateResponse;
 import org.badminton.api.club.model.dto.ClubsReadResponse;
 import org.badminton.api.club.service.ClubService;
 import org.badminton.api.member.oauth2.dto.CustomOAuth2Member;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -26,7 +29,9 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/v1/clubs")
@@ -48,8 +53,8 @@ public class ClubController {
 		description = "동호회를 추가합니다.",
 		tags = {"Club"})
 	public ResponseEntity<ClubCreateResponse> createClub(@Valid @RequestBody ClubCreateRequest clubCreateRequest,
-		Authentication authentication) {
-		CustomOAuth2Member member = (CustomOAuth2Member)authentication.getPrincipal();
+		@AuthenticationPrincipal CustomOAuth2Member member) {
+
 		Long memberId = member.getMemberId();
 		ClubCreateResponse clubAddResponse = clubService.createClub(clubCreateRequest, memberId);
 		return ResponseEntity.ok(clubAddResponse);

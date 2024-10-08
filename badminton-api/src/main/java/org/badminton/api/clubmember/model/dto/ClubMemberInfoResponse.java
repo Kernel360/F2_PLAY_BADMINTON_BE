@@ -18,6 +18,7 @@ public record ClubMemberInfoResponse(
 	String email,
 	@Schema(description = "프로필 이미지", example = "https://lh3.googleusercontent.com/a/ACg8ocI_eGCDYzQe6vX3e4wCYpm6syVZ-UnGg9TZtm6S1U2K04PiAw=s96-c")
 	String profileImage,
+	Long clubId,
 	@Schema(description = "동호회 회원 ID", example = "1")
 	Long clubMemberId,
 	@Schema(description = "동호회 이름", example = "동호회이름")
@@ -41,6 +42,7 @@ public record ClubMemberInfoResponse(
 			memberEntity.getName(),
 			memberEntity.getEmail(),
 			memberEntity.getProfileImage(),
+			clubMemberEntity.getClub().getClubId(),
 			clubMemberEntity.getClubMemberId(),
 			clubMemberEntity.getClub().getClubName(),
 			clubMemberEntity.getRole(),

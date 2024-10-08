@@ -29,6 +29,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -103,6 +104,7 @@ public class SecurityConfig {
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.authorizeHttpRequests(auth -> auth
 				.requestMatchers(HttpMethod.GET, "/v1/clubs", "/v1/clubs/{clubId}").permitAll()
+				.requestMatchers(HttpMethod.POST, "/v1/clubs").permitAll()
 				.requestMatchers(HttpMethod.DELETE, "/v1/clubs/{clubId}").access(hasClubRole("OWNER"))
 				.requestMatchers(HttpMethod.PATCH, "/v1/clubs/{clubId}").access(hasClubRole("OWNER", "MANAGER"))
 				.requestMatchers(HttpMethod.GET, "/v1/clubs/{clubId}/**").authenticated()
