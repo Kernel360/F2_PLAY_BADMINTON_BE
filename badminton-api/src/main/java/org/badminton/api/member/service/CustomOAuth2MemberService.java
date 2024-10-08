@@ -38,6 +38,7 @@ public class CustomOAuth2MemberService extends DefaultOAuth2UserService {
 		String registrationId = userRequest.getClientRegistration().getRegistrationId();
 		log.info("registrationId: {}", registrationId);
 		OAuthResponse oAuth2Response = null;
+		String oAuthAccessToken = userRequest.getAccessToken().getTokenValue();
 
 		switch (registrationId) {
 			case "naver" -> oAuth2Response = new NaverResponse(oAuth2User.getAttributes());
@@ -47,7 +48,6 @@ public class CustomOAuth2MemberService extends DefaultOAuth2UserService {
 				return null;
 			}
 		}
-
 		String providerId = oAuth2Response.getProviderId();
 		MemberEntity memberEntity = memberRepository.findByProviderId(providerId).orElse(null);
 
@@ -66,7 +66,7 @@ public class CustomOAuth2MemberService extends DefaultOAuth2UserService {
 		memberRepository.save(memberEntity);
 
 		MemberResponse memberResponse = memberEntityToResponse(memberEntity);
-		return new CustomOAuth2Member(memberResponse, registrationId);
+		return new CustomOAuth2Member(memberResponse, registrationId, oAuthAccessToken);
 
 	}
 }

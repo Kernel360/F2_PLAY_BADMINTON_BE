@@ -63,9 +63,9 @@ spring:
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: id
       revoke-url:
-        naver: "https://nid.naver.com/oauth2.0/token?grant_type=delete&client_id={client_id}&client_secret={client_secret}&access_token={access_token}&service_provider=NAVER"
+        naver: "https://nid.naver.com/oauth2.0/token"
         kakao: "https://kapi.kakao.com/v1/user/unlink"
-        google: "https://accounts.google.com/o/oauth2/revoke?token={access_token}"
+        google: "https://accounts.google.com/o/oauth2/revoke"
   servlet:
     multipart:
       enabled: true

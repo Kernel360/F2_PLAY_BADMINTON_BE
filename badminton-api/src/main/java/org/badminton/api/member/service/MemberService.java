@@ -22,10 +22,15 @@ import org.badminton.domain.leaguerecord.repository.LeagueRecordRepository;
 import org.badminton.domain.member.entity.MemberEntity;
 import org.badminton.domain.member.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -43,6 +48,7 @@ public class MemberService {
 	private final MemberRepository memberRepository;
 	private final ClubMemberRepository clubMemberRepository;
 	private final LeagueRecordRepository leagueRecordRepository;
+	private final RestTemplate restTemplate;
 
 	@Value("${spring.security.oauth2.revoke-url.naver}")
 	private String naverRevokeUrl;
@@ -58,6 +64,8 @@ public class MemberService {
 
 	@Value("${NAVER_CLIENT_SECRET}")
 	private String naverClientSecret;
+
+	//TODO: 제네릭 사용해보기
 
 	public MemberDetailResponse getMemberInfo(Long memberId) {
 		MemberEntity memberEntity = memberValidator.findMemberByMemberId(memberId);
@@ -82,7 +90,6 @@ public class MemberService {
 	}
 
 	public void logoutMember(Long memberId, HttpServletResponse response) {
-		// unLinkOAuth(accessToken, null, null);
 		MemberEntity member = memberValidator.findMemberByMemberId(memberId);
 		member.updateRefreshToken(null);
 		memberRepository.save(member);
@@ -98,8 +105,9 @@ public class MemberService {
 		HttpServletRequest request,
 		HttpServletResponse response) {
 
-		// String accessToken = jwtUtil.extractAccessTokenFromHeader(request);
-		// unLinkOAuth(accessToken, request, response);
+		String accessToken = member.getOAuthAccessToken();
+		String registrationId = member.getRegistrationId();
+		unLinkOAuth(registrationId, accessToken, request, response);
 		Long memberId = member.getMemberId();
 		MemberDeleteResponse memberDeleteResponse = changeIsDeleted(memberId);
 
@@ -139,8 +147,9 @@ public class MemberService {
 			String memberId = jwtUtil.getMemberId(refreshToken);
 			List<String> roles = jwtUtil.getRoles(refreshToken);
 			String registrationId = jwtUtil.getRegistrationId(refreshToken);
+			String oAuthAccessToken = jwtUtil.getOAuthToken(refreshToken);
 
-			String newAccessToken = jwtUtil.createAccessToken(memberId, roles, registrationId);
+			String newAccessToken = jwtUtil.createAccessToken(memberId, roles, registrationId, oAuthAccessToken);
 			jwtUtil.setAccessTokenHeader(response, newAccessToken);
 			return newAccessToken;
 		}
@@ -156,77 +165,83 @@ public class MemberService {
 		}
 	}
 
-	// private void unLinkOAuth(String accessToken, HttpServletRequest request, HttpServletResponse response) {
-	// 	String memberId = jwtUtil.getMemberId(accessToken);
-	// 	String registrationId = jwtUtil.getRegistrationId(accessToken);
-	//
-	// 	if (oAuthAccessToken == null) {
-	// 		log.warn("OAuth Access Token is null for member: {}", memberId);
-	// 		return;
-	// 	}
-	//
-	// 	// 액세스 토큰 유효성 검사 및 갱신
-	// 	if (jwtUtil.isTokenExpired(accessToken) && request != null && response != null) {
-	// 		accessToken = refreshAccessToken(request, response);
-	// 		if (accessToken == null) {
-	// 			log.error("Failed to refresh access token for member: {}", memberId);
-	// 			return;
-	// 		}
-	// 		oAuthAccessToken = jwtUtil.getOAuthToken(accessToken);
-	// 	}
-	//
-	// 	String unlinkUrl = getUnlinkUrl(registrationId, oAuthAccessToken);
-	// 	boolean useAuthHeader = "naver".equals(registrationId) || "kakao".equals(registrationId);
-	// 	String method = "google".equals(registrationId) ? "GET" : "POST";
-	//
-	// 	unlinkAccount(unlinkUrl, method, oAuthAccessToken, useAuthHeader);
-	// 	removeOAuthDataFromUser(memberId, registrationId);
-	// }
+	public void unLinkOAuth(String registrationId, String accessToken, HttpServletRequest request,
+		HttpServletResponse response) {
+		log.info("Unlinking OAuth for provider: {}", registrationId);
 
-	public void unlinkAccount(String revokeUrl, String method, String accessToken, boolean useAuthHeader) {
 		try {
-			URL url = new URL(revokeUrl);
-			HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-			connection.setRequestMethod(method);
-
-			if (useAuthHeader && accessToken != null) {
-				connection.setRequestProperty("Authorization", "Bearer " + accessToken);
+			switch (registrationId.toLowerCase()) {
+				case "google":
+					unlinkGoogle(accessToken);
+					break;
+				case "naver":
+					unlinkNaver(accessToken);
+					break;
+				case "kakao":
+					unlinkKakao(accessToken);
+					break;
+				default:
+					log.error("Unsupported OAuth provider: {}", registrationId);
+					throw new IllegalArgumentException("Unsupported OAuth provider");
 			}
-
-			connection.setRequestProperty("Content-Length", "0");
-
-			int responseCode = connection.getResponseCode();
-			if (responseCode == 200) {
-				log.info("Account successfully unlinked");
-			} else {
-				log.error("Failed to unlink account, response code: {}", responseCode);
-			}
-		} catch (IOException e) {
-			log.error("Error occurred while unlinking account", e);
+			log.info("Successfully unlinked OAuth for provider: {}", registrationId);
+		} catch (Exception e) {
+			log.error("Error unlinking OAuth for provider: {}", registrationId, e);
 		}
 	}
 
-	// private String getUnlinkUrl(String registrationId, String oAuthAccessToken) {
-	// 	switch (registrationId) {
-	// 		case "google":
-	// 			return googleRevokeUrl + "?token=" + oAuthAccessToken;
-	// 		case "naver":
-	// 			return naverRevokeUrl + "?grant_type=delete&client_id=" + naverClientId
-	// 				+ "&client_secret=" + naverClientSecret + "&access_token=" + oAuthAccessToken;
-	// 		case "kakao":
-	// 			return kakaoRevokeUrl;
-	// 		default:
-	// 			throw new IllegalArgumentException("Unsupported OAuth provider: " + registrationId);
-	// 	}
-	// }
-	//
-	// private void removeOAuthDataFromUser(String memberId, String registrationId) {
-	// 	MemberEntity member = memberValidator.findMemberByMemberId(Long.valueOf(memberId));
-	// 	// Implement logic to remove OAuth-specific data
-	// 	member.updateRefreshToken(null);
-	// 	// Add more fields to clear if necessary
-	// 	memberRepository.save(member);
-	// 	log.info("Removed OAuth data for {} from user {}", registrationId, memberId);
-	// }
+	private void unlinkGoogle(String accessToken) {
+		String unlinkUrl = UriComponentsBuilder.fromHttpUrl(googleRevokeUrl)
+			.queryParam("token", accessToken)
+			.build()
+			.toUriString();
 
+		ResponseEntity<String> response = restTemplate.getForEntity(unlinkUrl, String.class);
+			if (response.getStatusCode().is2xxSuccessful()) {
+				log.info("Successfully unlinked Google account");
+			} else {
+				log.error("Failed to unlink Google account. Status: {}, Body: {}",
+					response.getStatusCode(), response.getBody());
+			}
+	}
+
+	private void unlinkNaver(String accessToken) {
+		String unlinkUrl = UriComponentsBuilder.fromHttpUrl(naverRevokeUrl)
+			.queryParam("grant_type", "delete")
+			.queryParam("client_id", naverClientId)
+			.queryParam("client_secret", naverClientSecret)
+			.queryParam("access_token", accessToken)
+			.queryParam("service_provider", "NAVER")
+			.build()
+			.toUriString();
+
+		log.info("Sending request to unlink Naver account: {}", unlinkUrl);
+
+			ResponseEntity<String> response = restTemplate.getForEntity(unlinkUrl, String.class);
+			if (response.getStatusCode().is2xxSuccessful()) {
+				log.info("Successfully unlinked Naver account");
+			} else {
+				log.error("Failed to unlink Naver account. Status: {}, Body: {}",
+					response.getStatusCode(), response.getBody());
+			}
+
+	}
+
+	private void unlinkKakao(String accessToken) {
+		String unlinkUrl = UriComponentsBuilder.fromHttpUrl(kakaoRevokeUrl)
+			.build()
+			.toUriString();
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.setBearerAuth(accessToken);
+		HttpEntity<String> entity = new HttpEntity<>("", headers);
+
+			ResponseEntity<String> response = restTemplate.exchange(unlinkUrl, HttpMethod.POST, entity, String.class);
+			if (response.getStatusCode().is2xxSuccessful()) {
+				log.info("Successfully unlinked Kakao account");
+			} else {
+				log.error("Failed to unlink Kakao account. Status: {}, Body: {}",
+					response.getStatusCode(), response.getBody());
+			}
+	}
 }
