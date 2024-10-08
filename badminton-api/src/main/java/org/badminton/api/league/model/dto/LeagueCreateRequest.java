@@ -1,3 +1,4 @@
+
 package org.badminton.api.league.model.dto;
 
 import java.time.LocalDateTime;
@@ -23,7 +24,7 @@ public record LeagueCreateRequest(
 
 	//TODO: DTO 마다 검증 로직을 두지 않는 방법 알아보기
 	@Pattern(regexp = "GOLD|SILVER|BRONZE", message = "리그 상태 값이 올바르지 않습니다.")
-	@Schema(description = "최소 티어", example = "GOLD")
+	@Schema(description = "최소 티어", example = "GOLD || SILVER || BRONZE")
 	MemberTier tierLimit,
 
 	@Pattern(regexp = "OPEN|CLOSED", message = "리그 상태 값이 올바르지 않습니다.")
@@ -50,3 +51,4 @@ public record LeagueCreateRequest(
 ) {
 
 }
+
