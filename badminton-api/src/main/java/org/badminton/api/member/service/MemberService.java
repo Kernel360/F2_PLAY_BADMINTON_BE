@@ -1,12 +1,12 @@
+
 package org.badminton.api.member.service;
 
-
 import java.util.List;
+
 import org.badminton.api.member.jwt.JwtUtil;
 import org.badminton.api.member.model.dto.MemberDeleteResponse;
 import org.badminton.api.member.model.dto.MemberMyPageResponse;
-import org.badminton.api.member.model.dto.MemberUpdateRequest;
-import org.badminton.api.member.model.dto.MemberUpdateResponse;
+
 import org.badminton.api.member.oauth2.dto.CustomOAuth2Member;
 import org.badminton.api.member.validator.MemberValidator;
 import org.badminton.domain.clubmember.entity.ClubMemberEntity;
@@ -23,6 +23,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -59,7 +60,6 @@ public class MemberService {
 	@Value("${NAVER_CLIENT_SECRET}")
 	private String naverClientSecret;
 
-
 	public MemberMyPageResponse getMemberInfo(Long memberId) {
 		MemberEntity memberEntity = memberValidator.findMemberByMemberId(memberId);
 		ClubMemberEntity clubMemberEntity = clubMemberRepository.findByMember_MemberId(memberId).orElse(null);
@@ -67,16 +67,16 @@ public class MemberService {
 
 		if (clubMemberEntity != null) {
 			leagueRecordEntity = leagueRecordRepository.findByClubMember(clubMemberEntity)
-                .orElse(new LeagueRecordEntity(clubMemberEntity));
+				.orElse(new LeagueRecordEntity(clubMemberEntity));
 		}
-		return MemberMyPageResponse.entityToMyPageResponse(memberEntity,clubMemberEntity,leagueRecordEntity);
+		return MemberMyPageResponse.entityToMyPageResponse(memberEntity, clubMemberEntity, leagueRecordEntity);
 	}
 
-	public MemberUpdateResponse updateMember(Long memberId, MemberUpdateRequest memberUpdateRequest) {
+	@Transactional
+	public void updateProfileImage(Long memberId, String profileImageUrl) {
 		MemberEntity memberEntity = memberValidator.findMemberByMemberId(memberId);
-		memberEntity.updateMember(memberUpdateRequest.profileImage());
+		memberEntity.updateMember(profileImageUrl);
 		memberRepository.save(memberEntity);
-		return MemberUpdateResponse.memberEntityToUpdateResponse(memberEntity);
 	}
 
 	public void logoutMember(Long memberId, HttpServletResponse response) {
@@ -187,12 +187,12 @@ public class MemberService {
 			.toUriString();
 
 		ResponseEntity<String> response = restTemplate.getForEntity(unlinkUrl, String.class);
-			if (response.getStatusCode().is2xxSuccessful()) {
-				log.info("Successfully unlinked Google account");
-			} else {
-				log.error("Failed to unlink Google account. Status: {}, Body: {}",
-					response.getStatusCode(), response.getBody());
-			}
+		if (response.getStatusCode().is2xxSuccessful()) {
+			log.info("Successfully unlinked Google account");
+		} else {
+			log.error("Failed to unlink Google account. Status: {}, Body: {}",
+				response.getStatusCode(), response.getBody());
+		}
 	}
 
 	private void unlinkNaver(String accessToken) {
@@ -207,13 +207,13 @@ public class MemberService {
 
 		log.info("Sending request to unlink Naver account: {}", unlinkUrl);
 
-			ResponseEntity<String> response = restTemplate.getForEntity(unlinkUrl, String.class);
-			if (response.getStatusCode().is2xxSuccessful()) {
-				log.info("Successfully unlinked Naver account");
-			} else {
-				log.error("Failed to unlink Naver account. Status: {}, Body: {}",
-					response.getStatusCode(), response.getBody());
-			}
+		ResponseEntity<String> response = restTemplate.getForEntity(unlinkUrl, String.class);
+		if (response.getStatusCode().is2xxSuccessful()) {
+			log.info("Successfully unlinked Naver account");
+		} else {
+			log.error("Failed to unlink Naver account. Status: {}, Body: {}",
+				response.getStatusCode(), response.getBody());
+		}
 
 	}
 
@@ -226,12 +226,12 @@ public class MemberService {
 		headers.setBearerAuth(accessToken);
 		HttpEntity<String> entity = new HttpEntity<>("", headers);
 
-			ResponseEntity<String> response = restTemplate.exchange(unlinkUrl, HttpMethod.POST, entity, String.class);
-			if (response.getStatusCode().is2xxSuccessful()) {
-				log.info("Successfully unlinked Kakao account");
-			} else {
-				log.error("Failed to unlink Kakao account. Status: {}, Body: {}",
-					response.getStatusCode(), response.getBody());
-			}
+		ResponseEntity<String> response = restTemplate.exchange(unlinkUrl, HttpMethod.POST, entity, String.class);
+		if (response.getStatusCode().is2xxSuccessful()) {
+			log.info("Successfully unlinked Kakao account");
+		} else {
+			log.error("Failed to unlink Kakao account. Status: {}, Body: {}",
+				response.getStatusCode(), response.getBody());
+		}
 	}
 }
