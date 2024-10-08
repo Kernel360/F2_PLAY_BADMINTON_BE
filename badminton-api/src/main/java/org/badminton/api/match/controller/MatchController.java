@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/v1/club/{clubId}/league/{leagueId}/match")
+@RequestMapping("/v1/clubs/{clubId}/leagues/{leagueId}/matches")
 public class MatchController {
 
 	private final MatchCreateService matchCreateService;

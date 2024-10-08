@@ -16,6 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,21 +29,21 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/v1")
+@RequestMapping("/v1/clubs")
 public class ClubController {
 
 	private final ClubService clubService;
 
-	@GetMapping("/club")
+	@GetMapping("/{clubId}")
 	@Operation(summary = "동호회 조회",
 		description = "동호회를 조회합니다.",
 		tags = {"Club"})
-	public ResponseEntity<ClubReadResponse> readClub(@RequestParam Long clubId) {
+	public ResponseEntity<ClubReadResponse> readClub(@PathVariable Long clubId) {
 		ClubReadResponse clubReadResponse = clubService.readClub(clubId);
 		return ResponseEntity.ok(clubReadResponse);
 	}
 
-	@PostMapping("/club")
+	@PostMapping()
 	@Operation(summary = "동호회 추가",
 		description = "동호회를 추가합니다.",
 		tags = {"Club"})
@@ -54,26 +55,26 @@ public class ClubController {
 		return ResponseEntity.ok(clubAddResponse);
 	}
 
-	@PatchMapping("/club")
+	@PatchMapping("{clubId}")
 	@Operation(summary = "동호회 수정",
 		description = "동호회를 수정합니다.",
 		tags = {"Club"})
-	public ResponseEntity<ClubUpdateResponse> updateClub(@RequestParam Long clubId,
+	public ResponseEntity<ClubUpdateResponse> updateClub(@PathVariable Long clubId,
 		@Valid @RequestBody ClubUpdateRequest clubUpdateRequest) {
 		ClubUpdateResponse clubUpdateResponse = clubService.updateClub(clubUpdateRequest, clubId);
 		return ResponseEntity.ok(clubUpdateResponse);
 	}
 
-	@DeleteMapping("/club")
+	@DeleteMapping("{clubId}")
 	@Operation(summary = "동호회 삭제",
 		description = "동호회를 삭제합니다.",
 		tags = {"Club"})
-	public ResponseEntity<ClubDeleteResponse> deleteClub(@RequestParam Long clubId) {
+	public ResponseEntity<ClubDeleteResponse> deleteClub(@PathVariable Long clubId) {
 		ClubDeleteResponse clubDeleteResponse = clubService.deleteClub(clubId);
 		return ResponseEntity.ok(clubDeleteResponse);
 	}
 
-	@GetMapping("/clubs")
+	@GetMapping()
 	@Operation(summary = "전체 동호회 조회",
 		description = "전체 동호회를 조회합니다.",
 		tags = {"Club"})

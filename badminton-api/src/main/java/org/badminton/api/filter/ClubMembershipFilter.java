@@ -25,7 +25,7 @@ public class ClubMembershipFilter extends OncePerRequestFilter {
 	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) {
 		String path = request.getRequestURI();
-		return !path.startsWith("/v1/club") || SecurityUtil.isPublicPath(request) || path.startsWith("/v1/member");
+		return !path.startsWith("/v1/clubs") || SecurityUtil.isPublicPath(request) || path.startsWith("/v1/members");
 	}
 
 	@Override

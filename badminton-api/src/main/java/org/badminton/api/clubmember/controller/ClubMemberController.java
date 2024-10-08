@@ -17,9 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
 @RestController
+@Slf4j
 @RequestMapping("/v1/clubs/{clubId}/clubMembers")
 public class ClubMemberController {
 	private final ClubMemberService clubMemberService;
@@ -41,6 +43,8 @@ public class ClubMemberController {
 	@PostMapping
 	public ResponseEntity<ClubMemberJoinResponse> joinClub(@AuthenticationPrincipal CustomOAuth2Member member,
 		@Parameter(description = "동호회 ID", example = "1") @PathVariable Long clubId) {
+
+		log.info("member :{}",member);
 
 		Long memberId = member.getMemberId();
 
