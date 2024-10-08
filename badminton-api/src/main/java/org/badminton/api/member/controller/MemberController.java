@@ -3,7 +3,7 @@ package org.badminton.api.member.controller;
 import org.badminton.api.leaguerecord.service.LeagueRecordService;
 import org.badminton.api.member.jwt.JwtUtil;
 import org.badminton.api.member.model.dto.MemberDeleteResponse;
-import org.badminton.api.member.model.dto.MemberDetailResponse;
+import org.badminton.api.member.model.dto.MemberMyPageResponse;
 import org.badminton.api.member.model.dto.MemberUpdateRequest;
 import org.badminton.api.member.model.dto.MemberUpdateResponse;
 import org.badminton.api.member.oauth2.dto.CustomOAuth2Member;
@@ -33,10 +33,8 @@ import lombok.extern.slf4j.Slf4j;
 public class MemberController {
 
 	private final MemberService memberService;
-	private final JwtUtil jwtUtil;
 	private final ClubMemberRepository clubMemberRepository;
 	private final LeagueRecordService leagueRecordService;
-	private final LeagueRecordRepository leagueRecordRepository;
 
 	//TODO: 티어 정상 작동 테스트용, 지울예정입니다
 	@Operation(
@@ -117,8 +115,8 @@ public class MemberController {
 		description = "회원의 마이페이지 접근 시 정보 조회 (동호회 정보 포함)",
 		tags = {"Member"}
 	)
-	@GetMapping
-	public ResponseEntity<MemberDetailResponse> getMemberInfo(@AuthenticationPrincipal CustomOAuth2Member member) {
+	@GetMapping("/myPage")
+	public ResponseEntity<MemberMyPageResponse> getMemberInfo(@AuthenticationPrincipal CustomOAuth2Member member) {
 		return ResponseEntity.ok(memberService.getMemberInfo(member.getMemberId()));
 	}
 
