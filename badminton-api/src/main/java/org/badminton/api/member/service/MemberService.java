@@ -1,16 +1,10 @@
 package org.badminton.api.member.service;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.List;
-import java.util.Optional;
 
-import org.badminton.api.clubmember.model.dto.ClubMemberInfoResponse;
+import java.util.List;
 import org.badminton.api.member.jwt.JwtUtil;
 import org.badminton.api.member.model.dto.MemberDeleteResponse;
-import org.badminton.api.member.model.dto.MemberDetailResponse;
-import org.badminton.api.member.model.dto.MemberInfoResponse;
+import org.badminton.api.member.model.dto.MemberMyPageResponse;
 import org.badminton.api.member.model.dto.MemberUpdateRequest;
 import org.badminton.api.member.model.dto.MemberUpdateResponse;
 import org.badminton.api.member.oauth2.dto.CustomOAuth2Member;
@@ -65,21 +59,17 @@ public class MemberService {
 	@Value("${NAVER_CLIENT_SECRET}")
 	private String naverClientSecret;
 
-	//TODO: 제네릭 사용해보기
 
-	public MemberDetailResponse getMemberInfo(Long memberId) {
+	public MemberMyPageResponse getMemberInfo(Long memberId) {
 		MemberEntity memberEntity = memberValidator.findMemberByMemberId(memberId);
-		Optional<ClubMemberEntity> clubMemberEntity = clubMemberRepository.findByMember_MemberId(memberId);
+		ClubMemberEntity clubMemberEntity = clubMemberRepository.findByMember_MemberId(memberId).orElse(null);
+		LeagueRecordEntity leagueRecordEntity = null;
 
-		return clubMemberEntity
-			.map(clubMember -> {
-				LeagueRecordEntity leagueRecordEntity = leagueRecordRepository.findByClubMember(clubMember)
-					.orElse(new LeagueRecordEntity(clubMember));
-
-				return (MemberDetailResponse)ClubMemberInfoResponse.entityToClubMemberInfoResponse(memberEntity,
-					clubMember, leagueRecordEntity);
-			})
-			.orElseGet(() -> (MemberDetailResponse)MemberInfoResponse.entityToMemberInfoResponse(memberEntity));
+		if (clubMemberEntity != null) {
+			leagueRecordEntity = leagueRecordRepository.findByClubMember(clubMemberEntity)
+                .orElse(new LeagueRecordEntity(clubMemberEntity));
+		}
+		return MemberMyPageResponse.entityToMyPageResponse(memberEntity,clubMemberEntity,leagueRecordEntity);
 	}
 
 	public MemberUpdateResponse updateMember(Long memberId, MemberUpdateRequest memberUpdateRequest) {
