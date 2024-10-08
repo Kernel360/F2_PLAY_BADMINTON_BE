@@ -16,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/v1/club/image")
+@RequestMapping("/v1/clubs/images")
 public class ClubImageController {
 	private final ClubImageService clubImageService;
 

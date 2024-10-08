@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/v1/club/{clubId}/league")
+@RequestMapping("/v1/clubs/{clubId}/leagues")
 public class LeagueParticipationController {
 
 	private final LeagueParticipationService leagueParticipationService;

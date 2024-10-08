@@ -12,6 +12,7 @@ import org.badminton.api.member.service.CustomOAuth2MemberService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.authorization.AuthorizationManager;
@@ -24,6 +25,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -55,7 +57,7 @@ public class SecurityConfig {
 	public SecurityFilterChain publicFilterChain(HttpSecurity http) throws Exception {
 		http
 			.securityMatcher("/", "/oauth2/**", "/login/**", "/error",
-				"/swagger-ui/**", "/v1/clubs")
+				"/swagger-ui/**")
 			.csrf(AbstractHttpConfigurer::disable)
 			.cors(this::corsConfigurer)
 			.authorizeHttpRequests(auth -> auth
@@ -70,9 +72,14 @@ public class SecurityConfig {
 
 	// JWT 인증만 필요한 경로
 	@Bean
+	@Order(1)
 	public SecurityFilterChain jwtOnlyFilterChain(HttpSecurity http) throws Exception {
 		http
-			.securityMatcher("/v1/member/**", "/v1/clubMember")
+
+			.securityMatcher(
+				request -> request.getMethod().equals("POST") && request.getRequestURI().equals("/v1/clubs")
+					|| request.getRequestURI().startsWith("/v1/members")
+			)
 			.csrf(AbstractHttpConfigurer::disable)
 			.cors(this::corsConfigurer)
 			.addFilterBefore(new JwtAuthenticationFilter(jwtUtil, clubMemberService),
@@ -84,9 +91,10 @@ public class SecurityConfig {
 	}
 
 	@Bean
+	@Order(2)
 	public SecurityFilterChain clubFilterChain(HttpSecurity http) throws Exception {
 		http
-			.securityMatcher("/v1/club/**")
+			.securityMatcher("/v1/clubs/**")
 			.csrf(AbstractHttpConfigurer::disable)
 			.cors(this::corsConfigurer)
 			.addFilterBefore(new JwtAuthenticationFilter(jwtUtil, clubMemberService),
@@ -94,24 +102,17 @@ public class SecurityConfig {
 			.addFilterAfter(new ClubMembershipFilter(clubMemberService), JwtAuthenticationFilter.class)
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.authorizeHttpRequests(auth -> auth
-				.requestMatchers(HttpMethod.GET, "/v1/club").permitAll()
-				.requestMatchers(HttpMethod.POST, "/v1/club").authenticated()
-				.requestMatchers(HttpMethod.DELETE, "/v1/club").access(hasClubRole("OWNER"))
-				.requestMatchers(HttpMethod.PATCH, "/v1/club").access(hasClubRole("OWNER", "MANAGER"))
-				.requestMatchers(HttpMethod.GET, "/v1/club/{clubId}/**")
-				.authenticated()
-				.requestMatchers(HttpMethod.POST, "/v1/club/{clubId}/league")
-				.access(hasClubRole("OWNER", "MANAGER"))
-				.requestMatchers(HttpMethod.DELETE, "/v1/club/{clubId}/league/{leagueId}")
-				.access(hasClubRole("OWNER", "MANAGER"))
-				.requestMatchers(HttpMethod.PATCH, "/v1/club/{clubId}/league/{leagueId}")
-				.access(hasClubRole("OWNER", "MANAGER"))
-				.requestMatchers(HttpMethod.POST, "/v1/club/{clubId}/league/{leagueId}/participation")
-				.access(hasClubRole("OWNER", "MANAGER", "USER"))
-				.requestMatchers(HttpMethod.DELETE, "/v1/club/{clubId}/league/{leagueId}/participation")
-				.access(hasClubRole("OWNER", "MANAGER", "USER"))
-				.anyRequest()
-				.authenticated());
+				.requestMatchers(HttpMethod.GET, "/v1/clubs", "/v1/clubs/{clubId}").permitAll()
+				.requestMatchers(HttpMethod.DELETE, "/v1/clubs/{clubId}").access(hasClubRole("OWNER"))
+				.requestMatchers(HttpMethod.PATCH, "/v1/clubs/{clubId}").access(hasClubRole("OWNER", "MANAGER"))
+				.requestMatchers(HttpMethod.GET, "/v1/clubs/{clubId}/**").authenticated()
+				.requestMatchers(HttpMethod.POST, "/v1/clubs/{clubId}/league").access(hasClubRole("OWNER", "MANAGER"))
+				.requestMatchers(HttpMethod.DELETE, "/v1/clubs/{clubId}/leagues/{leagueId}").access(hasClubRole("OWNER", "MANAGER"))
+				.requestMatchers(HttpMethod.PATCH, "/v1/clubs/{clubId}/leagues/{leagueId}").access(hasClubRole("OWNER", "MANAGER"))
+				.requestMatchers(HttpMethod.POST, "/v1/clubs/{clubId}/leagues/{leagueId}/participation").access(hasClubRole("OWNER", "MANAGER", "USER"))
+				.requestMatchers(HttpMethod.DELETE, "/v1/clubs/{clubId}/leagues/{leagueId}/participation").access(hasClubRole("OWNER", "MANAGER", "USER"))
+				.anyRequest().authenticated()
+			);
 		return http.build();
 	}
 
