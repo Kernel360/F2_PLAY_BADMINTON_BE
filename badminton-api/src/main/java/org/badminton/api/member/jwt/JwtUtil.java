@@ -31,28 +31,27 @@ public class JwtUtil {
 
 	public JwtUtil(@Value("${spring.jwt.secret}") String secret) {
 		secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8),
-			Jwts.SIG.HS256.key().build().getAlgorithm()); // 비밀 키 생성
+			Jwts.SIG.HS256.key().build().getAlgorithm());
 	}
 
 	public String createAccessToken(String memberId, List<String> roles, String registrationId, String oAuthAccessToken) {
 
 		return Jwts.builder()
 			.claim("memberId", memberId)
-			.claim("roles", String.join(",", roles)) // List<String>을 String으로 변환하여 JWT에 추가
+			.claim("roles", String.join(",", roles))
 			.claim("registrationId", registrationId)
 			.claim("oAuthAccessToken", oAuthAccessToken)
-			.issuedAt(new Date(System.currentTimeMillis())) // 토큰 발행 시각 설정
-			.expiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRY)) // 만료 시각 설정 (현재 시각 + expiredMs)
-			.signWith(secretKey) // secretKey 로 서명
-			.compact(); // Jwt 를 문자열로 변환
+			.issuedAt(new Date(System.currentTimeMillis()))
+			.expiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRY))
+			.signWith(secretKey)
+			.compact();
 	}
 
 	public String createRefreshToken(String memberId, List<String> roles, String registrationId) {
 		return Jwts.builder()
 			.claim("memberId", memberId)
-			.claim("roles", String.join(",", roles)) // List<String>을 String으로 변환하여 JWT에 추가
+			.claim("roles", String.join(",", roles))
 			.claim("registrationId", registrationId)
-			// .claim("oAuthAccessToken", oAuthAccessToken)
 			.expiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRY))
 			.signWith(secretKey)
 			.compact();
