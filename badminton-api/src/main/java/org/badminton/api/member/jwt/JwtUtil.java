@@ -64,10 +64,10 @@ public class JwtUtil {
 
 	public void setRefreshTokenCookie(HttpServletResponse response, String refreshToken) {
 		ResponseCookie cookie = ResponseCookie.from("refresh_token", refreshToken)
-			// .httpOnly(true)
-			// .secure(true)
-			// .sameSite("None")
-			// .domain(domain)
+			.httpOnly(true)
+			.secure(true)
+			.sameSite("None")
+			.domain(domain)
 			.path("/")
 			.maxAge(REFRESH_TOKEN_EXPIRY) // 14일
 			.build();
@@ -76,10 +76,10 @@ public class JwtUtil {
 
 	public void setAccessTokenCookie(HttpServletResponse response, String accessToken) {
 		ResponseCookie cookie = ResponseCookie.from("access_token", accessToken)
-			// .httpOnly(true)
-			// .secure(true)
-			// .sameSite("None")
-			// .domain(domain)
+			.httpOnly(true)
+			.secure(true)
+			.sameSite("None")
+			.domain(domain)
 			.path("/")
 			.maxAge(ACCESS_TOKEN_EXPIRY) // 14일
 			.build();
