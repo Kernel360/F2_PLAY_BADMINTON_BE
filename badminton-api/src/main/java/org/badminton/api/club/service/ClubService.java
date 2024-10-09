@@ -2,6 +2,7 @@ package org.badminton.api.club.service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.badminton.api.club.model.dto.ClubCreateRequest;
@@ -14,6 +15,7 @@ import org.badminton.api.club.model.dto.ClubsReadResponse;
 import org.badminton.api.common.exception.club.ClubNameDuplicateException;
 import org.badminton.api.common.exception.club.ClubNotExistException;
 import org.badminton.api.common.exception.member.MemberNotExistException;
+import org.badminton.api.common.exception.member.MemberNotJoinedClubException;
 import org.badminton.api.leaguerecord.service.LeagueRecordService;
 import org.badminton.domain.club.entity.ClubEntity;
 import org.badminton.domain.club.repository.ClubRepository;
@@ -45,6 +47,11 @@ public class ClubService {
 	public ClubReadResponse readClub(Long clubId) {
 		ClubEntity club = findClubByClubId(clubId);
 		return ClubReadResponse.clubEntityToClubReadResponse(club);
+	}
+
+	public ClubReadResponse readCurrentClub(Long memberId) {
+		ClubMemberEntity clubMember = findClubMemberByClubMemberId(memberId);
+		return ClubReadResponse.clubEntityToClubReadResponse(clubMember.getClub());
 	}
 
 	public List<ClubsReadResponse> readAllClub() {
@@ -115,6 +122,12 @@ public class ClubService {
 		return clubRepository.findByClubIdAndIsClubDeletedFalse(clubId)
 			.orElseThrow(
 				() -> new ClubNotExistException(clubId));
+	}
+
+	private ClubMemberEntity findClubMemberByClubMemberId(Long memberId) {
+		return clubMemberRepository.findByMember_MemberId(memberId)
+            .orElseThrow(
+                () -> new MemberNotJoinedClubException(memberId));
 	}
 
 }
