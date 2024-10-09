@@ -112,6 +112,20 @@ public class ClubService {
 		return ClubDeleteResponse.clubEntityToClubDeleteResponse(club);
 	}
 
+	public MemberTier getAverageTier(Long clubId) {
+		Map<MemberTier, Long> memberCountByTierInClub = leagueRecordService.getMemberCountByTierInClub(clubId);
+
+		Optional<Map.Entry<MemberTier, Long>> maxEntry = memberCountByTierInClub.entrySet()
+			.stream()
+			.max(Map.Entry.comparingByValue());
+
+		if (maxEntry.isPresent() && maxEntry.get().getValue() > 0) {
+			return maxEntry.get().getKey();
+		} else {
+			return MemberTier.SILVER;
+		}
+	}
+
 	private void checkClubNameDuplicate(String clubName) {
 		clubRepository.findByClubNameAndIsClubDeletedFalse(clubName).ifPresent(club -> {
 			throw new ClubNameDuplicateException(clubName);

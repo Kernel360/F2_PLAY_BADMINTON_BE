@@ -19,11 +19,11 @@ public interface LeagueRecordRepository extends JpaRepository<LeagueRecordEntity
 
 	Optional<LeagueRecordEntity> findByClubMember_ClubMemberId(Long clubMemberId);
 
-	@Query("SELECT lr.tier, COUNT(lr) FROM LeagueRecordEntity lr " +
-		"JOIN lr.clubMember cm " +
-		"JOIN cm.club c " +
-		"WHERE c.clubId = :clubId " +
-		"GROUP BY lr.tier")
+	@Query("SELECT leagueEntity.tier, COUNT(leagueEntity) FROM LeagueRecordEntity leagueEntity " +
+		"JOIN leagueEntity.clubMember clubMemberEntity " +
+		"JOIN clubMemberEntity.club clubEntity " +
+		"WHERE clubEntity.clubId = :clubId " +
+		"GROUP BY leagueEntity.tier")
 	List<Object[]> countMembersByTierInClub(@Param("clubId") Long clubId);
 
 }
