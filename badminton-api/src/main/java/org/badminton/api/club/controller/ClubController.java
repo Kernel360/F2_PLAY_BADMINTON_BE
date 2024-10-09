@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -90,6 +91,14 @@ public class ClubController {
 	public ResponseEntity<List<ClubsReadResponse>> readAllClub() {
 
 		return ResponseEntity.ok(clubService.readAllClub());
+	}
+
+	@Operation(summary = "검색 조건에 맞는 동호회 조회",
+		description = "검색 조건에 맞는 동호회를 조회합니다.",
+		tags = {"Club"})
+	@GetMapping("/search")
+	public ResponseEntity<List<ClubsReadResponse>> clubSearch(@RequestParam(required = false) String keyword) {
+		return ResponseEntity.ok(clubService.searchClubs(keyword));
 	}
 
 }
