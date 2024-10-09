@@ -45,7 +45,7 @@ public class ClubController {
 		return ResponseEntity.ok(clubReadResponse);
 	}
 
-	@GetMapping("/current")
+	@GetMapping("/me")
 	@Operation(summary = "현재 로그인된 사용자의 동호회 조회", description = "현재 로그인되어 있는 사용자의 동호회를 조회합니다", tags = {"Club"})
 	public ResponseEntity<ClubReadResponse> readCurrentClub(@AuthenticationPrincipal CustomOAuth2Member member) {
 		ClubReadResponse clubReadResponse = clubService.readCurrentClub(member.getMemberId());
