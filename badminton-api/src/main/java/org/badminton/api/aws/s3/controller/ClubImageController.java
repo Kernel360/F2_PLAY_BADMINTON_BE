@@ -1,6 +1,6 @@
 package org.badminton.api.aws.s3.controller;
 
-import org.badminton.api.aws.s3.model.dto.ClubImageUploadRequest;
+import org.badminton.api.aws.s3.model.dto.ImageUploadRequest;
 import org.badminton.api.aws.s3.service.ClubImageService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,15 +27,16 @@ public class ClubImageController {
 			required = true,
 			content = @Content(
 				mediaType = "multipart/form-data",
-				schema = @Schema(implementation = ClubImageUploadRequest.class)
+				schema = @Schema(implementation = ImageUploadRequest.class)
 			)
 		)
 	)
 	@PostMapping
 	public ResponseEntity<String> saveImage(@RequestPart("multipartFile") MultipartFile multipartFile) {
-		ClubImageUploadRequest request = new ClubImageUploadRequest(multipartFile);
+		ImageUploadRequest request = new ImageUploadRequest(multipartFile);
 		return ResponseEntity.ok(clubImageService.uploadFile(request));
 	}
 	//TODO : 임시 테이블을 만들어 저장하고 배치에서 동호회 url 을 조회 후 미사용 객체들을 모두 삭제
 
 }
+
