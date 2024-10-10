@@ -10,7 +10,8 @@ public record ClubDetailsResponse(
 	String clubName,
 	String clubDescription,
 	String clubImage,
-	ClubMemberCountResponse clubMemberCount,
+	ClubMemberCountByTier clubMemberCountByTier,
+	int clubMemberCount,
 	LocalDateTime createdAt
 ) {
 
@@ -18,7 +19,8 @@ public record ClubDetailsResponse(
 		Map<MemberTier, Long> memberCountByTier) {
 		return new ClubDetailsResponse(clubEntity.getClubName(), clubEntity.getClubDescription(),
 			clubEntity.getClubImage(),
-			ClubMemberCountResponse.ofClubMemberCountResponse(memberCountByTier),
+			ClubMemberCountByTier.ofClubMemberCountResponse(memberCountByTier),
+			clubEntity.getClubMembers().size(),
 			clubEntity.getCreatedAt());
 	}
 }
