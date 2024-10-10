@@ -51,8 +51,8 @@ public class MemberEntity extends BaseTimeEntity {
 		this.refreshToken = refreshToken;
 	}
 
-	public void updateMember(String profileImage) {
-		this.profileImage = profileImage;
+	public void updateMember(String imageUrl) {
+		this.profileImage = imageUrl;
 	}
 
 	public void deleteMember() {

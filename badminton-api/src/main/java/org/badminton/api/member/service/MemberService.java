@@ -7,6 +7,7 @@ import org.badminton.api.member.jwt.JwtUtil;
 import org.badminton.api.member.model.dto.MemberDeleteResponse;
 import org.badminton.api.member.model.dto.MemberMyPageResponse;
 
+import org.badminton.api.member.model.dto.MemberResponse;
 import org.badminton.api.member.oauth2.dto.CustomOAuth2Member;
 import org.badminton.api.member.validator.MemberValidator;
 import org.badminton.domain.clubmember.entity.ClubMemberEntity;
@@ -73,10 +74,11 @@ public class MemberService {
 	}
 
 	@Transactional
-	public void updateProfileImage(Long memberId, String profileImageUrl) {
+	public MemberResponse updateProfileImage(Long memberId, String imageUrl) {
 		MemberEntity memberEntity = memberValidator.findMemberByMemberId(memberId);
-		memberEntity.updateMember(profileImageUrl);
+		memberEntity.updateMember(imageUrl);
 		memberRepository.save(memberEntity);
+		return MemberResponse.memberEntityToResponse(memberEntity);
 	}
 
 	public void logoutMember(Long memberId, HttpServletResponse response) {
