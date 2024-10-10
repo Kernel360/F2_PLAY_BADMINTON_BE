@@ -80,7 +80,7 @@ public class SecurityConfig {
 			.securityMatcher(
 				request -> request.getMethod().equals("POST") && request.getRequestURI().equals("/v1/clubs")
 					|| request.getRequestURI().startsWith("/v1/members") || request.getRequestURI().equals("/v1/clubs/me") || request.getRequestURI().equals("/v1/clubs/search")
-				|| request.getRequestURI().equals("/v1/members/profileImage")
+				|| request.getRequestURI().equals("/v1/members/profileImage") || request.getRequestURI().equals("/v1/members/is-club-member")
 			)
 			.csrf(AbstractHttpConfigurer::disable)
 			.cors(this::corsConfigurer)
