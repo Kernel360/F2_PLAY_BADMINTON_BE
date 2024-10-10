@@ -43,7 +43,7 @@ public class LeagueService {
 			leagueCreateRequest.description(), leagueCreateRequest.leagueLocation(), leagueCreateRequest.leagueAt(),
 			leagueCreateRequest.tierLimit(),
 			leagueCreateRequest.closedAt(), leagueCreateRequest.leagueStatus(), leagueCreateRequest.playerCount(),
-			leagueCreateRequest.matchType(), leagueCreateRequest.matchingRequirement(), club);
+			leagueCreateRequest.matchType(), leagueCreateRequest.matchGenerationType(), club);
 
 		return LeagueCreateResponse.leagueCreateEntityToResponse(leagueRepository.save(league));
 	}
@@ -63,7 +63,7 @@ public class LeagueService {
 			leagueUpdateRequest.description(), leagueUpdateRequest.leagueLocation(), leagueUpdateRequest.tierLimit(),
 			leagueUpdateRequest.leagueAt(), leagueUpdateRequest.closedAt(), leagueUpdateRequest.leagueStatus(),
 			leagueUpdateRequest.playerCount(),
-			leagueUpdateRequest.matchType(), leagueUpdateRequest.matchingRequirement());
+			leagueUpdateRequest.matchType(), leagueUpdateRequest.matchGenerationType());
 
 		leagueRepository.save(league);
 		return new LeagueStatusUpdateResponse(league);

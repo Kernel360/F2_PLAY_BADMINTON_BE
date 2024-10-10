@@ -2,6 +2,7 @@ package org.badminton.api.league.model.dto;
 
 import java.time.LocalDateTime;
 
+import org.badminton.domain.common.enums.MatchGenerationType;
 import org.badminton.domain.common.enums.MatchType;
 import org.badminton.domain.common.enums.MemberTier;
 import org.badminton.domain.league.enums.LeagueStatus;
@@ -42,7 +43,7 @@ public record LeagueUpdateRequest(
 	int playerCount,
 
 	@Schema(description = "매칭 조건", example = "TIER")
-	String matchingRequirement
+	MatchGenerationType matchGenerationType
 
 ) {
 }
