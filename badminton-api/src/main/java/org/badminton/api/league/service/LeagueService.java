@@ -2,13 +2,13 @@ package org.badminton.api.league.service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.badminton.api.common.exception.club.ClubNotExistException;
 import org.badminton.api.common.exception.league.InvalidDateTimeException;
 import org.badminton.api.common.exception.league.LeagueNotExistException;
+import org.badminton.api.league.model.dto.LeagueAndParticipantResponse;
 import org.badminton.api.league.model.dto.LeagueCreateRequest;
 import org.badminton.api.league.model.dto.LeagueCreateResponse;
 import org.badminton.api.league.model.dto.LeagueReadResponse;
@@ -17,6 +17,7 @@ import org.badminton.api.league.model.dto.LeagueUpdateRequest;
 import org.badminton.domain.club.entity.ClubEntity;
 import org.badminton.domain.club.repository.ClubRepository;
 import org.badminton.domain.league.entity.LeagueEntity;
+import org.badminton.domain.league.repository.LeagueParticipantRepository;
 import org.badminton.domain.league.repository.LeagueRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,10 +30,17 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class LeagueService {
 	private static final Integer START_MONTH = 1;
+	private static final Integer START_DAY = 1;
+	private static final Integer START_HOUR = 0;
+	private static final Integer START_MINUTE = 0;
+	private static final Integer END_HOUR = 23;
+	private static final Integer END_MINUTE = 59;
 	private static final Integer JANUARY = 1;
 	private static final Integer DECEMBER = 12;
+	private static final Integer YEAR_TO_FROM = 20;
 	private final LeagueRepository leagueRepository;
 	private final ClubRepository clubRepository;
+	private final LeagueParticipantRepository leagueParticipantRepository;
 
 	public LeagueCreateResponse createLeague(Long clubId, LeagueCreateRequest leagueCreateRequest) {
 
@@ -48,10 +56,30 @@ public class LeagueService {
 		return LeagueCreateResponse.leagueCreateEntityToResponse(leagueRepository.save(league));
 	}
 
-	public LeagueReadResponse getLeague(Long clubId, Long leagueId) {
+	public LeagueAndParticipantResponse getLeague(Long clubId, Long leagueId) {
 		ClubEntity club = provideClub(clubId);
 		LeagueEntity league = provideLeagueIfLeagueInClub(club.getClubId(), leagueId);
-		return LeagueReadResponse.leagueReadEntityToResponse(league);
+		int participateCount = leagueParticipantRepository.countByLeagueLeagueId(leagueId);
+
+		return LeagueAndParticipantResponse.leagueAndParticipantEntityToResponse(league, participateCount);
+	}
+
+	public List<LeagueReadResponse> getLeagues(Long clubId, String date) {
+		if (!validateDate(date)) {
+			throw new InvalidDateTimeException(date);
+		}
+
+		LocalDate parsedDate = parseDate(date);
+		LocalDateTime startOfMonth = getStartOfMonth(parsedDate);
+		LocalDateTime endOfMonth = getEndOfMonth(parsedDate);
+
+		List<LeagueEntity> result = leagueRepository.findAllByClubClubIdAndLeagueAtBetween(clubId, startOfMonth,
+			endOfMonth);
+
+		return result.stream()
+			.map(LeagueReadResponse::leagueReadEntityToResponse)
+			.collect(
+				Collectors.toList());
 	}
 
 	public LeagueStatusUpdateResponse updateLeague(Long clubId, Long leagueId, LeagueUpdateRequest leagueUpdateRequest
@@ -85,32 +113,32 @@ public class LeagueService {
 			() -> new ClubNotExistException(clubId));
 	}
 
-	public List<LeagueReadResponse> getLeagues(Long clubId, Integer year, Integer month) {
-		if (!validateDate(year, month)) {
-			throw new InvalidDateTimeException(year, month);
-		}
+	private boolean validateDate(String date) {
+		String[] dateForm = date.split("-");
+		int year = Integer.parseInt(dateForm[0]);
+		int month = Integer.parseInt(dateForm[1]);
 
-		LocalDateTime startOfMonth = LocalDateTime.of(LocalDate.of(year, month, START_MONTH), LocalTime.MIN);
-
-		LocalDateTime endOfMonth = LocalDateTime.of(
-			LocalDate.of(year, month, startOfMonth.toLocalDate().lengthOfMonth()), LocalTime.MAX);
-
-		List<LeagueEntity> result = leagueRepository.findAllByClubClubIdAndLeagueAtBetween(clubId, startOfMonth,
-			endOfMonth);
-
-		return result.stream()
-			.map(LeagueReadResponse::leagueReadEntityToResponse)
-			.collect(
-				Collectors.toList());
-	}
-
-	private boolean validateDate(Integer year, Integer month) {
-		int yearsPrevCompare = LocalDate.now().minusYears(20).getYear();
-		int yearsNextCompare = LocalDate.now().plusYears(20).getYear();
+		int yearsPrevCompare = LocalDate.now().minusYears(YEAR_TO_FROM).getYear();
+		int yearsNextCompare = LocalDate.now().plusYears(YEAR_TO_FROM).getYear();
 		if (yearsPrevCompare > year || yearsNextCompare < year) {
 			return false;
 		}
 		return month >= JANUARY && month <= DECEMBER;
+	}
+
+	private LocalDate parseDate(String date) {
+		String[] parts = date.split("-");
+		int year = Integer.parseInt(parts[0]);
+		int month = Integer.parseInt(parts[1]);
+		return LocalDate.of(year, month, START_DAY); // 첫 번째 날로 초기화
+	}
+
+	private LocalDateTime getStartOfMonth(LocalDate date) {
+		return LocalDateTime.of(date.getYear(), date.getMonthValue(), START_DAY, START_HOUR, START_MINUTE);
+	}
+
+	private LocalDateTime getEndOfMonth(LocalDate date) {
+		return LocalDateTime.of(date.getYear(), date.getMonthValue(), date.lengthOfMonth(), END_HOUR, END_MINUTE);
 	}
 
 }
