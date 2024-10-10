@@ -1,7 +1,6 @@
 package org.badminton.api.club.controller;
 
 import java.util.List;
-
 import org.badminton.api.club.model.dto.ClubCreateRequest;
 import org.badminton.api.club.model.dto.ClubCreateResponse;
 import org.badminton.api.club.model.dto.ClubDeleteResponse;
@@ -60,6 +59,7 @@ public class ClubController {
 		tags = {"Club"})
 	public ResponseEntity<ClubCreateResponse> createClub(@Valid @RequestBody ClubCreateRequest clubCreateRequest,
 		@AuthenticationPrincipal CustomOAuth2Member member) {
+
 		Long memberId = member.getMemberId();
 		ClubCreateResponse clubAddResponse = clubService.createClub(clubCreateRequest, memberId);
 		return ResponseEntity.ok(clubAddResponse);

@@ -30,12 +30,7 @@ public class ClubMemberEntity extends BaseTimeEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long clubMemberId;
 
-	// TODO: 동호회 탈퇴 시
-	// TODO: 추방, 강제 퇴장, 내보내기
-	// TODO: Ban 한 Club Member Entity 추가
-	private boolean deleted;
-
-	private boolean banned;
+	private boolean isDeleted;
 
 	@Enumerated(EnumType.STRING)
 	private ClubMemberRole role;
@@ -55,15 +50,6 @@ public class ClubMemberEntity extends BaseTimeEntity {
 		this.club = club;
 		this.member = member;
 		this.role = role;
-		this.deleted = false;
-		this.banned = false;
-	}
-
-	public void withdrawal() {
-		this.deleted = true;
-	}
-
-	public void expel() {
-		this.banned = true;
+		this.isDeleted = false;
 	}
 }

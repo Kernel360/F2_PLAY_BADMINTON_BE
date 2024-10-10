@@ -1,6 +1,7 @@
 package org.badminton.api.clubmember.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.badminton.api.clubmember.model.dto.ClubMemberJoinResponse;
 import org.badminton.api.clubmember.model.dto.ClubMemberResponse;
@@ -52,6 +53,10 @@ public class ClubMemberService {
 
 	}
 
+	public Optional<ClubMemberEntity> findClubMemberByMemberId(String memberId) {
+		return clubMemberRepository.findByMember_MemberId(Long.valueOf(memberId));
+	}
+
 	public List<ClubMemberEntity> findAllClubMembersByMemberId(Long memberId) {
 		return clubMemberRepository.findAllByMember_MemberId(memberId);
 	}
@@ -61,7 +66,7 @@ public class ClubMemberService {
 	}
 
 	public List<ClubMemberResponse> findAllClubMembers(Long clubId) {
-		return clubMemberRepository.findAllByClubClubIdAndBannedFalseAndDeletedFalse(clubId).stream()
+		return clubMemberRepository.findAllByClub_ClubId(clubId).stream()
 			.map(ClubMemberResponse::entityToClubMemberResponse)
 			.toList();
 	}
