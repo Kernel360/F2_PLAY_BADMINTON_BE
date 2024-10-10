@@ -14,6 +14,7 @@ import org.badminton.api.club.model.dto.ClubUpdateResponse;
 import org.badminton.api.club.model.dto.ClubsReadResponse;
 import org.badminton.api.common.exception.club.ClubNameDuplicateException;
 import org.badminton.api.common.exception.club.ClubNotExistException;
+import org.badminton.api.common.exception.member.MemberAlreadyExistInClubException;
 import org.badminton.api.common.exception.member.MemberNotExistException;
 import org.badminton.api.common.exception.member.MemberNotJoinedClubException;
 import org.badminton.api.leaguerecord.service.LeagueRecordService;
@@ -72,6 +73,7 @@ public class ClubService {
 		MemberEntity memberEntity = memberRepository.findByMemberId(memberId)
 			.orElseThrow(() -> new MemberNotExistException(memberId));
 
+		checkIfMemberAlreadyClubMember(memberId);
 		checkClubNameDuplicate(clubAddRequest.clubName());
 		ClubEntity club = new ClubEntity(clubAddRequest.clubName(), clubAddRequest.clubDescription(),
 			clubAddRequest.clubImage());
@@ -154,8 +156,16 @@ public class ClubService {
 
 	private ClubMemberEntity findClubMemberByClubMemberId(Long memberId) {
 		return clubMemberRepository.findByMember_MemberId(memberId)
-            .orElseThrow(
-                () -> new MemberNotJoinedClubException(memberId));
+			.orElseThrow(
+				() -> new MemberNotJoinedClubException(memberId));
+	}
+
+	private void checkIfMemberAlreadyClubMember(Long memberId) {
+		clubMemberRepository.findByMember_MemberId(memberId).ifPresent(clubMember -> {
+			throw new MemberAlreadyExistInClubException(memberId, clubMember.getClub().getClubId(),
+				clubMember.getRole());
+		});
+
 	}
 
 }

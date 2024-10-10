@@ -24,6 +24,7 @@ public record LeagueUpdateRequest(
 	@Schema(description = "최소 티어", example = "GOLD")
 	MemberTier tierLimit,
 
+	// TODO: 경기 상태
 	@Pattern(regexp = "OPEN|CLOSED", message = "리그 상태 값이 올바르지 않습니다.")
 	@Schema(description = "현재 경기 상태", example = "OPEN")
 	LeagueStatus leagueStatus,
@@ -41,6 +42,7 @@ public record LeagueUpdateRequest(
 	@Schema(description = "참가 인원", example = "16")
 	int playerCount,
 
+	// TODO: Random, Age, Tier -> Swagger 수정 필요
 	@Schema(description = "매칭 조건", example = "TIER")
 	String matchingRequirement
 
