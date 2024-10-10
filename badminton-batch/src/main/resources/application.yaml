@@ -1,6 +1,8 @@
 server:
   port: 9090
 spring:
+  profiles:
+    active: ${ACTIVE_PROFILE}
   application:
     name: badminton-batch
   jpa:

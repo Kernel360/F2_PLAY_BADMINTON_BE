@@ -12,6 +12,11 @@ allprojects {
     apply plugin: 'java-library'
 
     dependencies {
+        implementation "ca.pjer:logback-awslogs-appender:1.6.0"
+        implementation group: 'me.paulschwarz', name: 'spring-dotenv', version: '4.0.0'
+        implementation 'com.amazonaws:aws-java-sdk-logs:1.12.300'  // AWS CloudWatch Logs SDK
+        implementation 'net.logstash.logback:logstash-logback-encoder:7.2'
+
         compileOnly 'org.projectlombok:lombok'
         annotationProcessor 'org.projectlombok:lombok'
         testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
