@@ -3,6 +3,7 @@ package org.badminton.api.league.model.dto;
 
 import java.time.LocalDateTime;
 
+import org.badminton.domain.common.enums.MatchGenerationType;
 import org.badminton.domain.common.enums.MatchType;
 import org.badminton.domain.common.enums.MemberTier;
 import org.badminton.domain.league.enums.LeagueStatus;
@@ -24,7 +25,7 @@ public record LeagueCreateRequest(
 
 	//TODO: DTO 마다 검증 로직을 두지 않는 방법 알아보기
 	@Pattern(regexp = "GOLD|SILVER|BRONZE", message = "리그 상태 값이 올바르지 않습니다.")
-	@Schema(description = "최소 티어", example = "GOLD || SILVER || BRONZE")
+	@Schema(description = "최소 티어", example = "GOLD")
 	MemberTier tierLimit,
 
 	@Pattern(regexp = "OPEN|CLOSED", message = "리그 상태 값이 올바르지 않습니다.")
@@ -46,7 +47,7 @@ public record LeagueCreateRequest(
 	int playerCount,
 
 	@Schema(description = "매칭 조건", example = "TIER")
-	String matchingRequirement
+	MatchGenerationType matchGenerationType
 
 ) {
 

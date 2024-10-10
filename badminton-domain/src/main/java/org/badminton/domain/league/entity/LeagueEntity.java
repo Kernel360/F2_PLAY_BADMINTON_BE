@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import org.badminton.domain.club.entity.ClubEntity;
 import org.badminton.domain.common.BaseTimeEntity;
+import org.badminton.domain.common.enums.MatchGenerationType;
 import org.badminton.domain.common.enums.MatchType;
 import org.badminton.domain.common.enums.MemberTier;
 import org.badminton.domain.league.enums.LeagueStatus;
@@ -56,7 +57,8 @@ public class LeagueEntity extends BaseTimeEntity {
 
 	private int playerCount;
 
-	private String matchingRequirement;
+	@Enumerated(EnumType.STRING)
+	private MatchGenerationType matchGenerationType;  //RANDOM, TIER, AGE
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "clubId")
@@ -64,7 +66,7 @@ public class LeagueEntity extends BaseTimeEntity {
 
 	public LeagueEntity(String leagueName, String description, String leagueLocation, LocalDateTime leagueAt,
 		MemberTier tierLimit, LocalDateTime closedAt, LeagueStatus leagueStatus, int playerCount,
-		MatchType matchType, String matchingRequirement, ClubEntity club) {
+		MatchType matchType, MatchGenerationType matchGenerationType, ClubEntity club) {
 		this.leagueName = leagueName;
 		this.description = description;
 		this.leagueLocation = leagueLocation;
@@ -74,14 +76,14 @@ public class LeagueEntity extends BaseTimeEntity {
 		this.leagueStatus = leagueStatus;
 		this.playerCount = playerCount;
 		this.matchType = matchType;
-		this.matchingRequirement = matchingRequirement;
+		this.matchGenerationType = matchGenerationType;
 		this.club = club;
 	}
 
 	public void updateLeague(String leagueName, String description, String leagueLocation, MemberTier requiredTier,
 		LocalDateTime leagueAt,
 		LocalDateTime closedAt, LeagueStatus leagueStatus, int playerCount, MatchType matchType,
-		String matchingRequirement) {
+		MatchGenerationType matchGenerationType) {
 		this.leagueName = leagueName;
 		this.description = description;
 		this.leagueLocation = leagueLocation;
@@ -91,7 +93,7 @@ public class LeagueEntity extends BaseTimeEntity {
 		this.leagueStatus = leagueStatus;
 		this.playerCount = playerCount;
 		this.matchType = matchType;
-		this.matchingRequirement = matchingRequirement;
+		this.matchGenerationType = matchGenerationType;
 
 	}
 }

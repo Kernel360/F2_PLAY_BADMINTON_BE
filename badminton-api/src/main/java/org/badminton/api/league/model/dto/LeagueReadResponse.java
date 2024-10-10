@@ -2,6 +2,7 @@ package org.badminton.api.league.model.dto;
 
 import java.time.LocalDateTime;
 
+import org.badminton.domain.common.enums.MatchGenerationType;
 import org.badminton.domain.common.enums.MatchType;
 import org.badminton.domain.common.enums.MemberTier;
 import org.badminton.domain.league.entity.LeagueEntity;
@@ -44,7 +45,7 @@ public record LeagueReadResponse(
 	LocalDateTime modifiedAt,
 
 	@Schema(description = "매칭 조건", example = "RANDOM")
-	String matchingRequirement
+	MatchGenerationType matchGenerationType
 ) {
 	public LeagueReadResponse(LeagueEntity entity) {
 		this(
@@ -59,7 +60,7 @@ public record LeagueReadResponse(
 			entity.getPlayerCount(),
 			entity.getCreatedAt(),
 			entity.getModifiedAt(),
-			entity.getMatchingRequirement()
+			entity.getMatchGenerationType()
 		);
 	}
 
