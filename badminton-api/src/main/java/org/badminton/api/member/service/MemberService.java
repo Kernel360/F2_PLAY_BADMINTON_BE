@@ -5,12 +5,14 @@ import java.util.List;
 
 import org.badminton.api.member.jwt.JwtUtil;
 import org.badminton.api.member.model.dto.MemberDeleteResponse;
+import org.badminton.api.member.model.dto.MemberIsClubMemberResponse;
 import org.badminton.api.member.model.dto.MemberMyPageResponse;
 
 import org.badminton.api.member.model.dto.MemberResponse;
 import org.badminton.api.member.oauth2.dto.CustomOAuth2Member;
 import org.badminton.api.member.validator.MemberValidator;
 import org.badminton.domain.clubmember.entity.ClubMemberEntity;
+import org.badminton.domain.clubmember.entity.ClubMemberRole;
 import org.badminton.domain.clubmember.repository.ClubMemberRepository;
 import org.badminton.domain.leaguerecord.entity.LeagueRecordEntity;
 import org.badminton.domain.leaguerecord.repository.LeagueRecordRepository;
@@ -60,6 +62,18 @@ public class MemberService {
 
 	@Value("${NAVER_CLIENT_SECRET}")
 	private String naverClientSecret;
+
+	public MemberIsClubMemberResponse getMemberIsClubMember(Long memberId) {
+		boolean isClubMember = clubMemberRepository.existsByMember_MemberId(memberId);
+		if (isClubMember) {
+			ClubMemberEntity clubMemberEntity = clubMemberRepository.findByMember_MemberId(memberId).get();
+			ClubMemberRole clubMemberRole = clubMemberEntity.getRole();
+			Long clubId = clubMemberEntity.getClub().getClubId();
+
+			return new MemberIsClubMemberResponse(true,clubMemberRole,clubId);
+		}
+		return new MemberIsClubMemberResponse(false,null,null);
+	}
 
 	public MemberMyPageResponse getMemberInfo(Long memberId) {
 		MemberEntity memberEntity = memberValidator.findMemberByMemberId(memberId);

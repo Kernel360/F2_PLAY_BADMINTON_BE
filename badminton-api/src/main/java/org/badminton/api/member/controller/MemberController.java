@@ -5,10 +5,12 @@ import org.badminton.api.aws.s3.model.dto.ImageUploadRequest;
 import org.badminton.api.aws.s3.service.MemberProfileImageService;
 import org.badminton.api.leaguerecord.service.LeagueRecordService;
 import org.badminton.api.member.model.dto.MemberDeleteResponse;
+import org.badminton.api.member.model.dto.MemberIsClubMemberResponse;
 import org.badminton.api.member.model.dto.MemberMyPageResponse;
 import org.badminton.api.member.model.dto.MemberResponse;
 import org.badminton.api.member.oauth2.dto.CustomOAuth2Member;
 import org.badminton.api.member.service.MemberService;
+import org.badminton.domain.clubmember.entity.ClubMemberRole;
 import org.badminton.domain.clubmember.repository.ClubMemberRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -145,6 +147,17 @@ public class MemberController {
 	@GetMapping("/myPage")
 	public ResponseEntity<MemberMyPageResponse> getMemberInfo(@AuthenticationPrincipal CustomOAuth2Member member) {
 		return ResponseEntity.ok(memberService.getMemberInfo(member.getMemberId()));
+	}
+
+	@Operation(
+		summary = "회원이 동호회에 가입되어있는지 확인합니다",
+		description = "회원이 동호회에 가입되어있는지 확인합니다",
+		tags = {"Member"}
+	)
+	@GetMapping("/is-club-member")
+	public ResponseEntity<MemberIsClubMemberResponse> getMemberIsClubMember(@AuthenticationPrincipal CustomOAuth2Member member) {
+		Long memberId = member.getMemberId();
+		return ResponseEntity.ok(memberService.getMemberIsClubMember(memberId));
 	}
 
 }
