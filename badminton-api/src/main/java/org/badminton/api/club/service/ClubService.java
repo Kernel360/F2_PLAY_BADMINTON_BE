@@ -5,13 +5,13 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.badminton.api.club.model.dto.ClubCardResponse;
 import org.badminton.api.club.model.dto.ClubCreateRequest;
 import org.badminton.api.club.model.dto.ClubCreateResponse;
 import org.badminton.api.club.model.dto.ClubDeleteResponse;
-import org.badminton.api.club.model.dto.ClubReadResponse;
+import org.badminton.api.club.model.dto.ClubDetailsResponse;
 import org.badminton.api.club.model.dto.ClubUpdateRequest;
 import org.badminton.api.club.model.dto.ClubUpdateResponse;
-import org.badminton.api.club.model.dto.ClubsReadResponse;
 import org.badminton.api.common.exception.club.ClubNameDuplicateException;
 import org.badminton.api.common.exception.club.ClubNotExistException;
 import org.badminton.api.common.exception.member.MemberAlreadyExistInClubException;
@@ -45,23 +45,27 @@ public class ClubService {
 	private final LeagueRecordRepository leagueRecordRepository;
 	private final LeagueRecordService leagueRecordService;
 
-	public ClubReadResponse readClub(Long clubId) {
-		ClubEntity club = findClubByClubId(clubId);
-		return ClubReadResponse.clubEntityToClubReadResponse(club);
+	public ClubDetailsResponse readClub(Long clubId) {
+		ClubEntity club = checkIfClubPresent(clubId);
+		Map<MemberTier, Long> memberCountByTier = club.getMemberCountByTier();
+
+		return ClubDetailsResponse.clubEntityToClubReadResponse(club, memberCountByTier);
 	}
 
-	public ClubReadResponse readCurrentClub(Long memberId) {
+	public ClubDetailsResponse readCurrentClub(Long memberId) {
 		ClubMemberEntity clubMember = findClubMemberByClubMemberId(memberId);
-		return ClubReadResponse.clubEntityToClubReadResponse(clubMember.getClub());
+		Map<MemberTier, Long> memberCountByTier = clubMember.getClub().getMemberCountByTier();
+
+		return ClubDetailsResponse.clubEntityToClubReadResponse(clubMember.getClub(), memberCountByTier);
 	}
 
-	public List<ClubsReadResponse> readAllClub() {
+	public List<ClubCardResponse> readAllClub() {
 		List<ClubEntity> clubs = clubRepository.findAllByIsClubDeletedIsFalse();
 
 		return clubs.stream()
 			.map(club -> {
 				Map<MemberTier, Long> tierCounts = leagueRecordService.getMemberCountByTierInClub(club.getClubId());
-				return ClubsReadResponse.clubEntityToClubsReadResponse(club, tierCounts);
+				return ClubCardResponse.clubEntityToClubsReadResponse(club, tierCounts);
 			})
 			.collect(Collectors.toList());
 	}
@@ -100,7 +104,7 @@ public class ClubService {
 
 	@Transactional
 	public ClubUpdateResponse updateClub(ClubUpdateRequest clubUpdateRequest, Long clubId) {
-		ClubEntity club = findClubByClubId(clubId);
+		ClubEntity club = checkIfClubPresent(clubId);
 		club.updateClub(clubUpdateRequest.clubName(), clubUpdateRequest.clubDescription(),
 			clubUpdateRequest.clubDescription());
 		clubRepository.save(club);
@@ -109,7 +113,7 @@ public class ClubService {
 
 	@Transactional
 	public ClubDeleteResponse deleteClub(Long clubId) {
-		ClubEntity club = findClubByClubId(clubId);
+		ClubEntity club = checkIfClubPresent(clubId);
 		club.doWithdrawal();
 		return ClubDeleteResponse.clubEntityToClubDeleteResponse(club);
 	}
@@ -128,7 +132,7 @@ public class ClubService {
 		}
 	}
 
-	public List<ClubsReadResponse> searchClubs(String keyword) {
+	public List<ClubCardResponse> searchClubs(String keyword) {
 		if (keyword == null || keyword.trim().isEmpty()) {
 			return readAllClub();
 		}
@@ -137,7 +141,7 @@ public class ClubService {
 		return clubEntityList.stream()
 			.map(club -> {
 				Map<MemberTier, Long> tierCounts = leagueRecordService.getMemberCountByTierInClub(club.getClubId());
-				return ClubsReadResponse.clubEntityToClubsReadResponse(club, tierCounts);
+				return ClubCardResponse.clubEntityToClubsReadResponse(club, tierCounts);
 			})
 			.collect(Collectors.toList());
 	}
@@ -148,7 +152,7 @@ public class ClubService {
 		});
 	}
 
-	private ClubEntity findClubByClubId(Long clubId) {
+	private ClubEntity checkIfClubPresent(Long clubId) {
 		return clubRepository.findByClubIdAndIsClubDeletedFalse(clubId)
 			.orElseThrow(
 				() -> new ClubNotExistException(clubId));
