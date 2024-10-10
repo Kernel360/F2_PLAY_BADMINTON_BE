@@ -29,7 +29,6 @@ import lombok.RequiredArgsConstructor;
 @Validated
 @RequiredArgsConstructor
 public class LeagueService {
-	private static final Integer START_MONTH = 1;
 	private static final Integer START_DAY = 1;
 	private static final Integer START_HOUR = 0;
 	private static final Integer START_MINUTE = 0;
