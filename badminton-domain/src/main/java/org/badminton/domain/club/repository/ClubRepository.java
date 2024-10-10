@@ -13,5 +13,7 @@ public interface ClubRepository extends JpaRepository<ClubEntity, Long> {
 	Optional<ClubEntity> findByClubIdAndIsClubDeletedFalse(Long clubId);
 
 	List<ClubEntity> findAllByIsClubDeletedIsFalse();
+
+	List<ClubEntity> findAllByClubNameContainingIgnoreCase(String keyword);
 }
 
