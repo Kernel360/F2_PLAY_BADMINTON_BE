@@ -20,9 +20,8 @@ public class MemberProfileImageService extends AbstractFileUploadService {
 
 	public String uploadFile(ImageUploadRequest file, Long memberId) {
 		this.currentMemberId = memberId;
-		String fileUrl = super.uploadFile(file);
-		memberService.updateProfileImage(memberId, fileUrl);
-		return fileUrl;
+		return super.uploadFile(file);
+
 	}
 
 	@Override
