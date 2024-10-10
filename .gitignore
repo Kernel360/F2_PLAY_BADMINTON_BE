@@ -44,3 +44,6 @@ data/
 
 gradlew
 gradlew.bat
+
+logback-api.xml
+logback-batch.xml

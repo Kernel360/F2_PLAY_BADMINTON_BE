@@ -1,4 +1,6 @@
 spring:
+  profiles:
+    active: ${ACTIVE_PROFILE}
   application:
     name: badminton
   jpa:
@@ -17,7 +19,7 @@ spring:
     basename: messages
   sql:
     init:
-      mode: always
+      mode: ${SQL_MODE}
   datasource:
     url: ${DATABASE_URL}
     username: ${DATABASE_USER_NAME}
