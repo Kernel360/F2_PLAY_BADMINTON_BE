@@ -127,21 +127,17 @@ public class ClubService {
 	}
 
 	public List<ClubsReadResponse> searchClubs(String keyword) {
-
 		if (keyword == null || keyword.trim().isEmpty()) {
 			return readAllClub();
 		}
-
 		List<ClubEntity> clubEntityList = clubRepository.findAllByClubNameContainingIgnoreCase(
 			keyword);
-
 		return clubEntityList.stream()
 			.map(club -> {
 				Map<MemberTier, Long> tierCounts = leagueRecordService.getMemberCountByTierInClub(club.getClubId());
 				return ClubsReadResponse.clubEntityToClubsReadResponse(club, tierCounts);
 			})
 			.collect(Collectors.toList());
-
 	}
 
 	private void checkClubNameDuplicate(String clubName) {
