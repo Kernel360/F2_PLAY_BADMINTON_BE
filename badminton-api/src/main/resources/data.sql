@@ -70,7 +70,8 @@ VALUES (1, 1, 'ROLE_OWNER', false, false, '2024-01-01 09:00:00', '2024-01-01 09:
        (2, 10, 'ROLE_MANAGER', false, false, '2024-01-10 09:00:00', '2024-01-10 09:00:00');
 
 -- League 데이터 삽입 (leagueLocation 필드 추가)
-INSERT INTO league (leagueName, description, requiredTier, leagueStatus, matchType, leagueAt, closedAt, playerCount,
+INSERT INTO league (leagueName, description, requiredTier, leagueStatus, matchType, leagueAt, closedAt,
+                    playerLimitCount,
                     matchGenerationType, clubId, createdAt, modifiedAt, leagueLocation)
 VALUES ('League 1', 'First league description', 'GOLD', 'OPEN', 'SINGLES', '2024-01-01 10:00:00', '2024-02-01 10:00:00',
         10, 'RANDOM', 1, '2024-01-01 09:00:00', '2024-01-01 09:00:00', '성동구 서울숲 체육관'),

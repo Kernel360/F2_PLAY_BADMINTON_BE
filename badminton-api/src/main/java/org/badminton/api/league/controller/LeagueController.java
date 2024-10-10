@@ -2,12 +2,14 @@ package org.badminton.api.league.controller;
 
 import java.util.List;
 
+import org.badminton.api.league.model.dto.LeagueAndParticipantResponse;
 import org.badminton.api.league.model.dto.LeagueCreateRequest;
 import org.badminton.api.league.model.dto.LeagueCreateResponse;
 import org.badminton.api.league.model.dto.LeagueReadResponse;
 import org.badminton.api.league.model.dto.LeagueStatusUpdateResponse;
 import org.badminton.api.league.model.dto.LeagueUpdateRequest;
 import org.badminton.api.league.service.LeagueService;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -31,15 +34,19 @@ public class LeagueController {
 	private final LeagueService leagueService;
 
 	@Operation(
-		summary = "년, 월별로 검색합니다.",
-		description = "검색조건에 따라 경기를 검색합니다.",
-		tags = {"league"}
+		summary = "해당 일자 기준으로 데이터를 조회합니다.",
+		description = "특정 클럽 ID에 대한 리그 데이터를 조회합니다. 검색 조건으로 날짜를 사용하며, 날짜는 'yyyy-MM' 형식으로 제공되어야 합니다.",
+		tags = {"league"},
+		parameters = {
+			@Parameter(name = "clubId", description = "조회할 클럽의 ID", required = true),
+			@Parameter(name = "date", description = "조회할 날짜, 'yyyy-MM' 형식으로 입력", required = true)
+		}
 	)
 	@GetMapping()
 	public ResponseEntity<List<LeagueReadResponse>> leagueReadByCondition(@PathVariable Long clubId,
-		@RequestParam Integer year,
-		@RequestParam Integer month) {
-		return ResponseEntity.ok(leagueService.getLeagues(clubId, year, month));
+		@RequestParam
+		@DateTimeFormat(pattern = "yyyy-MM") String date) {
+		return ResponseEntity.ok(leagueService.getLeagues(clubId, date));
 	}
 
 	@Operation(
@@ -60,7 +67,8 @@ public class LeagueController {
 		tags = {"league"}
 	)
 	@GetMapping("/{leagueId}")
-	public ResponseEntity<LeagueReadResponse> leagueRead(@PathVariable Long clubId, @PathVariable Long leagueId) {
+	public ResponseEntity<LeagueAndParticipantResponse> leagueRead(@PathVariable Long clubId,
+		@PathVariable Long leagueId) {
 		return ResponseEntity.ok(leagueService.getLeague(clubId, leagueId));
 	}
 

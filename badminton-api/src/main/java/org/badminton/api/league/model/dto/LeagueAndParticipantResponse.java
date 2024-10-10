@@ -10,7 +10,10 @@ import org.badminton.domain.league.enums.LeagueStatus;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-public record LeagueCreateResponse(
+public record LeagueAndParticipantResponse(
+	@Schema(description = "경기 아이디", example = "1L")
+	Long leagueId,
+
 	@Schema(description = "경기 이름", example = "배드민턴 경기")
 	String leagueName,
 
@@ -32,8 +35,8 @@ public record LeagueCreateResponse(
 	@Schema(description = "모집 마감 날짜", example = "2024-09-08T23:59:59")
 	LocalDateTime closedAt,
 
-	@Schema(description = "참가 인원", example = "16")
-	int playerCount,
+	@Schema(description = "참가 제한 인원", example = "16")
+	int playerLimitCount,
 
 	@Schema(description = "생성 일자", example = "2024-09-10T15:30:00")
 	LocalDateTime createdAt,
@@ -41,12 +44,14 @@ public record LeagueCreateResponse(
 	@Schema(description = "수정 일자", example = "2024-09-10T15:30:00")
 	LocalDateTime modifiedAt,
 
-	@Schema(description = "매칭 조건", example = "TIER")
-	MatchGenerationType matchGenerationType
-) {
+	@Schema(description = "매칭 조건", example = "RANDOM")
+	MatchGenerationType matchGenerationType,
 
-	public LeagueCreateResponse(LeagueEntity entity) {
-		this(
+	@Schema(description = "현재 참여 인원", example = "0")
+	int playerCount
+) {
+	public LeagueAndParticipantResponse(LeagueEntity entity, int playerCount) {
+		this(entity.getLeagueId(),
 			entity.getLeagueName(),
 			entity.getDescription(),
 			entity.getRequiredTier(),
@@ -57,11 +62,13 @@ public record LeagueCreateResponse(
 			entity.getPlayerLimitCount(),
 			entity.getCreatedAt(),
 			entity.getModifiedAt(),
-			entity.getMatchGenerationType()
+			entity.getMatchGenerationType(),
+			playerCount
 		);
 	}
 
-	public static LeagueCreateResponse leagueCreateEntityToResponse(LeagueEntity entity) {
-		return new LeagueCreateResponse(entity);
+	public static LeagueAndParticipantResponse leagueAndParticipantEntityToResponse(LeagueEntity entity,
+		int playerCount) {
+		return new LeagueAndParticipantResponse(entity, playerCount);
 	}
 }
