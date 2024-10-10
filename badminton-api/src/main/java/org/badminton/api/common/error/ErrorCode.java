@@ -49,6 +49,7 @@ public enum ErrorCode {
 	CLUB_NAME_ALREADY_EXIST(409, "이미 존재하는 동호회 이름입니다."),
 	LEAGUE_ALREADY_EXIST(409, "이미 존재하는 경기 일정입니다."),
 	MATCH_ALREADY_EXIST(409, "이미 대진표가 만들어졌습니다."),
+	MEMBER_ALREADY_JOINED_CLUB(409, "해당하는 회원은 이미 동호회에 가입을 완료했습니다."),
 
 	LEAGUE_ALREADY_PARTICIPATED(409, "이미 참여 신청을 완료한 경기 일정입니다."),
 	LEAGUE_NOT_PARTICIPATED(409, "참여 신청을 하지 않는 경기입니다."),

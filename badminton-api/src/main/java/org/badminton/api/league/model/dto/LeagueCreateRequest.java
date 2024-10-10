@@ -1,4 +1,3 @@
-
 package org.badminton.api.league.model.dto;
 
 import java.time.LocalDateTime;
@@ -28,6 +27,8 @@ public record LeagueCreateRequest(
 	@Schema(description = "최소 티어", example = "GOLD")
 	MemberTier tierLimit,
 
+	// TODO: 모집 중, 모집 마감
+	// TODO: 경기 중, 경기 끝 추후에 추가
 	@Pattern(regexp = "OPEN|CLOSED", message = "리그 상태 값이 올바르지 않습니다.")
 	@Schema(description = "현재 경기 상태", example = "OPEN")
 	LeagueStatus leagueStatus,
