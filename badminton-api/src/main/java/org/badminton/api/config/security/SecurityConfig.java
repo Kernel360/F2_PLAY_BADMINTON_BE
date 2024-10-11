@@ -114,6 +114,7 @@ public class SecurityConfig {
 				.requestMatchers(HttpMethod.PATCH, "/v1/clubs/{clubId}/leagues/{leagueId}").access(hasClubRole("OWNER", "MANAGER"))
 				.requestMatchers(HttpMethod.POST, "/v1/clubs/{clubId}/leagues/{leagueId}/participation").access(hasClubRole("OWNER", "MANAGER", "USER"))
 				.requestMatchers(HttpMethod.DELETE, "/v1/clubs/{clubId}/leagues/{leagueId}/participation").access(hasClubRole("OWNER", "MANAGER", "USER"))
+				.requestMatchers(HttpMethod.PATCH, "/v1/clubs/{clubId}/clubMembers/role").access(hasClubRole("OWNER"))
 				.anyRequest().authenticated()
 			);
 		return http.build();

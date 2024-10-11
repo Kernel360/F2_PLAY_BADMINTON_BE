@@ -59,6 +59,10 @@ public class ClubMemberEntity extends BaseTimeEntity {
 		this.banned = false;
 	}
 
+	public void updateClubMemberRole(ClubMemberRole role) {
+		this.role = role;
+	}
+
 	public void withdrawal() {
 		this.deleted = true;
 	}

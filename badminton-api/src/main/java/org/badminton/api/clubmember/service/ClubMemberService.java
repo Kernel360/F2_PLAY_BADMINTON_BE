@@ -8,8 +8,10 @@ import java.util.TreeMap;
 import org.badminton.api.clubmember.model.Comparator.ClubMemberRoleComparator;
 import org.badminton.api.clubmember.model.dto.ClubMemberJoinResponse;
 import org.badminton.api.clubmember.model.dto.ClubMemberResponse;
+import org.badminton.api.clubmember.model.dto.ClubMemberRoleUpdateRequest;
 import org.badminton.api.common.exception.club.ClubNotExistException;
 import org.badminton.api.common.exception.clubmember.ClubMemberDuplicateException;
+import org.badminton.api.common.exception.clubmember.ClubMemberNotExistException;
 import org.badminton.api.common.exception.member.MemberNotExistException;
 import org.badminton.domain.club.entity.ClubEntity;
 import org.badminton.domain.club.repository.ClubRepository;
@@ -54,6 +56,14 @@ public class ClubMemberService {
 		return ClubMemberJoinResponse.clubMemberEntityToClubMemberJoinResponse(
 			clubMemberEntity);
 
+	}
+
+	public ClubMemberResponse updateClubMemberRole(ClubMemberRoleUpdateRequest request, Long clubMemberId) {
+		ClubMemberEntity clubMemberEntity = clubMemberRepository.findByClubMemberId(clubMemberId)
+			.orElseThrow(() -> new ClubMemberNotExistException(clubMemberId));
+		clubMemberEntity.updateClubMemberRole(request.role());
+		clubMemberRepository.save(clubMemberEntity);
+		return ClubMemberResponse.entityToClubMemberResponse(clubMemberEntity);
 	}
 
 	public List<ClubMemberEntity> findAllClubMembersByMemberId(Long memberId) {
