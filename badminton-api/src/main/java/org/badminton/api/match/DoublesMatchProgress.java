@@ -63,8 +63,9 @@ public class DoublesMatchProgress implements MatchProgress {
 		// 승자에 따라 Match에 이긴 세트수를 업데이트해준다. 만약 2번을 모두 이긴 팀이 있다면 해당 Match는 종료된다.
 		if (setScoreUpdateRequest.score1() > setScoreUpdateRequest.score2()) {
 			doublesMatch.team1WinSet();
-		} else
+		} else {
 			doublesMatch.team2WinSet();
+		}
 
 		doublesMatchRepository.save(doublesMatch);
 		return SetScoreUpdateResponse.doublesSetEntityToSetScoreUpdateResponse(matchId, setIndex,
