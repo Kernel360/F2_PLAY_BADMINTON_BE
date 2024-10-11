@@ -6,6 +6,7 @@ import org.badminton.api.match.model.dto.MatchDetailsResponse;
 import org.badminton.api.match.model.dto.MatchResponse;
 import org.badminton.api.match.service.MatchCreateService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +23,18 @@ import lombok.extern.slf4j.Slf4j;
 public class MatchController {
 
 	private final MatchCreateService matchCreateService;
+	
+	@GetMapping
+	@Operation(summary = "대진표 조회",
+		description = "대진표를 조회합니다.",
+		tags = {"Match"})
+	public ResponseEntity<List<MatchResponse>> getMatches(
+		@PathVariable Long clubId,
+		@PathVariable Long leagueId
+	) {
+		List<MatchResponse> matchResponseList = matchCreateService.getMatches(clubId, leagueId);
+		return ResponseEntity.ok(matchResponseList);
+	}
 
 	@PostMapping
 	@Operation(summary = "대진표 생성",
