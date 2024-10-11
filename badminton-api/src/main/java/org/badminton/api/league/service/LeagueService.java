@@ -2,6 +2,7 @@ package org.badminton.api.league.service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,6 +15,8 @@ import org.badminton.api.league.model.dto.LeagueCreateResponse;
 import org.badminton.api.league.model.dto.LeagueReadResponse;
 import org.badminton.api.league.model.dto.LeagueStatusUpdateResponse;
 import org.badminton.api.league.model.dto.LeagueUpdateRequest;
+import org.badminton.api.league.model.enums.EndDateType;
+import org.badminton.api.league.model.enums.StartDateType;
 import org.badminton.domain.club.entity.ClubEntity;
 import org.badminton.domain.club.repository.ClubRepository;
 import org.badminton.domain.league.entity.LeagueEntity;
@@ -29,14 +32,8 @@ import lombok.RequiredArgsConstructor;
 @Validated
 @RequiredArgsConstructor
 public class LeagueService {
-	private static final Integer START_DAY = 1;
-	private static final Integer START_HOUR = 0;
-	private static final Integer START_MINUTE = 0;
-	private static final Integer END_HOUR = 23;
-	private static final Integer END_MINUTE = 59;
-	private static final Integer JANUARY = 1;
-	private static final Integer DECEMBER = 12;
 	private static final Integer YEAR_TO_FROM = 20;
+
 	private final LeagueRepository leagueRepository;
 	private final ClubRepository clubRepository;
 	private final LeagueParticipantRepository leagueParticipantRepository;
@@ -122,22 +119,24 @@ public class LeagueService {
 		if (yearsPrevCompare > year || yearsNextCompare < year) {
 			return false;
 		}
-		return month >= JANUARY && month <= DECEMBER;
+		return month >= Month.JANUARY.getValue() && month <= Month.DECEMBER.getValue();
 	}
 
 	private LocalDate parseDate(String date) {
 		String[] parts = date.split("-");
 		int year = Integer.parseInt(parts[0]);
 		int month = Integer.parseInt(parts[1]);
-		return LocalDate.of(year, month, START_DAY); // 첫 번째 날로 초기화
+		return LocalDate.of(year, month, StartDateType.START_DAY.getDescription()); // 첫 번째 날로 초기화
 	}
 
 	private LocalDateTime getStartOfMonth(LocalDate date) {
-		return LocalDateTime.of(date.getYear(), date.getMonthValue(), START_DAY, START_HOUR, START_MINUTE);
+		return LocalDateTime.of(date.getYear(), date.getMonthValue(), StartDateType.START_DAY.getDescription(),
+			StartDateType.START_HOUR.getDescription(), StartDateType.START_MINUTE.getDescription());
 	}
 
 	private LocalDateTime getEndOfMonth(LocalDate date) {
-		return LocalDateTime.of(date.getYear(), date.getMonthValue(), date.lengthOfMonth(), END_HOUR, END_MINUTE);
+		return LocalDateTime.of(date.getYear(), date.getMonthValue(),
+			date.lengthOfMonth(), EndDateType.END_HOUR.getDescription(), EndDateType.END_MINUTE.getDescription());
 	}
 
 }
