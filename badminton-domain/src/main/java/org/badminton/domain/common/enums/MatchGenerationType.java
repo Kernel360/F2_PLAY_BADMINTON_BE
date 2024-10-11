@@ -1,8 +1,8 @@
 package org.badminton.domain.common.enums;
 
 public enum MatchGenerationType {
-	RANDOM("무작위"),
-	TIER("티어");
+	RANDOM("랜덤 생성"),
+	TIER("티어별 생성");
 
 	private final String description;
 
@@ -11,7 +11,7 @@ public enum MatchGenerationType {
 	}
 
 	public String getDescription() {
-        return description;
-    }
+		return description;
+	}
 
 }

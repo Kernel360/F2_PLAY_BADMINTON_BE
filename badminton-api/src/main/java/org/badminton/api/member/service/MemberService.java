@@ -1,4 +1,3 @@
-
 package org.badminton.api.member.service;
 
 import java.util.List;
@@ -7,7 +6,6 @@ import org.badminton.api.member.jwt.JwtUtil;
 import org.badminton.api.member.model.dto.MemberDeleteResponse;
 import org.badminton.api.member.model.dto.MemberIsClubMemberResponse;
 import org.badminton.api.member.model.dto.MemberMyPageResponse;
-
 import org.badminton.api.member.model.dto.MemberResponse;
 import org.badminton.api.member.oauth2.dto.CustomOAuth2Member;
 import org.badminton.api.member.validator.MemberValidator;
@@ -70,9 +68,9 @@ public class MemberService {
 			ClubMemberRole clubMemberRole = clubMemberEntity.getRole();
 			Long clubId = clubMemberEntity.getClub().getClubId();
 
-			return new MemberIsClubMemberResponse(true,clubMemberRole,clubId);
+			return new MemberIsClubMemberResponse(true, clubMemberRole, clubId);
 		}
-		return new MemberIsClubMemberResponse(false,null,null);
+		return new MemberIsClubMemberResponse(false, null, null);
 	}
 
 	public MemberMyPageResponse getMemberInfo(Long memberId) {
@@ -141,7 +139,7 @@ public class MemberService {
 
 	public MemberDeleteResponse changeIsDeleted(Long memberId) {
 		MemberEntity memberEntity = memberValidator.findMemberByMemberId(memberId);
-		memberEntity.deleteMember();
+		memberEntity.doWithdrawal();
 		memberRepository.save(memberEntity);
 		log.info("Member marked as deleted: {}", memberId);
 		return MemberDeleteResponse.memberEntityToDeleteResponse(memberEntity);

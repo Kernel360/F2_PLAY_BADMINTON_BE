@@ -27,7 +27,8 @@ public class SinglesMatchProgress implements MatchProgress {
 
 	@Override
 	public List<MatchResponse> getMatches(Long leagueId) {
-		return singlesMatchRepository.findAllByLeague_LeagueId(leagueId).stream()
+		return singlesMatchRepository.findAllByLeague_LeagueId(leagueId)
+			.stream()
 			.map(MatchResponse::entityToSinglesMatchResponse)
 			.toList();
 	}
@@ -35,10 +36,7 @@ public class SinglesMatchProgress implements MatchProgress {
 	@Override
 	public List<MatchResponse> makeMatches(LeagueEntity league, List<LeagueParticipantEntity> leagueParticipantList) {
 		List<SinglesMatchEntity> singlesMatches = makeSinglesMatches(leagueParticipantList, league);
-		return singlesMatches
-			.stream()
-			.map(MatchResponse::entityToSinglesMatchResponse)
-			.toList();
+		return singlesMatches.stream().map(MatchResponse::entityToSinglesMatchResponse).toList();
 	}
 
 	@Override
@@ -47,16 +45,16 @@ public class SinglesMatchProgress implements MatchProgress {
 
 		return singlesMatchList.stream()
 			.map(this::initSinglesMatch)
-			.map(MatchDetailsResponse::entityToSinglesMatchDetailsResponse).toList();
+			.map(MatchDetailsResponse::entityToSinglesMatchDetailsResponse)
+			.toList();
 	}
 
 	@Override
 	public SetScoreUpdateResponse updateSetScore(Long matchId, int setIndex,
 		SetScoreUpdateRequest setScoreUpdateRequest) {
 		// SinglesSetEntity를 꺼내온다.
-		SinglesMatchEntity singlesMatch = singlesMatchRepository.findById(matchId).orElseThrow(
-			() -> new MatchNotExistException(matchId, MatchType.SINGLES)
-		);
+		SinglesMatchEntity singlesMatch = singlesMatchRepository.findById(matchId)
+			.orElseThrow(() -> new MatchNotExistException(matchId, MatchType.SINGLES));
 
 		// 세트 스코어를 기록한다.
 		singlesMatch.getSinglesSets()
@@ -70,7 +68,7 @@ public class SinglesMatchProgress implements MatchProgress {
 			singlesMatch.player2WinSet();
 
 		singlesMatchRepository.save(singlesMatch);
-		return SetScoreUpdateResponse.singlesSetentityToSetScoreUpdateResponse(
+		return SetScoreUpdateResponse.singlesSetentityToSetScoreUpdateResponse(matchId, setIndex,
 			singlesMatch.getSinglesSets().get(setIndex - 1));
 	}
 
@@ -81,6 +79,7 @@ public class SinglesMatchProgress implements MatchProgress {
 			throw new MatchDuplicateException(matchType, leagueId);
 	}
 
+	// TODO: 리팩토링
 	private SinglesMatchEntity initSinglesMatch(SinglesMatchEntity singlesMatch) {
 		//단식 게임 세트를 3개 생성
 		SinglesSetEntity set1 = new SinglesSetEntity(singlesMatch, 1);
@@ -100,9 +99,8 @@ public class SinglesMatchProgress implements MatchProgress {
 
 		List<SinglesMatchEntity> singlesMatches = new ArrayList<>();
 		for (int i = 0; i < leagueParticipantList.size() - 1; i += 2) {
-			SinglesMatchEntity singlesMatch = new SinglesMatchEntity(
-				league, leagueParticipantList.get(i), leagueParticipantList.get(i + 1)
-			);
+			SinglesMatchEntity singlesMatch = new SinglesMatchEntity(league, leagueParticipantList.get(i),
+				leagueParticipantList.get(i + 1));
 			singlesMatches.add(singlesMatch);
 			singlesMatchRepository.save(singlesMatch);
 		}
