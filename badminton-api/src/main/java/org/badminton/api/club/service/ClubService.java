@@ -1,9 +1,8 @@
 package org.badminton.api.club.service;
 
-import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.badminton.api.club.model.dto.ClubCardResponse;
 import org.badminton.api.club.model.dto.ClubCreateRequest;
@@ -17,7 +16,6 @@ import org.badminton.api.common.exception.club.ClubNotExistException;
 import org.badminton.api.common.exception.member.MemberAlreadyExistInClubException;
 import org.badminton.api.common.exception.member.MemberNotExistException;
 import org.badminton.api.common.exception.member.MemberNotJoinedClubException;
-import org.badminton.api.leaguerecord.service.LeagueRecordService;
 import org.badminton.domain.club.entity.ClubEntity;
 import org.badminton.domain.club.repository.ClubRepository;
 import org.badminton.domain.clubmember.entity.ClubMemberEntity;
@@ -45,7 +43,6 @@ public class ClubService {
 	private final ClubMemberRepository clubMemberRepository;
 	private final MemberRepository memberRepository;
 	private final LeagueRecordRepository leagueRecordRepository;
-	private final LeagueRecordService leagueRecordService;
 
 	public ClubDetailsResponse readClub(Long clubId) {
 		ClubEntity club = checkIfClubPresent(clubId);
@@ -64,22 +61,22 @@ public class ClubService {
 	public Page<ClubCardResponse> readAllClubs(Pageable pageable) {
 		Page<ClubEntity> clubsPage = clubRepository.findAllByIsClubDeletedIsFalse(pageable);
 		return clubsPage.map(club -> {
-			Map<MemberTier, Long> tierCounts = leagueRecordService.getMemberCountByTierInClub(club.getClubId());
-			return ClubCardResponse.clubEntityToClubsReadResponse(club, tierCounts);
+			Map<MemberTier, Long> tierCounts = club.getClubMemberCountByTier();
+			return ClubCardResponse.clubEntityToClubsCardResponse(club, tierCounts);
 		});
 	}
 
 	public Page<ClubCardResponse> searchClubs(String keyword, Pageable pageable) {
 		Page<ClubEntity> clubPage;
 
-		if (keyword == null || keyword.trim().isEmpty()) {
+		if (Objects.isNull(keyword) || keyword.trim().isEmpty()) {
 			clubPage = clubRepository.findAllByIsClubDeletedIsFalse(pageable);
 		} else {
 			clubPage = clubRepository.findAllByClubNameContainingIgnoreCaseAndIsClubDeletedIsFalse(keyword, pageable);
 		}
 		return clubPage.map(club -> {
-			Map<MemberTier, Long> tierCounts = leagueRecordService.getMemberCountByTierInClub(club.getClubId());
-			return ClubCardResponse.clubEntityToClubsReadResponse(club, tierCounts);
+			Map<MemberTier, Long> tierCounts = club.getClubMemberCountByTier();
+			return ClubCardResponse.clubEntityToClubsCardResponse(club, tierCounts);
 		});
 	}
 
@@ -132,7 +129,8 @@ public class ClubService {
 	}
 
 	public MemberTier getAverageTier(Long clubId) {
-		Map<MemberTier, Long> memberCountByTierInClub = leagueRecordService.getMemberCountByTierInClub(clubId);
+		ClubEntity club = checkIfClubPresent(clubId);
+		Map<MemberTier, Long> memberCountByTierInClub = club.getClubMemberCountByTier();
 
 		Optional<Map.Entry<MemberTier, Long>> maxEntry = memberCountByTierInClub.entrySet()
 			.stream()

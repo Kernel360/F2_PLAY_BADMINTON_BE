@@ -40,6 +40,10 @@ import lombok.extern.slf4j.Slf4j;
 public class ClubController {
 
 	private final ClubService clubService;
+	private static final String DEFAULT_PAGE_VALUE = "0";
+	private static final String DEFAULT_SIZE_VALUE = "9";
+	private static final String DEFAULT_SORT_BY_VALUE = "clubId";
+
 	private final ClubMemberRepository clubMemberRepository;
 
 	@GetMapping("/{clubId}")
@@ -94,9 +98,9 @@ public class ClubController {
 		tags = {"Club"})
 
 	public ResponseEntity<Page<ClubCardResponse>> readAllClub(
-		@RequestParam(defaultValue = "0") int page,
-		@RequestParam(defaultValue = "9") int size,
-		@RequestParam(defaultValue = "clubId") String sort) {
+		@RequestParam(defaultValue = DEFAULT_PAGE_VALUE) int page,
+		@RequestParam(defaultValue = DEFAULT_SIZE_VALUE) int size,
+		@RequestParam(defaultValue = DEFAULT_SORT_BY_VALUE) String sort) {
 
 		Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
 		return ResponseEntity.ok(clubService.readAllClubs(pageable));
@@ -107,9 +111,9 @@ public class ClubController {
 		tags = {"Club"})
 	@GetMapping("/search")
 	public ResponseEntity<Page<ClubCardResponse>> clubSearch(
-		@RequestParam(defaultValue = "0") int page,
-		@RequestParam(defaultValue = "9") int size,
-		@RequestParam(defaultValue = "clubId") String sort,
+		@RequestParam(defaultValue = DEFAULT_PAGE_VALUE) int page,
+		@RequestParam(defaultValue = DEFAULT_SIZE_VALUE) int size,
+		@RequestParam(defaultValue = DEFAULT_SORT_BY_VALUE) String sort,
 		@RequestParam(required = false) String keyword) {
 
 		Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
