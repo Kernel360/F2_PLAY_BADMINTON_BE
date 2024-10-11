@@ -56,10 +56,10 @@ public class ClubEntity extends BaseTimeEntity {
 		this.clubImage = clubImage;
 	}
 
-	// TODO: 동호회에서 강퇴 당하거나 탈퇴한 동호회원은 조회되면 안된다.
-	public Map<MemberTier, Long> getMemberCountByTier() {
+	public Map<MemberTier, Long> getClubMemberCountByTier() {
 		return clubMembers.stream()
 			.filter(clubMember -> clubMember.getLeagueRecord() != null)
+			.filter(clubMember -> !clubMember.isDeleted() && !clubMember.isBanned())
 			.collect(Collectors.groupingBy(
 				clubMember -> clubMember.getLeagueRecord().getTier(),
 				Collectors.counting()

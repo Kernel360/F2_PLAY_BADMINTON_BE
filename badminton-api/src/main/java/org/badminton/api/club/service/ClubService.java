@@ -47,14 +47,14 @@ public class ClubService {
 
 	public ClubDetailsResponse readClub(Long clubId) {
 		ClubEntity club = checkIfClubPresent(clubId);
-		Map<MemberTier, Long> memberCountByTier = club.getMemberCountByTier();
+		Map<MemberTier, Long> memberCountByTier = club.getClubMemberCountByTier();
 
 		return ClubDetailsResponse.clubEntityToClubReadResponse(club, memberCountByTier);
 	}
 
 	public ClubDetailsResponse readCurrentClub(Long memberId) {
 		ClubMemberEntity clubMember = findClubMemberByClubMemberId(memberId);
-		Map<MemberTier, Long> memberCountByTier = clubMember.getClub().getMemberCountByTier();
+		Map<MemberTier, Long> memberCountByTier = clubMember.getClub().getClubMemberCountByTier();
 
 		return ClubDetailsResponse.clubEntityToClubReadResponse(clubMember.getClub(), memberCountByTier);
 	}
