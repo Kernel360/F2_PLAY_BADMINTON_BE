@@ -55,6 +55,7 @@ public class MemberEntity extends BaseTimeEntity {
 		this.profileImage = imageUrl;
 	}
 
+	// TODO: 회원 탈퇴 시 동호회에서도 탈퇴해야 함
 	public void doWithdrawal() {
 		this.isDeleted = true;
 		this.updateLastConnection();
