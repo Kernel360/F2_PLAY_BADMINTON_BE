@@ -143,8 +143,6 @@ public class ClubService {
 		}
 	}
 
-
-
 	private void checkClubNameDuplicate(String clubName) {
 		clubRepository.findByClubNameAndIsClubDeletedFalse(clubName).ifPresent(club -> {
 			throw new ClubNameDuplicateException(clubName);
@@ -165,8 +163,9 @@ public class ClubService {
 
 	private void checkIfMemberAlreadyClubMember(Long memberId) {
 		clubMemberRepository.findByMember_MemberId(memberId).ifPresent(clubMember -> {
-			if (clubMember.getClub().isClubDeleted())
+			if (clubMember.getClub().isClubDeleted()) {
 				return;
+			}
 			throw new MemberAlreadyExistInClubException(memberId, clubMember.getClub().getClubId(),
 				clubMember.getRole());
 		});
