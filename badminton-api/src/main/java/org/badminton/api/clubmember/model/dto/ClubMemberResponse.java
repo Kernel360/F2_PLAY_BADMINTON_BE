@@ -5,6 +5,7 @@ import org.badminton.domain.clubmember.entity.ClubMemberEntity;
 import org.badminton.domain.clubmember.entity.ClubMemberRole;
 
 public record ClubMemberResponse(
+	Long clubMemberId,
 	String image,
 	String name,
 	ClubMemberRole role,
@@ -12,7 +13,7 @@ public record ClubMemberResponse(
 ) {
 
 	public static ClubMemberResponse entityToClubMemberResponse(ClubMemberEntity clubMember) {
-		return new ClubMemberResponse(clubMember.getMember().getProfileImage(), clubMember.getMember().getName(),
+		return new ClubMemberResponse(clubMember.getClubMemberId(),clubMember.getMember().getProfileImage(), clubMember.getMember().getName(),
 			clubMember.getRole(), LeagueRecordInfoResponse.entityToLeagueRecordInfoResponse(
 			clubMember.getLeagueRecord()));
 	}

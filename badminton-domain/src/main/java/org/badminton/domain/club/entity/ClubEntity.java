@@ -1,6 +1,8 @@
 package org.badminton.domain.club.entity;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -57,13 +59,25 @@ public class ClubEntity extends BaseTimeEntity {
 	}
 
 	public Map<MemberTier, Long> getClubMemberCountByTier() {
-		return clubMembers.stream()
+
+		List<MemberTier> tierListForInit = Arrays.asList(MemberTier.BRONZE, MemberTier.SILVER, MemberTier.GOLD);
+		Map<MemberTier, Long> tierCounts = new LinkedHashMap<>();
+
+		for (MemberTier tier : tierListForInit) {
+			tierCounts.put(tier, 0L);
+		}
+
+		Map<MemberTier, Long> actualCounts = clubMembers.stream()
 			.filter(clubMember -> clubMember.getLeagueRecord() != null)
 			.filter(clubMember -> !clubMember.isDeleted() && !clubMember.isBanned())
 			.collect(Collectors.groupingBy(
 				clubMember -> clubMember.getLeagueRecord().getTier(),
 				Collectors.counting()
 			));
+
+		tierCounts.putAll(actualCounts);
+
+		return tierCounts;
 	}
 
 	public void doWithdrawal() {

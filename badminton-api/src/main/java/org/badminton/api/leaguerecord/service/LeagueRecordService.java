@@ -76,20 +76,4 @@ public class LeagueRecordService {
 			.orElseThrow(() -> new ClubMemberNotExistException(clubMemberId));
 	}
 
-	public Map<MemberTier, Long> getMemberCountByTierInClub(Long clubId) {
-		List<Object[]> results = leagueRecordRepository.countMembersByTierInClub(clubId);
-		Map<MemberTier, Long> tierCounts = new HashMap<>();
-
-		for (Object[] result : results) {
-			MemberTier tier = (MemberTier)result[0];
-			Long count = (Long)result[1];
-			tierCounts.put(tier, count);
-		}
-		for (MemberTier tier : MemberTier.values()) {
-			tierCounts.putIfAbsent(tier, 0L);
-		}
-
-		return tierCounts;
-	}
-
 }

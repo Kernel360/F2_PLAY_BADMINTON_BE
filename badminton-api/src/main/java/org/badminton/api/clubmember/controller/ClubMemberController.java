@@ -8,6 +8,7 @@ import org.badminton.api.clubmember.model.dto.ClubMemberResponse;
 import org.badminton.api.clubmember.service.ClubMemberService;
 import org.badminton.api.member.oauth2.dto.CustomOAuth2Member;
 import org.badminton.domain.clubmember.entity.ClubMemberRole;
+import org.badminton.domain.clubmember.repository.ClubMemberRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -55,7 +56,16 @@ public class ClubMemberController {
 		ClubMemberJoinResponse clubMemberJoinResponse = clubMemberService.joinClub(memberId, clubId);
 
 		return ResponseEntity.ok(clubMemberJoinResponse);
-
 	}
+
+	// @PatchMapping("role")
+	// public ResponseEntity<String> changeClubMemberRole(@AuthenticationPrincipal CustomOAuth2Member member,
+	// 	@RequestParam String role, Long clubMemberId
+	// 	) {
+	// 	ClubMemberEntity clubMemberEntity = clubMemberRepository.find
+	// 	clubMemberService.changeClubMemberRole(role,clubMemberId);
+	// 	return null;
+	// }
+
 }
 

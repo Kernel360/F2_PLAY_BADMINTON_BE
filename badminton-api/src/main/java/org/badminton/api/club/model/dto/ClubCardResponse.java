@@ -13,7 +13,7 @@ public record ClubCardResponse(
 	String clubImage,
 	LocalDateTime createdAt,
 	LocalDateTime modifiedAt,
-	Map<MemberTier, Long> tierCounts
+	ClubMemberCountByTier clubMemberCountByTier
 ) {
 
 	public static ClubCardResponse clubEntityToClubsCardResponse(ClubEntity clubEntity,
@@ -22,7 +22,7 @@ public record ClubCardResponse(
 			clubEntity.getClubImage(),
 			clubEntity.getCreatedAt(),
 			clubEntity.getModifiedAt(),
-			tierCounts
+			ClubMemberCountByTier.ofClubMemberCountResponse(tierCounts)
 		);
 	}
 }
