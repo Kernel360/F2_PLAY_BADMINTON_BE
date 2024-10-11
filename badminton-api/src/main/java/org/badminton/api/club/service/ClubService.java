@@ -166,10 +166,11 @@ public class ClubService {
 
 	private void checkIfMemberAlreadyClubMember(Long memberId) {
 		clubMemberRepository.findByMember_MemberId(memberId).ifPresent(clubMember -> {
+			if (clubMember.getClub().isClubDeleted())
+				return;
 			throw new MemberAlreadyExistInClubException(memberId, clubMember.getClub().getClubId(),
 				clubMember.getRole());
 		});
-
 	}
 
 }
