@@ -12,6 +12,10 @@ import org.badminton.api.club.model.dto.ClubsReadResponse;
 import org.badminton.api.club.service.ClubService;
 import org.badminton.api.member.oauth2.dto.CustomOAuth2Member;
 import org.badminton.domain.clubmember.repository.ClubMemberRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -88,17 +92,27 @@ public class ClubController {
 	@Operation(summary = "전체 동호회 조회",
 		description = "전체 동호회를 조회합니다.",
 		tags = {"Club"})
-	public ResponseEntity<List<ClubsReadResponse>> readAllClub() {
+	public ResponseEntity<Page<ClubsReadResponse>> readAllClub(
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "9") int size,
+		@RequestParam(defaultValue = "clubId") String sort) {
 
-		return ResponseEntity.ok(clubService.readAllClub());
+		Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
+		return ResponseEntity.ok(clubService.readAllClubs(pageable));
 	}
 
 	@Operation(summary = "검색 조건에 맞는 동호회 조회",
 		description = "검색 조건에 맞는 동호회를 조회합니다.",
 		tags = {"Club"})
 	@GetMapping("/search")
-	public ResponseEntity<List<ClubsReadResponse>> clubSearch(@RequestParam(required = false) String keyword) {
-		return ResponseEntity.ok(clubService.searchClubs(keyword));
+	public ResponseEntity<Page<ClubsReadResponse>> clubSearch(
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "9") int size,
+		@RequestParam(defaultValue = "clubId") String sort,
+		@RequestParam(required = false) String keyword) {
+
+		Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
+		return ResponseEntity.ok(clubService.searchClubs(keyword, pageable));
 	}
 
 }

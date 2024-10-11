@@ -28,6 +28,8 @@ import org.badminton.domain.leaguerecord.entity.LeagueRecordEntity;
 import org.badminton.domain.leaguerecord.repository.LeagueRecordRepository;
 import org.badminton.domain.member.entity.MemberEntity;
 import org.badminton.domain.member.repository.MemberRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
@@ -55,15 +57,26 @@ public class ClubService {
 		return ClubReadResponse.clubEntityToClubReadResponse(clubMember.getClub());
 	}
 
-	public List<ClubsReadResponse> readAllClub() {
-		List<ClubEntity> clubs = clubRepository.findAllByIsClubDeletedIsFalse();
+	public Page<ClubsReadResponse> readAllClubs(Pageable pageable) {
+		Page<ClubEntity> clubsPage = clubRepository.findAllByIsClubDeletedIsFalse(pageable);
+		return clubsPage.map(club -> {
+			Map<MemberTier, Long> tierCounts = leagueRecordService.getMemberCountByTierInClub(club.getClubId());
+			return ClubsReadResponse.clubEntityToClubsReadResponse(club, tierCounts);
+		});
+	}
 
-		return clubs.stream()
-			.map(club -> {
-				Map<MemberTier, Long> tierCounts = leagueRecordService.getMemberCountByTierInClub(club.getClubId());
-				return ClubsReadResponse.clubEntityToClubsReadResponse(club, tierCounts);
-			})
-			.collect(Collectors.toList());
+	public Page<ClubsReadResponse> searchClubs(String keyword, Pageable pageable) {
+		Page<ClubEntity> clubPage;
+
+		if (keyword == null || keyword.trim().isEmpty()) {
+			clubPage = clubRepository.findAllByIsClubDeletedIsFalse(pageable);
+		} else {
+			clubPage = clubRepository.findAllByClubNameContainingIgnoreCaseAndIsClubDeletedIsFalse(keyword, pageable);
+		}
+		return clubPage.map(club -> {
+			Map<MemberTier, Long> tierCounts = leagueRecordService.getMemberCountByTierInClub(club.getClubId());
+			return ClubsReadResponse.clubEntityToClubsReadResponse(club, tierCounts);
+		});
 	}
 
 	// TODO: clubAddRequest에 이미지가 없으면 default 이미지를 넣어주도록 구현
@@ -128,19 +141,7 @@ public class ClubService {
 		}
 	}
 
-	public List<ClubsReadResponse> searchClubs(String keyword) {
-		if (keyword == null || keyword.trim().isEmpty()) {
-			return readAllClub();
-		}
-		List<ClubEntity> clubEntityList = clubRepository.findAllByClubNameContainingIgnoreCase(
-			keyword);
-		return clubEntityList.stream()
-			.map(club -> {
-				Map<MemberTier, Long> tierCounts = leagueRecordService.getMemberCountByTierInClub(club.getClubId());
-				return ClubsReadResponse.clubEntityToClubsReadResponse(club, tierCounts);
-			})
-			.collect(Collectors.toList());
-	}
+
 
 	private void checkClubNameDuplicate(String clubName) {
 		clubRepository.findByClubNameAndIsClubDeletedFalse(clubName).ifPresent(club -> {
