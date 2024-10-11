@@ -6,7 +6,7 @@ import java.util.Map;
 import org.badminton.domain.club.entity.ClubEntity;
 import org.badminton.domain.common.enums.MemberTier;
 
-public record ClubsReadResponse(
+public record ClubCardResponse(
 	Long clubId,
 	String clubName,
 	String clubDescription,
@@ -16,9 +16,9 @@ public record ClubsReadResponse(
 	Map<MemberTier, Long> tierCounts
 ) {
 
-	public static ClubsReadResponse clubEntityToClubsReadResponse(ClubEntity clubEntity,
+	public static ClubCardResponse clubEntityToClubsReadResponse(ClubEntity clubEntity,
 		Map<MemberTier, Long> tierCounts) {
-		return new ClubsReadResponse(clubEntity.getClubId(),clubEntity.getClubName(), clubEntity.getClubDescription(),
+		return new ClubCardResponse(clubEntity.getClubId(), clubEntity.getClubName(), clubEntity.getClubDescription(),
 			clubEntity.getClubImage(),
 			clubEntity.getCreatedAt(),
 			clubEntity.getModifiedAt(),

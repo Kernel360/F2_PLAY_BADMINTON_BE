@@ -2,13 +2,13 @@ package org.badminton.api.club.controller;
 
 import java.util.List;
 
+import org.badminton.api.club.model.dto.ClubCardResponse;
 import org.badminton.api.club.model.dto.ClubCreateRequest;
 import org.badminton.api.club.model.dto.ClubCreateResponse;
 import org.badminton.api.club.model.dto.ClubDeleteResponse;
-import org.badminton.api.club.model.dto.ClubReadResponse;
+import org.badminton.api.club.model.dto.ClubDetailsResponse;
 import org.badminton.api.club.model.dto.ClubUpdateRequest;
 import org.badminton.api.club.model.dto.ClubUpdateResponse;
-import org.badminton.api.club.model.dto.ClubsReadResponse;
 import org.badminton.api.club.service.ClubService;
 import org.badminton.api.member.oauth2.dto.CustomOAuth2Member;
 import org.badminton.domain.clubmember.repository.ClubMemberRepository;
@@ -46,16 +46,16 @@ public class ClubController {
 	@Operation(summary = "동호회 조회",
 		description = "동호회를 조회합니다.",
 		tags = {"Club"})
-	public ResponseEntity<ClubReadResponse> readClub(@PathVariable Long clubId) {
-		ClubReadResponse clubReadResponse = clubService.readClub(clubId);
-		return ResponseEntity.ok(clubReadResponse);
+	public ResponseEntity<ClubDetailsResponse> readClub(@PathVariable Long clubId) {
+		ClubDetailsResponse clubDetailsResponse = clubService.readClub(clubId);
+		return ResponseEntity.ok(clubDetailsResponse);
 	}
 
 	@GetMapping("/me")
 	@Operation(summary = "현재 로그인된 사용자의 동호회 조회", description = "현재 로그인되어 있는 사용자의 동호회를 조회합니다", tags = {"Club"})
-	public ResponseEntity<ClubReadResponse> readCurrentClub(@AuthenticationPrincipal CustomOAuth2Member member) {
-		ClubReadResponse clubReadResponse = clubService.readCurrentClub(member.getMemberId());
-		return ResponseEntity.ok(clubReadResponse);
+	public ResponseEntity<ClubDetailsResponse> readCurrentClub(@AuthenticationPrincipal CustomOAuth2Member member) {
+		ClubDetailsResponse clubDetailsResponse = clubService.readCurrentClub(member.getMemberId());
+		return ResponseEntity.ok(clubDetailsResponse);
 	}
 
 	@PostMapping()
@@ -92,7 +92,8 @@ public class ClubController {
 	@Operation(summary = "전체 동호회 조회",
 		description = "전체 동호회를 조회합니다.",
 		tags = {"Club"})
-	public ResponseEntity<Page<ClubsReadResponse>> readAllClub(
+
+	public ResponseEntity<Page<ClubCardResponse>> readAllClub(
 		@RequestParam(defaultValue = "0") int page,
 		@RequestParam(defaultValue = "9") int size,
 		@RequestParam(defaultValue = "clubId") String sort) {
@@ -105,7 +106,7 @@ public class ClubController {
 		description = "검색 조건에 맞는 동호회를 조회합니다.",
 		tags = {"Club"})
 	@GetMapping("/search")
-	public ResponseEntity<Page<ClubsReadResponse>> clubSearch(
+	public ResponseEntity<Page<ClubCardResponse>> clubSearch(
 		@RequestParam(defaultValue = "0") int page,
 		@RequestParam(defaultValue = "9") int size,
 		@RequestParam(defaultValue = "clubId") String sort,
@@ -113,6 +114,7 @@ public class ClubController {
 
 		Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
 		return ResponseEntity.ok(clubService.searchClubs(keyword, pageable));
+
 	}
 
 }
