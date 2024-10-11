@@ -1,7 +1,11 @@
 package org.badminton.api.clubmember.service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
+import org.badminton.api.clubmember.model.Comparator.ClubMemberRoleComparator;
 import org.badminton.api.clubmember.model.dto.ClubMemberJoinResponse;
 import org.badminton.api.clubmember.model.dto.ClubMemberResponse;
 import org.badminton.api.common.exception.club.ClubNotExistException;
@@ -60,9 +64,19 @@ public class ClubMemberService {
 		return clubMemberRepository.existsByMember_MemberIdAndClub_ClubId(memberId, clubId);
 	}
 
-	public List<ClubMemberResponse> findAllClubMembers(Long clubId) {
-		return clubMemberRepository.findAllByClubClubIdAndBannedFalseAndDeletedFalse(clubId).stream()
-			.map(ClubMemberResponse::entityToClubMemberResponse)
-			.toList();
+	public Map<ClubMemberRole, List<ClubMemberResponse>> findAllClubMembers(Long clubId) {
+		Map<ClubMemberRole, List<ClubMemberResponse>> responseMap = new TreeMap<>(new ClubMemberRoleComparator());
+
+		List<ClubMemberEntity> clubMembers =
+			clubMemberRepository.findAllByClubClubIdAndBannedFalseAndDeletedFalse(clubId);
+
+		clubMembers.stream()
+			.map(ClubMemberResponse::entityToClubMemberResponse) // 멤버를 응답 객체로 변환
+			.forEach(clubMemberResponse -> {
+				ClubMemberRole role = clubMemberResponse.role();
+				responseMap.computeIfAbsent(role, clubMember -> new ArrayList<>()).add(clubMemberResponse);
+			});
+
+		return responseMap;
 	}
 }
