@@ -16,7 +16,7 @@ public record ClubCardResponse(
 	Map<MemberTier, Long> tierCounts
 ) {
 
-	public static ClubCardResponse clubEntityToClubsReadResponse(ClubEntity clubEntity,
+	public static ClubCardResponse clubEntityToClubsCardResponse(ClubEntity clubEntity,
 		Map<MemberTier, Long> tierCounts) {
 		return new ClubCardResponse(clubEntity.getClubId(), clubEntity.getClubName(), clubEntity.getClubDescription(),
 			clubEntity.getClubImage(),

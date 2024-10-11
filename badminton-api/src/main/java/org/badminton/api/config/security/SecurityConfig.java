@@ -79,7 +79,7 @@ public class SecurityConfig {
 
 			.securityMatcher(
 				request -> request.getMethod().equals("POST") && request.getRequestURI().equals("/v1/clubs")
-					|| request.getRequestURI().startsWith("/v1/members") || request.getRequestURI().equals("/v1/clubs/me") || request.getRequestURI().equals("/v1/clubs/search")
+					|| request.getRequestURI().startsWith("/v1/members") || request.getRequestURI().equals("/v1/clubs/me")
 				|| request.getRequestURI().equals("/v1/members/profileImage") || request.getRequestURI().equals("/v1/members/is-club-member")
 			)
 			.csrf(AbstractHttpConfigurer::disable)
@@ -104,7 +104,7 @@ public class SecurityConfig {
 			.addFilterAfter(new ClubMembershipFilter(clubMemberService), JwtAuthenticationFilter.class)
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.authorizeHttpRequests(auth -> auth
-				.requestMatchers(HttpMethod.GET, "/v1/clubs", "/v1/clubs/{clubId}").permitAll()
+				.requestMatchers(HttpMethod.GET, "/v1/clubs", "/v1/clubs/{clubId}", "/v1/clubs/search").permitAll()
 				.requestMatchers(HttpMethod.POST, "/v1/clubs").permitAll()
 				.requestMatchers(HttpMethod.DELETE, "/v1/clubs/{clubId}").access(hasClubRole("OWNER"))
 				.requestMatchers(HttpMethod.PATCH, "/v1/clubs/{clubId}").access(hasClubRole("OWNER", "MANAGER"))
