@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 import org.badminton.domain.common.enums.MatchGenerationType;
 import org.badminton.domain.common.enums.MatchType;
 import org.badminton.domain.common.enums.MemberTier;
-import org.badminton.domain.league.enums.LeagueStatus;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Pattern;
@@ -25,13 +24,8 @@ public record LeagueUpdateRequest(
 	@Schema(description = "최소 티어", example = "GOLD")
 	MemberTier tierLimit,
 
-	// TODO: 경기 상태
-	@Pattern(regexp = "OPEN|CLOSED", message = "리그 상태 값이 올바르지 않습니다.")
-	@Schema(description = "현재 경기 상태", example = "OPEN")
-	LeagueStatus leagueStatus,
-
 	@Pattern(regexp = "SINGLE|DOUBLES", message = "경기 방식 값이 올바르지 않습니다.")
-	@Schema(description = "경기 방식", example = "SINGLE")
+	@Schema(description = "경기 방식", example = "SINGLES")
 	MatchType matchType,
 
 	@Schema(description = "경기 시작 날짜", example = "2024-09-10T15:30:00")
@@ -43,7 +37,6 @@ public record LeagueUpdateRequest(
 	@Schema(description = "참가 인원", example = "16")
 	int playerCount,
 
-	// TODO: Random, Age, Tier -> Swagger 수정 필요
 	@Schema(description = "매칭 조건", example = "TIER")
 	MatchGenerationType matchGenerationType
 

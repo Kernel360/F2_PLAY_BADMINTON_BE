@@ -46,7 +46,7 @@ public class LeagueService {
 		LeagueEntity league = new LeagueEntity(leagueCreateRequest.leagueName(),
 			leagueCreateRequest.description(), leagueCreateRequest.leagueLocation(), leagueCreateRequest.leagueAt(),
 			leagueCreateRequest.tierLimit(),
-			leagueCreateRequest.closedAt(), leagueCreateRequest.leagueStatus(), leagueCreateRequest.playerCount(),
+			leagueCreateRequest.closedAt(), leagueCreateRequest.playerCount(),
 			leagueCreateRequest.matchType(), leagueCreateRequest.matchGenerationType(), club);
 
 		return LeagueCreateResponse.leagueCreateEntityToResponse(leagueRepository.save(league));
@@ -85,7 +85,7 @@ public class LeagueService {
 		// TODO: 개선 방법
 		league.updateLeague(leagueUpdateRequest.leagueName(),
 			leagueUpdateRequest.description(), leagueUpdateRequest.leagueLocation(), leagueUpdateRequest.tierLimit(),
-			leagueUpdateRequest.leagueAt(), leagueUpdateRequest.closedAt(), leagueUpdateRequest.leagueStatus(),
+			leagueUpdateRequest.leagueAt(), leagueUpdateRequest.closedAt(),
 			leagueUpdateRequest.playerCount(),
 			leagueUpdateRequest.matchType(), leagueUpdateRequest.matchGenerationType());
 
