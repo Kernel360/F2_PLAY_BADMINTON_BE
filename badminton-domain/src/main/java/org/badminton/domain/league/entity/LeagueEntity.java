@@ -55,7 +55,7 @@ public class LeagueEntity extends BaseTimeEntity {
 
 	private LocalDateTime closedAt;
 
-	private int playerCount;
+	private int playerLimitCount;
 
 	@Enumerated(EnumType.STRING)
 	private MatchGenerationType matchGenerationType;  //RANDOM, TIER, AGE
@@ -65,7 +65,7 @@ public class LeagueEntity extends BaseTimeEntity {
 	private ClubEntity club;
 
 	public LeagueEntity(String leagueName, String description, String leagueLocation, LocalDateTime leagueAt,
-		MemberTier tierLimit, LocalDateTime closedAt, LeagueStatus leagueStatus, int playerCount,
+		MemberTier tierLimit, LocalDateTime closedAt, LeagueStatus leagueStatus, int playerLimitCount,
 		MatchType matchType, MatchGenerationType matchGenerationType, ClubEntity club) {
 		this.leagueName = leagueName;
 		this.description = description;
@@ -74,7 +74,7 @@ public class LeagueEntity extends BaseTimeEntity {
 		this.requiredTier = tierLimit;
 		this.closedAt = closedAt;
 		this.leagueStatus = leagueStatus;
-		this.playerCount = playerCount;
+		this.playerLimitCount = playerLimitCount;
 		this.matchType = matchType;
 		this.matchGenerationType = matchGenerationType;
 		this.club = club;
@@ -82,7 +82,7 @@ public class LeagueEntity extends BaseTimeEntity {
 
 	public void updateLeague(String leagueName, String description, String leagueLocation, MemberTier requiredTier,
 		LocalDateTime leagueAt,
-		LocalDateTime closedAt, LeagueStatus leagueStatus, int playerCount, MatchType matchType,
+		LocalDateTime closedAt, LeagueStatus leagueStatus, int playerLimitCount, MatchType matchType,
 		MatchGenerationType matchGenerationType) {
 		this.leagueName = leagueName;
 		this.description = description;
@@ -91,7 +91,7 @@ public class LeagueEntity extends BaseTimeEntity {
 		this.requiredTier = requiredTier;
 		this.closedAt = closedAt;
 		this.leagueStatus = leagueStatus;
-		this.playerCount = playerCount;
+		this.playerLimitCount = playerLimitCount;
 		this.matchType = matchType;
 		this.matchGenerationType = matchGenerationType;
 

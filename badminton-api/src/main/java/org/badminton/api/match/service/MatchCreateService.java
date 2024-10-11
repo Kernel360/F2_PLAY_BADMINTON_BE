@@ -68,7 +68,7 @@ public class MatchCreateService {
 	}
 
 	private void checkPlayerCount(LeagueEntity league, int playerCount) {
-		if (league.getPlayerCount() != playerCount) {
+		if (league.getPlayerLimitCount() != playerCount) {
 			throw new InvalidPlayerCountException(league.getLeagueId(), playerCount);
 		}
 	}

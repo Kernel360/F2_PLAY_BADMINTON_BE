@@ -54,7 +54,7 @@ public record LeagueStatusUpdateResponse(
 			entity.getMatchType(),
 			entity.getLeagueAt(),
 			entity.getClosedAt(),
-			entity.getPlayerCount(),
+			entity.getPlayerLimitCount(),
 			entity.getModifiedAt(),
 			entity.getMatchGenerationType()
 		);
