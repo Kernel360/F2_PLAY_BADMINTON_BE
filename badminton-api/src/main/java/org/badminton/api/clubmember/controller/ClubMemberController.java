@@ -1,11 +1,14 @@
 package org.badminton.api.clubmember.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.badminton.api.clubmember.model.dto.ClubMemberJoinResponse;
 import org.badminton.api.clubmember.model.dto.ClubMemberResponse;
 import org.badminton.api.clubmember.service.ClubMemberService;
 import org.badminton.api.member.oauth2.dto.CustomOAuth2Member;
+import org.badminton.domain.clubmember.entity.ClubMemberRole;
+import org.badminton.domain.clubmember.repository.ClubMemberRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,10 +33,12 @@ public class ClubMemberController {
 		description = "동호회에 가입한 회원들의 리스트를 조회합니다.",
 		tags = {"ClubMember"})
 	@GetMapping
-	public ResponseEntity<List<ClubMemberResponse>> getClubMembersInClub(
+	public ResponseEntity<Map<ClubMemberRole, List<ClubMemberResponse>>> getClubMembersInClub(
 		@PathVariable Long clubId
 	) {
-		List<ClubMemberResponse> clubMemberResponseList = clubMemberService.findAllClubMembers(clubId);
+		Map<ClubMemberRole, List<ClubMemberResponse>> clubMemberResponseList =
+			clubMemberService.findAllClubMembers(clubId);
+
 		return ResponseEntity.ok(clubMemberResponseList);
 	}
 
@@ -44,14 +49,23 @@ public class ClubMemberController {
 	public ResponseEntity<ClubMemberJoinResponse> joinClub(@AuthenticationPrincipal CustomOAuth2Member member,
 		@Parameter(description = "동호회 ID", example = "1") @PathVariable Long clubId) {
 
-		log.info("member :{}",member);
+		log.info("member :{}", member);
 
 		Long memberId = member.getMemberId();
 
 		ClubMemberJoinResponse clubMemberJoinResponse = clubMemberService.joinClub(memberId, clubId);
 
 		return ResponseEntity.ok(clubMemberJoinResponse);
-
 	}
+
+	// @PatchMapping("role")
+	// public ResponseEntity<String> changeClubMemberRole(@AuthenticationPrincipal CustomOAuth2Member member,
+	// 	@RequestParam String role, Long clubMemberId
+	// 	) {
+	// 	ClubMemberEntity clubMemberEntity = clubMemberRepository.find
+	// 	clubMemberService.changeClubMemberRole(role,clubMemberId);
+	// 	return null;
+	// }
+
 }
 

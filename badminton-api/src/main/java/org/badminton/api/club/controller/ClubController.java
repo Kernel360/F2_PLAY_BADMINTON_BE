@@ -12,6 +12,10 @@ import org.badminton.api.club.model.dto.ClubUpdateResponse;
 import org.badminton.api.club.service.ClubService;
 import org.badminton.api.member.oauth2.dto.CustomOAuth2Member;
 import org.badminton.domain.clubmember.repository.ClubMemberRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -36,6 +40,10 @@ import lombok.extern.slf4j.Slf4j;
 public class ClubController {
 
 	private final ClubService clubService;
+	private static final String DEFAULT_PAGE_VALUE = "0";
+	private static final String DEFAULT_SIZE_VALUE = "9";
+	private static final String DEFAULT_SORT_BY_VALUE = "clubId";
+
 	private final ClubMemberRepository clubMemberRepository;
 
 	@GetMapping("/{clubId}")
@@ -88,17 +96,29 @@ public class ClubController {
 	@Operation(summary = "전체 동호회 조회",
 		description = "전체 동호회를 조회합니다.",
 		tags = {"Club"})
-	public ResponseEntity<List<ClubCardResponse>> readAllClub() {
 
-		return ResponseEntity.ok(clubService.readAllClub());
+	public ResponseEntity<Page<ClubCardResponse>> readAllClub(
+		@RequestParam(defaultValue = DEFAULT_PAGE_VALUE) int page,
+		@RequestParam(defaultValue = DEFAULT_SIZE_VALUE) int size,
+		@RequestParam(defaultValue = DEFAULT_SORT_BY_VALUE) String sort) {
+
+		Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
+		return ResponseEntity.ok(clubService.readAllClubs(pageable));
 	}
 
 	@Operation(summary = "검색 조건에 맞는 동호회 조회",
 		description = "검색 조건에 맞는 동호회를 조회합니다.",
 		tags = {"Club"})
 	@GetMapping("/search")
-	public ResponseEntity<List<ClubCardResponse>> clubSearch(@RequestParam(required = false) String keyword) {
-		return ResponseEntity.ok(clubService.searchClubs(keyword));
+	public ResponseEntity<Page<ClubCardResponse>> clubSearch(
+		@RequestParam(defaultValue = DEFAULT_PAGE_VALUE) int page,
+		@RequestParam(defaultValue = DEFAULT_SIZE_VALUE) int size,
+		@RequestParam(defaultValue = DEFAULT_SORT_BY_VALUE) String sort,
+		@RequestParam(required = false) String keyword) {
+
+		Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
+		return ResponseEntity.ok(clubService.searchClubs(keyword, pageable));
+
 	}
 
 }

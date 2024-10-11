@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.badminton.domain.club.entity.ClubEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ClubRepository extends JpaRepository<ClubEntity, Long> {
@@ -12,8 +14,8 @@ public interface ClubRepository extends JpaRepository<ClubEntity, Long> {
 
 	Optional<ClubEntity> findByClubIdAndIsClubDeletedFalse(Long clubId);
 
-	List<ClubEntity> findAllByIsClubDeletedIsFalse();
+	Page<ClubEntity> findAllByIsClubDeletedIsFalse(Pageable pageable);
 
-	List<ClubEntity> findAllByClubNameContainingIgnoreCase(String keyword);
+	Page<ClubEntity> findAllByClubNameContainingIgnoreCaseAndIsClubDeletedIsFalse(String keyword, Pageable pageable);
 }
 
