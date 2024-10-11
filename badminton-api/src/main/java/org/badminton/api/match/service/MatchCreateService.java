@@ -42,6 +42,7 @@ public class MatchCreateService {
 
 	public List<MatchResponse> makeMatches(Long leagueId) {
 		// TODO: 만약 리스트에 아무것도 없으면!?
+		// TODO: League의 League Status가 COMPLETED 일 경우에만 생성할 수 있다.
 		List<LeagueParticipantEntity> leagueParticipantList =
 			leagueParticipantRepository.findAllByLeague_LeagueId(leagueId);
 
