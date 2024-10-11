@@ -55,7 +55,7 @@ public class MemberEntity extends BaseTimeEntity {
 		this.profileImage = imageUrl;
 	}
 
-	public void deleteMember() {
+	public void doWithdrawal() {
 		this.isDeleted = true;
 		this.updateLastConnection();
 	}

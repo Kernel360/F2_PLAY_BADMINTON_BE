@@ -81,6 +81,7 @@ public class SinglesMatchProgress implements MatchProgress {
 			throw new MatchDuplicateException(matchType, leagueId);
 	}
 
+	// TODO: 리팩토링
 	private SinglesMatchEntity initSinglesMatch(SinglesMatchEntity singlesMatch) {
 		//단식 게임 세트를 3개 생성
 		SinglesSetEntity set1 = new SinglesSetEntity(singlesMatch, 1);
