@@ -67,7 +67,7 @@ public class DoublesMatchProgress implements MatchProgress {
 			doublesMatch.team2WinSet();
 
 		doublesMatchRepository.save(doublesMatch);
-		return SetScoreUpdateResponse.doublesSetEntityToSetScoreUpdateResponse(
+		return SetScoreUpdateResponse.doublesSetEntityToSetScoreUpdateResponse(matchId, setIndex,
 			doublesMatch.getDoublesSets().get(setIndex - 1));
 	}
 
