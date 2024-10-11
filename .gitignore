@@ -48,3 +48,6 @@ gradlew.bat
 logback-api.xml
 logback-batch.xml
 /logs/
+logs
+logs/batch
+logs/api

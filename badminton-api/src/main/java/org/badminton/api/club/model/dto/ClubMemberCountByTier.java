@@ -5,7 +5,7 @@ import java.util.Map;
 import org.badminton.domain.common.enums.MemberTier;
 
 public record ClubMemberCountByTier(
-	Long oldClubMemberCount,
+	Long goldClubMemberCount,
 	Long silverClubMemberCount,
 	Long bronzeClubMemberCount
 ) {
