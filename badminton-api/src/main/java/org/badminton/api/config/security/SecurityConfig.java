@@ -107,7 +107,7 @@ public class SecurityConfig {
 				.requestMatchers(HttpMethod.DELETE, "/v1/clubs/{clubId}").access(hasClubRole("OWNER"))
 				.requestMatchers(HttpMethod.PATCH, "/v1/clubs/{clubId}").access(hasClubRole("OWNER", "MANAGER"))
 				.requestMatchers(HttpMethod.GET, "/v1/clubs/{clubId}/**").authenticated()
-				.requestMatchers(HttpMethod.POST, "/v1/clubs/{clubId}/league").access(hasClubRole("OWNER", "MANAGER"))
+				.requestMatchers(HttpMethod.POST, "/v1/clubs/{clubId}/league","/v1/clubs/images").access(hasClubRole("OWNER", "MANAGER"))
 				.requestMatchers(HttpMethod.DELETE, "/v1/clubs/{clubId}/leagues/{leagueId}").access(hasClubRole("OWNER", "MANAGER"))
 				.requestMatchers(HttpMethod.PATCH, "/v1/clubs/{clubId}/leagues/{leagueId}").access(hasClubRole("OWNER", "MANAGER"))
 				.requestMatchers(HttpMethod.POST, "/v1/clubs/{clubId}/leagues/{leagueId}/participation").access(hasClubRole("OWNER", "MANAGER", "USER"))
