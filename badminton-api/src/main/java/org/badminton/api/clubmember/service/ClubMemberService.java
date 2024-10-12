@@ -3,9 +3,11 @@ package org.badminton.api.clubmember.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.TreeMap;
 
+import org.badminton.api.clubmember.BanStrategy;
+import org.badminton.api.clubmember.ClubMemberPenaltyStrategy;
+import org.badminton.api.clubmember.ExpelStrategy;
 import org.badminton.api.clubmember.model.Comparator.ClubMemberRoleComparator;
 import org.badminton.api.clubmember.model.dto.BannedClubMemberResponse;
 import org.badminton.api.clubmember.model.dto.ClubMemberBanRequest;
@@ -14,14 +16,11 @@ import org.badminton.api.clubmember.model.dto.ClubMemberJoinResponse;
 import org.badminton.api.clubmember.model.dto.ClubMemberResponse;
 import org.badminton.api.clubmember.model.dto.ClubMemberRoleUpdateRequest;
 import org.badminton.api.common.exception.club.ClubNotExistException;
-import org.badminton.api.common.exception.clubmember.ClubMemberAlreadyBannedException;
 import org.badminton.api.common.exception.clubmember.ClubMemberDuplicateException;
 import org.badminton.api.common.exception.clubmember.ClubMemberNotExistException;
 import org.badminton.api.common.exception.member.MemberNotExistException;
 import org.badminton.domain.club.entity.ClubEntity;
 import org.badminton.domain.club.repository.ClubRepository;
-import org.badminton.domain.clubmember.entity.BannedClubMemberEntity;
-import org.badminton.domain.clubmember.entity.BannedType;
 import org.badminton.domain.clubmember.entity.ClubMemberEntity;
 import org.badminton.domain.clubmember.entity.ClubMemberRole;
 import org.badminton.domain.clubmember.repository.ClubMemberRepository;
@@ -31,16 +30,25 @@ import org.badminton.domain.member.entity.MemberEntity;
 import org.badminton.domain.member.repository.MemberRepository;
 import org.springframework.stereotype.Service;
 
-import lombok.RequiredArgsConstructor;
-
 @Service
-@RequiredArgsConstructor
 public class ClubMemberService {
 
 	private final ClubMemberRepository clubMemberRepository;
 	private final ClubRepository clubRepository;
 	private final MemberRepository memberRepository;
 	private final LeagueRecordRepository leagueRecordRepository;
+	private final ClubMemberPenaltyStrategy expelStrategy;
+	private final ClubMemberPenaltyStrategy banStrategy;
+
+	public ClubMemberService(ClubMemberRepository clubMemberRepository, ClubRepository clubRepository,
+		MemberRepository memberRepository, LeagueRecordRepository leagueRecordRepository) {
+		this.clubMemberRepository = clubMemberRepository;
+		this.clubRepository = clubRepository;
+		this.memberRepository = memberRepository;
+		this.leagueRecordRepository = leagueRecordRepository;
+		this.expelStrategy = new ExpelStrategy(clubMemberRepository);
+		this.banStrategy = new BanStrategy(clubMemberRepository);
+	}
 
 	public ClubMemberJoinResponse joinClub(Long memberId, Long clubId) {
 		ClubEntity clubEntity = clubRepository.findByClubIdAndIsClubDeletedFalse(clubId)
@@ -97,36 +105,18 @@ public class ClubMemberService {
 		return responseMap;
 	}
 
-	public BannedClubMemberResponse banOrExpelClubMember(Long clubMemberId, BannedType bannedType, String reason) {
-		ClubMemberEntity clubMemberEntity = clubMemberRepository.findByClubMemberId(clubMemberId)
+	private ClubMemberEntity getClubMember(Long clubMemberId) {
+		return clubMemberRepository.findByClubMemberId(clubMemberId)
 			.orElseThrow(() -> new ClubMemberNotExistException(clubMemberId));
-
-		Optional<BannedClubMemberEntity> activeBan = clubMemberEntity.getBanHistory()
-			.stream()
-			.filter(BannedClubMemberEntity::isActive)
-			.findFirst();
-
-		if (activeBan.isPresent()) {
-			throw new ClubMemberAlreadyBannedException(clubMemberId);
-		}
-
-		BannedClubMemberEntity newBanRecord = new BannedClubMemberEntity(clubMemberEntity, bannedType, reason);
-		clubMemberEntity.addBanRecord(newBanRecord);
-
-		if (bannedType == BannedType.PERMANENT) {
-			clubMemberEntity.expel();
-		}
-
-		clubMemberRepository.save(clubMemberEntity);
-
-		return BannedClubMemberResponse.entityToBannedClubMemberResponse(newBanRecord);
 	}
 
 	public BannedClubMemberResponse expelClubMember(ClubMemberExpelRequest request, Long clubMemberId) {
-		return banOrExpelClubMember(clubMemberId, BannedType.PERMANENT, request.expelReason());
+		ClubMemberEntity clubMemberEntity = getClubMember(clubMemberId);
+		return expelStrategy.execute(clubMemberEntity, request);
 	}
 
 	public BannedClubMemberResponse banClubMember(ClubMemberBanRequest request, Long clubMemberId) {
-		return banOrExpelClubMember(clubMemberId, request.type(), request.bannedReason());
+		ClubMemberEntity clubMemberEntity = getClubMember(clubMemberId);
+		return banStrategy.execute(clubMemberEntity, request);
 	}
 }
