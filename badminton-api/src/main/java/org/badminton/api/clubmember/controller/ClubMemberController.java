@@ -3,6 +3,9 @@ package org.badminton.api.clubmember.controller;
 import java.util.List;
 import java.util.Map;
 
+import org.badminton.api.clubmember.model.dto.BannedClubMemberResponse;
+import org.badminton.api.clubmember.model.dto.ClubMemberBanRequest;
+import org.badminton.api.clubmember.model.dto.ClubMemberExpelRequest;
 import org.badminton.api.clubmember.model.dto.ClubMemberJoinResponse;
 import org.badminton.api.clubmember.model.dto.ClubMemberResponse;
 import org.badminton.api.clubmember.model.dto.ClubMemberRoleUpdateRequest;
@@ -19,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
@@ -68,6 +70,23 @@ public class ClubMemberController {
 	public ResponseEntity<ClubMemberResponse> updateClubMemberRole(@RequestBody ClubMemberRoleUpdateRequest request,
 		@RequestParam Long clubMemberId, @PathVariable Long clubId) {
 		return ResponseEntity.ok(clubMemberService.updateClubMemberRole(request, clubMemberId));
+	}
+
+	@Operation(summary = "동호회원 강제 탈퇴시키기",
+		description = "동호회원을 강제 탈퇴시킵니다.",
+		tags = {"ClubMember"})
+	@PatchMapping("/expel")
+	public ResponseEntity<BannedClubMemberResponse> expelClubMember(@RequestParam Long clubMemberId, @PathVariable Long clubId, @RequestBody
+		ClubMemberExpelRequest request) {
+		return ResponseEntity.ok(clubMemberService.expelClubMember(request, clubMemberId));
+	}
+
+	@Operation(summary = "동호회원 정지",
+		description = "동호회원의 활동을 정지시킵니다.",
+		tags = {"ClubMember"})
+	@PatchMapping("/ban")
+	public ResponseEntity<BannedClubMemberResponse> banClubMember(@RequestParam Long clubMemberId, @PathVariable Long clubId, @RequestBody ClubMemberBanRequest request) {
+		return ResponseEntity.ok(clubMemberService.banClubMember(request, clubMemberId));
 	}
 }
 
