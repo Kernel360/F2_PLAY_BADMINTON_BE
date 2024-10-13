@@ -3,7 +3,7 @@ package org.badminton.api.clubmember.controller;
 import java.util.List;
 import java.util.Map;
 
-import org.badminton.api.clubmember.model.dto.BannedClubMemberResponse;
+import org.badminton.api.clubmember.model.dto.clubMemberBanRecordResponse;
 import org.badminton.api.clubmember.model.dto.ClubMemberBanRequest;
 import org.badminton.api.clubmember.model.dto.ClubMemberExpelRequest;
 import org.badminton.api.clubmember.model.dto.ClubMemberJoinResponse;
@@ -76,7 +76,7 @@ public class ClubMemberController {
 		description = "동호회원을 강제 탈퇴시킵니다.",
 		tags = {"ClubMember"})
 	@PatchMapping("/expel")
-	public ResponseEntity<BannedClubMemberResponse> expelClubMember(@RequestParam Long clubMemberId, @PathVariable Long clubId, @RequestBody
+	public ResponseEntity<clubMemberBanRecordResponse> expelClubMember(@RequestParam Long clubMemberId, @PathVariable Long clubId, @RequestBody
 		ClubMemberExpelRequest request) {
 		return ResponseEntity.ok(clubMemberService.expelClubMember(request, clubMemberId));
 	}
@@ -85,7 +85,7 @@ public class ClubMemberController {
 		description = "동호회원의 활동을 정지시킵니다.",
 		tags = {"ClubMember"})
 	@PatchMapping("/ban")
-	public ResponseEntity<BannedClubMemberResponse> banClubMember(@RequestParam Long clubMemberId, @PathVariable Long clubId, @RequestBody ClubMemberBanRequest request) {
+	public ResponseEntity<clubMemberBanRecordResponse> banClubMember(@RequestParam Long clubMemberId, @PathVariable Long clubId, @RequestBody ClubMemberBanRequest request) {
 		return ResponseEntity.ok(clubMemberService.banClubMember(request, clubMemberId));
 	}
 }

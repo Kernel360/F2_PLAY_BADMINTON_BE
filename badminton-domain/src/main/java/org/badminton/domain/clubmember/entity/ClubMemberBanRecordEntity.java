@@ -22,11 +22,11 @@ import lombok.NoArgsConstructor;
 @Table(name = "banned_club_member")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class BannedClubMemberEntity extends BaseTimeEntity {
+public class ClubMemberBanRecordEntity extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long bannedClubMemberId;
+	private Long clubMemberBanRecordId;
 
 	@Enumerated(EnumType.STRING)
 	private BannedType bannedType;
@@ -42,7 +42,7 @@ public class BannedClubMemberEntity extends BaseTimeEntity {
 	private LocalDateTime endDate;
 
 
-	public BannedClubMemberEntity(ClubMemberEntity clubMember, BannedType bannedType, String bannedReason) {
+	public ClubMemberBanRecordEntity(ClubMemberEntity clubMember, BannedType bannedType, String bannedReason) {
 		this.clubMember = clubMember;
 		this.bannedType = bannedType;
 		this.bannedReason = bannedReason;

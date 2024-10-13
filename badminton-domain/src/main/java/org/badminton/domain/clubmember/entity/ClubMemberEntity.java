@@ -54,7 +54,7 @@ public class ClubMemberEntity extends BaseTimeEntity {
 	private LeagueRecordEntity leagueRecord;
 
 	@OneToMany(mappedBy = "clubMember", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<BannedClubMemberEntity> banHistory = new ArrayList<>();
+	private List<ClubMemberBanRecordEntity> banHistory = new ArrayList<>();
 
 	public ClubMemberEntity(ClubEntity club, MemberEntity member, ClubMemberRole role) {
 		this.club = club;
@@ -73,8 +73,8 @@ public class ClubMemberEntity extends BaseTimeEntity {
 		this.banned = true;
 	}
 
-	public void addBanRecord(BannedClubMemberEntity bannedClubMemberEntity) {
-		this.banHistory.add(bannedClubMemberEntity);
+	public void addBanRecord(ClubMemberBanRecordEntity clubMemberBanRecordEntity) {
+		this.banHistory.add(clubMemberBanRecordEntity);
 		this.banned = true;
 	}
 

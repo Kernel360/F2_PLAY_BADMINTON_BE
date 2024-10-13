@@ -1,7 +1,7 @@
 package org.badminton.api.clubmember;
 
 import org.badminton.api.clubmember.model.dto.ClubMemberExpelRequest;
-import org.badminton.domain.clubmember.entity.BannedClubMemberEntity;
+import org.badminton.domain.clubmember.entity.ClubMemberBanRecordEntity;
 import org.badminton.domain.clubmember.entity.BannedType;
 import org.badminton.domain.clubmember.entity.ClubMemberEntity;
 import org.badminton.domain.clubmember.repository.ClubMemberRepository;
@@ -24,9 +24,9 @@ public class ExpelStrategy extends AbstractClubMemberBanStrategy{
 	}
 
 	@Override
-	protected BannedClubMemberEntity createBanRecord(ClubMemberEntity clubMember, BannedType bannedType,
+	protected ClubMemberBanRecordEntity createBanRecord(ClubMemberEntity clubMember, BannedType bannedType,
 		String reason) {
-		return new BannedClubMemberEntity(clubMember, BannedType.PERMANENT, reason);
+		return new ClubMemberBanRecordEntity(clubMember, BannedType.PERMANENT, reason);
 	}
 
 	@Override

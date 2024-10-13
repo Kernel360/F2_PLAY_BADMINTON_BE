@@ -9,7 +9,7 @@ import org.badminton.api.clubmember.BanStrategy;
 import org.badminton.api.clubmember.ClubMemberPenaltyStrategy;
 import org.badminton.api.clubmember.ExpelStrategy;
 import org.badminton.api.clubmember.model.Comparator.ClubMemberRoleComparator;
-import org.badminton.api.clubmember.model.dto.BannedClubMemberResponse;
+import org.badminton.api.clubmember.model.dto.clubMemberBanRecordResponse;
 import org.badminton.api.clubmember.model.dto.ClubMemberBanRequest;
 import org.badminton.api.clubmember.model.dto.ClubMemberExpelRequest;
 import org.badminton.api.clubmember.model.dto.ClubMemberJoinResponse;
@@ -110,12 +110,12 @@ public class ClubMemberService {
 			.orElseThrow(() -> new ClubMemberNotExistException(clubMemberId));
 	}
 
-	public BannedClubMemberResponse expelClubMember(ClubMemberExpelRequest request, Long clubMemberId) {
+	public clubMemberBanRecordResponse expelClubMember(ClubMemberExpelRequest request, Long clubMemberId) {
 		ClubMemberEntity clubMemberEntity = getClubMember(clubMemberId);
 		return expelStrategy.execute(clubMemberEntity, request);
 	}
 
-	public BannedClubMemberResponse banClubMember(ClubMemberBanRequest request, Long clubMemberId) {
+	public clubMemberBanRecordResponse banClubMember(ClubMemberBanRequest request, Long clubMemberId) {
 		ClubMemberEntity clubMemberEntity = getClubMember(clubMemberId);
 		return banStrategy.execute(clubMemberEntity, request);
 	}
