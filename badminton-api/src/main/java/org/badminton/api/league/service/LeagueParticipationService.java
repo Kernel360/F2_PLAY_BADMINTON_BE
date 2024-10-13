@@ -86,6 +86,7 @@ public class LeagueParticipationService {
 				() -> new LeagueParticipationNotExistException(leagueId, clubMemberId));
 	}
 
+	// TODO: ban 당하거나 탈퇴한 회원의 경우 조회에서 제외
 	private ClubMemberEntity provideClubMemberIfClubMemberInClub(Long clubId, Long memberId) {
 		return clubMemberRepository.findByClub_ClubIdAndMember_MemberId(clubId, memberId).orElseThrow(
 			() -> new ClubMemberNotExistException(clubId, memberId));
