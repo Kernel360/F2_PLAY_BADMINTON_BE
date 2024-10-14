@@ -49,14 +49,14 @@ public class ClubService {
 		ClubEntity club = checkIfClubPresent(clubId);
 		Map<MemberTier, Long> memberCountByTier = club.getClubMemberCountByTier();
 
-		return ClubDetailsResponse.clubEntityToClubReadResponse(club, memberCountByTier);
+		return ClubDetailsResponse.fromClubEntityAndMemberCountByTier(club, memberCountByTier);
 	}
 
 	public ClubDetailsResponse readCurrentClub(Long memberId) {
 		ClubMemberEntity clubMember = findClubMemberByClubMemberId(memberId);
 		Map<MemberTier, Long> memberCountByTier = clubMember.getClub().getClubMemberCountByTier();
 
-		return ClubDetailsResponse.clubEntityToClubReadResponse(clubMember.getClub(), memberCountByTier);
+		return ClubDetailsResponse.fromClubEntityAndMemberCountByTier(clubMember.getClub(), memberCountByTier);
 	}
 
 	public Page<ClubCardResponse> readAllClubs(Pageable pageable) {
@@ -99,7 +99,7 @@ public class ClubService {
 
 		createLeagueRecord(clubMemberEntity);
 
-		return ClubCreateResponse.clubEntityToClubCreateResponse(club);
+		return ClubCreateResponse.fromClubEntity(club);
 	}
 
 	private ClubMemberEntity createClubMember(ClubEntity club, MemberEntity memberEntity) {
@@ -119,7 +119,7 @@ public class ClubService {
 		club.updateClub(clubUpdateRequest.clubName(), clubUpdateRequest.clubDescription(),
 			clubUpdateRequest.clubDescription());
 		clubRepository.save(club);
-		return ClubUpdateResponse.clubEntityToClubUpdateResponse(club);
+		return ClubUpdateResponse.fromClubEntity(club);
 	}
 
 	@Transactional
