@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Objects;
 
 import org.badminton.api.common.exception.clubmember.ClubMemberNotExistException;
+import org.badminton.api.common.exception.league.InsufficientTierException;
 import org.badminton.api.common.exception.league.LeagueNotExistException;
 import org.badminton.api.common.exception.league.LeagueParticipationAlreadyCanceledException;
 import org.badminton.api.common.exception.league.LeagueParticipationDuplicateException;
@@ -12,6 +13,7 @@ import org.badminton.api.league.model.dto.LeagueParticipantResponse;
 import org.badminton.api.league.model.dto.LeagueParticipationCancelResponse;
 import org.badminton.domain.clubmember.entity.ClubMemberEntity;
 import org.badminton.domain.clubmember.repository.ClubMemberRepository;
+import org.badminton.domain.common.enums.MemberTier;
 import org.badminton.domain.league.entity.LeagueEntity;
 import org.badminton.domain.league.entity.LeagueParticipantEntity;
 import org.badminton.domain.league.repository.LeagueParticipantRepository;
@@ -39,12 +41,30 @@ public class LeagueParticipationService {
 
 		ClubMemberEntity clubMember = provideClubMemberIfClubMemberInClub(clubId, memberId);
 		LeagueEntity league = provideLeagueIfClubMemberInLeague(clubId, leagueId);
+		MemberTier requiredTier = league.getRequiredTier();
+		MemberTier clubMemberTier = clubMember.getTier();
 
+		switch (requiredTier) {
+			case GOLD -> checkGoldMemberTier(clubMemberTier, leagueId, clubId);
+			case SILVER -> checkSilverMemberTIer(clubMemberTier, leagueId, clubId);
+		}
 		checkIfClubMemberInLeague(leagueId, clubMember.getClubMemberId());
 
 		LeagueParticipantEntity leagueParticipation = new LeagueParticipantEntity(clubMember, league);
 		leagueParticipantRepository.save(leagueParticipation);
 		return LeagueParticipantResponse.entityToLeagueParticipantResponse(leagueParticipation);
+	}
+
+	private void checkSilverMemberTIer(MemberTier clubMemberTier, Long leagueId, Long clubMemberId) {
+		if (clubMemberTier == MemberTier.BRONZE) {
+			throw new InsufficientTierException(MemberTier.SILVER, leagueId, clubMemberId);
+		}
+	}
+
+	private void checkGoldMemberTier(MemberTier clubMemberTier, Long leagueId, Long clubMemberId) {
+		if (clubMemberTier != MemberTier.GOLD) {
+			throw new InsufficientTierException(MemberTier.GOLD, leagueId, clubMemberId);
+		}
 	}
 
 	public LeagueParticipationCancelResponse cancelLeagueParticipation(Long clubId, Long leagueId, Long memberId) {
