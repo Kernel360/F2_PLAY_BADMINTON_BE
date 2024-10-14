@@ -13,6 +13,7 @@ import org.badminton.api.match.model.dto.MatchResponse;
 import org.badminton.domain.common.enums.MatchType;
 import org.badminton.domain.league.entity.LeagueEntity;
 import org.badminton.domain.league.entity.LeagueParticipantEntity;
+import org.badminton.domain.league.enums.LeagueStatus;
 import org.badminton.domain.league.repository.LeagueParticipantRepository;
 import org.badminton.domain.league.repository.LeagueRepository;
 import org.badminton.domain.match.repository.DoublesMatchRepository;
@@ -43,11 +44,15 @@ public class MatchCreateService {
 	public List<MatchResponse> makeMatches(Long leagueId) {
 		// TODO: 만약 리스트에 아무것도 없으면!?
 		// TODO: League의 League Status가 COMPLETED 일 경우에만 생성할 수 있다.
+		// TODO: League의 시작 날짜가 되어야 경기를 생성할 수 있다.
+
+		// TODO: 참여 취소한 애들도 포함됨
 		List<LeagueParticipantEntity> leagueParticipantList =
 			leagueParticipantRepository.findAllByLeague_LeagueId(leagueId);
 
 		LeagueEntity league = leagueParticipantList.get(0).getLeague();
 		checkPlayerCount(league, leagueParticipantList.size());
+		checkLeagueRecruitingStatus(league);
 
 		MatchType matchType = league.getMatchType();
 		MatchProgress matchProgress = createMatchProgress(matchType);
@@ -68,10 +73,19 @@ public class MatchCreateService {
 		return matchProgress.initDetails(leagueId);
 	}
 
+	// TODO: 예외 체이닝 걸 수 있음.
+	private void checkLeagueRecruitingStatus(LeagueEntity league) {
+		if (league.getLeagueStatus() != LeagueStatus.COMPLETED) {
+			league.cancelLeague();
+			throw new InvalidPlayerCountException(league.getLeagueId(), league.getClosedAt());
+		}
+	}
+
 	private void checkPlayerCount(LeagueEntity league, int playerCount) {
 		if (league.getPlayerLimitCount() != playerCount) {
 			throw new InvalidPlayerCountException(league.getLeagueId(), playerCount);
 		}
+		league.completeLeagueRecruiting();
 	}
 
 	private MatchProgress createMatchProgress(MatchType matchType) {

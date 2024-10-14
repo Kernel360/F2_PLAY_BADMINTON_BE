@@ -9,6 +9,7 @@ import org.badminton.api.common.exception.league.LeagueNotExistException;
 import org.badminton.api.common.exception.league.LeagueParticipationAlreadyCanceledException;
 import org.badminton.api.common.exception.league.LeagueParticipationDuplicateException;
 import org.badminton.api.common.exception.league.LeagueParticipationNotExistException;
+import org.badminton.api.common.exception.league.LeagueRecruitingCompletedException;
 import org.badminton.api.league.model.dto.LeagueParticipantResponse;
 import org.badminton.api.league.model.dto.LeagueParticipationCancelResponse;
 import org.badminton.domain.clubmember.entity.ClubMemberEntity;
@@ -16,6 +17,7 @@ import org.badminton.domain.clubmember.repository.ClubMemberRepository;
 import org.badminton.domain.common.enums.MemberTier;
 import org.badminton.domain.league.entity.LeagueEntity;
 import org.badminton.domain.league.entity.LeagueParticipantEntity;
+import org.badminton.domain.league.enums.LeagueStatus;
 import org.badminton.domain.league.repository.LeagueParticipantRepository;
 import org.badminton.domain.league.repository.LeagueRepository;
 import org.springframework.stereotype.Service;
@@ -43,15 +45,18 @@ public class LeagueParticipationService {
 		LeagueEntity league = provideLeagueIfClubMemberInLeague(clubId, leagueId);
 		MemberTier requiredTier = league.getRequiredTier();
 		MemberTier clubMemberTier = clubMember.getTier();
-
+    checkLeagueRecruitingStatus(league);
+    checkIfClubMemberInLeague(leagueId, clubMember.getClubMemberId());
 		switch (requiredTier) {
 			case GOLD -> checkGoldMemberTier(clubMemberTier, leagueId, clubId);
 			case SILVER -> checkSilverMemberTIer(clubMemberTier, leagueId, clubId);
 		}
-		checkIfClubMemberInLeague(leagueId, clubMember.getClubMemberId());
+
 
 		LeagueParticipantEntity leagueParticipation = new LeagueParticipantEntity(clubMember, league);
 		leagueParticipantRepository.save(leagueParticipation);
+
+		checkPlayerCount(league);
 		return LeagueParticipantResponse.entityToLeagueParticipantResponse(leagueParticipation);
 	}
 
@@ -65,6 +70,10 @@ public class LeagueParticipationService {
 		if (clubMemberTier != MemberTier.GOLD) {
 			throw new InsufficientTierException(MemberTier.GOLD, leagueId, clubMemberId);
 		}
+	private void checkLeagueRecruitingStatus(LeagueEntity league) {
+		if (league.getLeagueStatus() == LeagueStatus.COMPLETED)
+			throw new LeagueRecruitingCompletedException(league.getLeagueId(), league.getLeagueStatus(),
+				league.getPlayerLimitCount());
 	}
 
 	public LeagueParticipationCancelResponse cancelLeagueParticipation(Long clubId, Long leagueId, Long memberId) {
@@ -106,9 +115,19 @@ public class LeagueParticipationService {
 				() -> new LeagueParticipationNotExistException(leagueId, clubMemberId));
 	}
 
+	// TODO: ban 당하거나 탈퇴한 회원의 경우 조회에서 제외
 	private ClubMemberEntity provideClubMemberIfClubMemberInClub(Long clubId, Long memberId) {
 		return clubMemberRepository.findByClub_ClubIdAndMember_MemberId(clubId, memberId).orElseThrow(
 			() -> new ClubMemberNotExistException(clubId, memberId));
+	}
+
+	private void checkPlayerCount(LeagueEntity league) {
+		// TODO: MatchCreateService와 중복 코드 발생
+		List<LeagueParticipantEntity> leagueParticipantList =
+			leagueParticipantRepository.findAllByLeague_LeagueId(league.getLeagueId());
+		if (league.getPlayerLimitCount() == leagueParticipantList.size()) {
+			league.completeLeagueRecruiting();
+		}
 	}
 
 }

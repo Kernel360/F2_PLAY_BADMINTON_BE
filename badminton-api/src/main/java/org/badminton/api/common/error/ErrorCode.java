@@ -43,6 +43,7 @@ public enum ErrorCode {
 	CONFLICT(409, "리소스 충돌이 발생했습니다."),
 	ALREADY_EXIST(409, "리소스가 이미 존재합니다."),
 	CLUB_MEMBER_ALREADY_EXIST(409, "이미 해당 동호회에 가입을 완료한 회원입니다."),
+	LEAGUE_RECRUITING_ALREADY_COMPLETED(409, "이미 경기 일정에 모집 인원이 다 채워졌습니다."),
 
 	// RESOURCE_ALREADY_EXIST
 	RESOURCE_ALREADY_EXIST(409, "특정 리소스가 이미 존재합니다."),

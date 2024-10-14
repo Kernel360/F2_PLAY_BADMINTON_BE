@@ -95,4 +95,12 @@ public class LeagueEntity extends BaseTimeEntity {
 		this.matchGenerationType = matchGenerationType;
 
 	}
+
+	public void completeLeagueRecruiting() {
+		this.leagueStatus = LeagueStatus.COMPLETED;
+	}
+
+	public void cancelLeague() {
+		this.leagueStatus = LeagueStatus.CANCELED;
+	}
 }
