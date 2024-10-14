@@ -38,9 +38,6 @@ public class LeagueRecordEntity extends BaseTimeEntity {
 
 	private int matchCount;
 
-	@Enumerated(EnumType.STRING)
-	private MemberTier tier;
-
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "clubMemberId")
 	private ClubMemberEntity clubMember;
@@ -51,7 +48,6 @@ public class LeagueRecordEntity extends BaseTimeEntity {
 		this.loseCount = 0;
 		this.drawCount = 0;
 		this.matchCount = 0;
-		this.tier = MemberTier.BRONZE;
 	}
 
 	public void updateWinCount(int winCount) {
@@ -70,7 +66,4 @@ public class LeagueRecordEntity extends BaseTimeEntity {
 		this.matchCount = matchCount;
 	}
 
-	public void updateTier(MemberTier tier) {
-		this.tier = tier;
-	}
 }

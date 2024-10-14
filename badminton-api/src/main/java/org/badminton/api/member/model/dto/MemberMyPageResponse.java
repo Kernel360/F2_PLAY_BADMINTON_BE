@@ -2,6 +2,7 @@ package org.badminton.api.member.model.dto;
 
 import org.badminton.api.leaguerecord.dto.LeagueRecordInfoResponse;
 import org.badminton.domain.clubmember.entity.ClubMemberRole;
+import org.badminton.domain.common.enums.MemberTier;
 import org.badminton.domain.member.entity.MemberEntity;
 import org.badminton.domain.clubmember.entity.ClubMemberEntity;
 import org.badminton.domain.leaguerecord.entity.LeagueRecordEntity;
@@ -34,6 +35,9 @@ public record MemberMyPageResponse(
 	@Schema(description = "Member role", example = "ROLE_USER")
 	ClubMemberRole role,
 
+	@Schema(description = "ClubMember Tier", example = "GOLD")
+	MemberTier tier,
+
 	@Schema(description = "League record information")
 	LeagueRecordInfoResponse leagueRecordInfo
 ) {
@@ -47,6 +51,7 @@ public record MemberMyPageResponse(
 			clubMemberEntity != null ? clubMemberEntity.getClubMemberId() : null,
 			clubMemberEntity != null ? clubMemberEntity.getClub().getClubName() : null,
 			clubMemberEntity != null ? clubMemberEntity.getRole() : null,
+			clubMemberEntity != null ? clubMemberEntity.getTier() : null,
 			leagueRecordEntity != null ? LeagueRecordInfoResponse.entityToLeagueRecordInfoResponse(leagueRecordEntity) : null
 		);
 	}
