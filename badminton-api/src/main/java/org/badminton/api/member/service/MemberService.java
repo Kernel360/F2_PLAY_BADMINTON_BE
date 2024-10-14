@@ -21,6 +21,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
@@ -60,6 +61,9 @@ public class MemberService {
 
 	@Value("${NAVER_CLIENT_SECRET}")
 	private String naverClientSecret;
+
+	@Value("${custom.server.domain}")
+	private String domain;
 
 	public MemberIsClubMemberResponse getMemberIsClubMember(Long memberId) {
 		boolean isClubMember = clubMemberRepository.existsByMember_MemberIdAndDeletedFalse(memberId);
@@ -125,17 +129,27 @@ public class MemberService {
 	}
 
 	public void clearRefreshCookie(HttpServletResponse response) {
-		Cookie refreshTokenCookie = new Cookie("refresh_token", null);
-		refreshTokenCookie.setMaxAge(0);
-		refreshTokenCookie.setPath("/");
-		response.addCookie(refreshTokenCookie);
+		ResponseCookie cookie = ResponseCookie.from("refresh_token", "")
+			.httpOnly(true)
+			.secure(true)
+			.sameSite("None")
+			.domain(domain)
+			.path("/")
+			.maxAge(0)  // 만료 시간을 0으로 설정하여 쿠키 삭제
+			.build();
+		response.addHeader("Set-Cookie", cookie.toString());
 	}
 
 	public void clearAccessCookie(HttpServletResponse response) {
-		Cookie accessTokenCookie = new Cookie("access_token", null);
-		accessTokenCookie.setMaxAge(0);
-		accessTokenCookie.setPath("/");
-		response.addCookie(accessTokenCookie);
+		ResponseCookie cookie = ResponseCookie.from("access_token", "")
+			.httpOnly(true)
+			.secure(true)
+			.sameSite("None")
+			.domain(domain)
+			.path("/")
+			.maxAge(0)  // 만료 시간을 0으로 설정하여 쿠키 삭제
+			.build();
+		response.addHeader("Set-Cookie", cookie.toString());
 	}
 
 	public MemberDeleteResponse changeIsDeleted(Long memberId) {
