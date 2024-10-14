@@ -81,8 +81,9 @@ public class MemberService {
 		if (clubMemberEntity != null) {
 			leagueRecordEntity = leagueRecordRepository.findByClubMember(clubMemberEntity)
 				.orElse(new LeagueRecordEntity(clubMemberEntity));
+			return MemberMyPageResponse.fromMemberEntityAndClubMemberEntity(memberEntity, clubMemberEntity, leagueRecordEntity);
 		}
-		return MemberMyPageResponse.entityToMyPageResponse(memberEntity, clubMemberEntity, leagueRecordEntity);
+		return MemberMyPageResponse.fromMemberEntity(memberEntity);
 	}
 
 	@Transactional

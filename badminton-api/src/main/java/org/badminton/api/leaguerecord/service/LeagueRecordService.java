@@ -17,6 +17,10 @@ public class LeagueRecordService {
 
 	private final LeagueRecordRepository leagueRecordRepository;
 	private final ClubMemberRepository clubMemberRepository;
+	private static final int GOLD_TIER_MIN_MATCHES = 20;
+	private static final int GOLD_TIER_MIN_WIN_RATE = 80;
+	private static final int SILVER_TIER_MIN_MATCHES = 10;
+	private static final int SILVER_TIER_MIN_WIN_RATE = 60;
 
 	@Transactional
 	public void addWin(Long clubMemberId) {
@@ -61,9 +65,9 @@ public class LeagueRecordService {
 		LeagueRecordEntity record = getLeagueRecord(clubMemberId);
 		int matchCount = record.getMatchCount();
 
-		if (matchCount >= 20 && winRate >= 80) {
+		if (matchCount >= GOLD_TIER_MIN_MATCHES && winRate >= GOLD_TIER_MIN_WIN_RATE) {
 			clubMemberEntity.updateTier(MemberTier.GOLD);
-			} else if (matchCount >= 10 && winRate >= 60) {
+			} else if (matchCount >= SILVER_TIER_MIN_MATCHES && winRate >= SILVER_TIER_MIN_WIN_RATE) {
 			clubMemberEntity.updateTier(MemberTier.SILVER);
 			} else {
 			clubMemberEntity.updateTier(MemberTier.BRONZE);
