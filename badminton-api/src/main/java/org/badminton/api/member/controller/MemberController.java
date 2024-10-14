@@ -52,7 +52,7 @@ public class MemberController {
 	@PostMapping("/win")
 	public ResponseEntity<String> addWin(@AuthenticationPrincipal CustomOAuth2Member member) {
 		Long memberId = member.getMemberId();
-		Long clubMemberId = clubMemberRepository.findByMember_MemberId(memberId).get().getClubMemberId();
+		Long clubMemberId = clubMemberRepository.findByMember_MemberIdAndDeletedFalse(memberId).get().getClubMemberId();
 		leagueRecordService.addWin(clubMemberId);
 		return ResponseEntity.ok("Win added successfully");
 	}
@@ -66,7 +66,7 @@ public class MemberController {
 	@PostMapping("/lose")
 	public ResponseEntity<String> addLose(@AuthenticationPrincipal CustomOAuth2Member member) {
 		Long memberId = member.getMemberId();
-		Long clubMemberId = clubMemberRepository.findByMember_MemberId(memberId).get().getClubMemberId();
+		Long clubMemberId = clubMemberRepository.findByMember_MemberIdAndDeletedFalse(memberId).get().getClubMemberId();
 		leagueRecordService.addLose(clubMemberId);
 		return ResponseEntity.ok("Loss added successfully");
 	}

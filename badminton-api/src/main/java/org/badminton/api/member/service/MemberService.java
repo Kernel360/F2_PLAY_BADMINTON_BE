@@ -64,7 +64,7 @@ public class MemberService {
 	public MemberIsClubMemberResponse getMemberIsClubMember(Long memberId) {
 		boolean isClubMember = clubMemberRepository.existsByMember_MemberId(memberId);
 		if (isClubMember) {
-			ClubMemberEntity clubMemberEntity = clubMemberRepository.findByMember_MemberId(memberId).get();
+			ClubMemberEntity clubMemberEntity = clubMemberRepository.findByMember_MemberIdAndDeletedFalse(memberId).get();
 			ClubMemberRole clubMemberRole = clubMemberEntity.getRole();
 			Long clubId = clubMemberEntity.getClub().getClubId();
 
@@ -75,7 +75,7 @@ public class MemberService {
 
 	public MemberMyPageResponse getMemberInfo(Long memberId) {
 		MemberEntity memberEntity = memberValidator.findMemberByMemberId(memberId);
-		ClubMemberEntity clubMemberEntity = clubMemberRepository.findByMember_MemberId(memberId).orElse(null);
+		ClubMemberEntity clubMemberEntity = clubMemberRepository.findByMember_MemberIdAndDeletedFalse(memberId).orElse(null);
 		LeagueRecordEntity leagueRecordEntity = null;
 
 		if (clubMemberEntity != null) {

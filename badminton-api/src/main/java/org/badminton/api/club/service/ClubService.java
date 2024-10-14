@@ -1,5 +1,6 @@
 package org.badminton.api.club.service;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -125,7 +126,16 @@ public class ClubService {
 	public ClubDeleteResponse deleteClub(Long clubId) {
 		ClubEntity club = checkIfClubPresent(clubId);
 		club.doWithdrawal();
+		deleteAllClubMembers(clubId);
 		return ClubDeleteResponse.clubEntityToClubDeleteResponse(club);
+	}
+
+	public void deleteAllClubMembers(Long clubId) {
+		List<ClubMemberEntity> allByClubClubId = clubMemberRepository.findAllByClub_ClubId(clubId);
+		allByClubClubId.forEach(clubMember -> {
+			clubMember.deleteClubMember();
+			clubMemberRepository.save(clubMember);
+		});
 	}
 
 	public MemberTier getAverageTier(Long clubId) {
@@ -156,13 +166,13 @@ public class ClubService {
 	}
 
 	private ClubMemberEntity findClubMemberByClubMemberId(Long memberId) {
-		return clubMemberRepository.findByMember_MemberId(memberId)
+		return clubMemberRepository.findByMember_MemberIdAndDeletedFalse(memberId)
 			.orElseThrow(
 				() -> new MemberNotJoinedClubException(memberId));
 	}
 
 	private void checkIfMemberAlreadyClubMember(Long memberId) {
-		clubMemberRepository.findByMember_MemberId(memberId).ifPresent(clubMember -> {
+		clubMemberRepository.findByMember_MemberIdAndDeletedFalse(memberId).ifPresent(clubMember -> {
 			if (clubMember.getClub().isClubDeleted()) {
 				return;
 			}
