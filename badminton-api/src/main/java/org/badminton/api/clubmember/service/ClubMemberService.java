@@ -5,11 +5,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.badminton.api.clubmember.BanStrategy;
+import org.badminton.api.clubmember.ClubMemberPenaltyStrategy;
+import org.badminton.api.clubmember.ExpelStrategy;
 import org.badminton.api.clubmember.model.Comparator.ClubMemberRoleComparator;
+import org.badminton.api.clubmember.model.dto.clubMemberBanRecordResponse;
+import org.badminton.api.clubmember.model.dto.ClubMemberBanRequest;
+import org.badminton.api.clubmember.model.dto.ClubMemberExpelRequest;
 import org.badminton.api.clubmember.model.dto.ClubMemberJoinResponse;
 import org.badminton.api.clubmember.model.dto.ClubMemberResponse;
+import org.badminton.api.clubmember.model.dto.ClubMemberRoleUpdateRequest;
 import org.badminton.api.common.exception.club.ClubNotExistException;
 import org.badminton.api.common.exception.clubmember.ClubMemberDuplicateException;
+import org.badminton.api.common.exception.clubmember.ClubMemberNotExistException;
 import org.badminton.api.common.exception.member.MemberNotExistException;
 import org.badminton.domain.club.entity.ClubEntity;
 import org.badminton.domain.club.repository.ClubRepository;
@@ -22,16 +30,25 @@ import org.badminton.domain.member.entity.MemberEntity;
 import org.badminton.domain.member.repository.MemberRepository;
 import org.springframework.stereotype.Service;
 
-import lombok.RequiredArgsConstructor;
-
 @Service
-@RequiredArgsConstructor
 public class ClubMemberService {
 
 	private final ClubMemberRepository clubMemberRepository;
 	private final ClubRepository clubRepository;
 	private final MemberRepository memberRepository;
 	private final LeagueRecordRepository leagueRecordRepository;
+	private final ClubMemberPenaltyStrategy expelStrategy;
+	private final ClubMemberPenaltyStrategy banStrategy;
+
+	public ClubMemberService(ClubMemberRepository clubMemberRepository, ClubRepository clubRepository,
+		MemberRepository memberRepository, LeagueRecordRepository leagueRecordRepository) {
+		this.clubMemberRepository = clubMemberRepository;
+		this.clubRepository = clubRepository;
+		this.memberRepository = memberRepository;
+		this.leagueRecordRepository = leagueRecordRepository;
+		this.expelStrategy = new ExpelStrategy(clubMemberRepository);
+		this.banStrategy = new BanStrategy(clubMemberRepository);
+	}
 
 	public ClubMemberJoinResponse joinClub(Long memberId, Long clubId) {
 		ClubEntity clubEntity = clubRepository.findByClubIdAndIsClubDeletedFalse(clubId)
@@ -56,6 +73,14 @@ public class ClubMemberService {
 
 	}
 
+	public ClubMemberResponse updateClubMemberRole(ClubMemberRoleUpdateRequest request, Long clubMemberId) {
+		ClubMemberEntity clubMemberEntity = clubMemberRepository.findByClubMemberId(clubMemberId)
+			.orElseThrow(() -> new ClubMemberNotExistException(clubMemberId));
+		clubMemberEntity.updateClubMemberRole(request.role());
+		clubMemberRepository.save(clubMemberEntity);
+		return ClubMemberResponse.entityToClubMemberResponse(clubMemberEntity);
+	}
+
 	public List<ClubMemberEntity> findAllClubMembersByMemberId(Long memberId) {
 		return clubMemberRepository.findAllByMember_MemberId(memberId);
 	}
@@ -78,5 +103,20 @@ public class ClubMemberService {
 			});
 
 		return responseMap;
+	}
+
+	private ClubMemberEntity getClubMember(Long clubMemberId) {
+		return clubMemberRepository.findByClubMemberId(clubMemberId)
+			.orElseThrow(() -> new ClubMemberNotExistException(clubMemberId));
+	}
+
+	public clubMemberBanRecordResponse expelClubMember(ClubMemberExpelRequest request, Long clubMemberId) {
+		ClubMemberEntity clubMemberEntity = getClubMember(clubMemberId);
+		return expelStrategy.execute(clubMemberEntity, request);
+	}
+
+	public clubMemberBanRecordResponse banClubMember(ClubMemberBanRequest request, Long clubMemberId) {
+		ClubMemberEntity clubMemberEntity = getClubMember(clubMemberId);
+		return banStrategy.execute(clubMemberEntity, request);
 	}
 }

@@ -25,11 +25,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -109,11 +107,12 @@ public class SecurityConfig {
 				.requestMatchers(HttpMethod.DELETE, "/v1/clubs/{clubId}").access(hasClubRole("OWNER"))
 				.requestMatchers(HttpMethod.PATCH, "/v1/clubs/{clubId}").access(hasClubRole("OWNER", "MANAGER"))
 				.requestMatchers(HttpMethod.GET, "/v1/clubs/{clubId}/**").authenticated()
-				.requestMatchers(HttpMethod.POST, "/v1/clubs/{clubId}/league").access(hasClubRole("OWNER", "MANAGER"))
+				.requestMatchers(HttpMethod.POST, "/v1/clubs/{clubId}/league","/v1/clubs/images").access(hasClubRole("OWNER", "MANAGER"))
 				.requestMatchers(HttpMethod.DELETE, "/v1/clubs/{clubId}/leagues/{leagueId}").access(hasClubRole("OWNER", "MANAGER"))
 				.requestMatchers(HttpMethod.PATCH, "/v1/clubs/{clubId}/leagues/{leagueId}").access(hasClubRole("OWNER", "MANAGER"))
 				.requestMatchers(HttpMethod.POST, "/v1/clubs/{clubId}/leagues/{leagueId}/participation").access(hasClubRole("OWNER", "MANAGER", "USER"))
 				.requestMatchers(HttpMethod.DELETE, "/v1/clubs/{clubId}/leagues/{leagueId}/participation").access(hasClubRole("OWNER", "MANAGER", "USER"))
+				.requestMatchers(HttpMethod.PATCH, "/v1/clubs/{clubId}/clubMembers/role","v1/clubs/{clubId}/clubMembers/ban","v1/clubs/{clubId}/clubMembers/expel").access(hasClubRole("OWNER"))
 				.anyRequest().authenticated()
 			);
 		return http.build();
