@@ -8,12 +8,14 @@ import org.badminton.api.common.exception.league.LeagueNotExistException;
 import org.badminton.api.common.exception.league.LeagueParticipationAlreadyCanceledException;
 import org.badminton.api.common.exception.league.LeagueParticipationDuplicateException;
 import org.badminton.api.common.exception.league.LeagueParticipationNotExistException;
+import org.badminton.api.common.exception.league.LeagueRecruitingCompletedException;
 import org.badminton.api.league.model.dto.LeagueParticipantResponse;
 import org.badminton.api.league.model.dto.LeagueParticipationCancelResponse;
 import org.badminton.domain.clubmember.entity.ClubMemberEntity;
 import org.badminton.domain.clubmember.repository.ClubMemberRepository;
 import org.badminton.domain.league.entity.LeagueEntity;
 import org.badminton.domain.league.entity.LeagueParticipantEntity;
+import org.badminton.domain.league.enums.LeagueStatus;
 import org.badminton.domain.league.repository.LeagueParticipantRepository;
 import org.badminton.domain.league.repository.LeagueRepository;
 import org.springframework.stereotype.Service;
@@ -40,11 +42,21 @@ public class LeagueParticipationService {
 		ClubMemberEntity clubMember = provideClubMemberIfClubMemberInClub(clubId, memberId);
 		LeagueEntity league = provideLeagueIfClubMemberInLeague(clubId, leagueId);
 
+		checkLeagueRecruitingStatus(league);
+
 		checkIfClubMemberInLeague(leagueId, clubMember.getClubMemberId());
 
 		LeagueParticipantEntity leagueParticipation = new LeagueParticipantEntity(clubMember, league);
 		leagueParticipantRepository.save(leagueParticipation);
+
+		checkPlayerCount(league);
 		return LeagueParticipantResponse.entityToLeagueParticipantResponse(leagueParticipation);
+	}
+
+	private void checkLeagueRecruitingStatus(LeagueEntity league) {
+		if (league.getLeagueStatus() == LeagueStatus.COMPLETED)
+			throw new LeagueRecruitingCompletedException(league.getLeagueId(), league.getLeagueStatus(),
+				league.getPlayerLimitCount());
 	}
 
 	public LeagueParticipationCancelResponse cancelLeagueParticipation(Long clubId, Long leagueId, Long memberId) {
@@ -90,6 +102,15 @@ public class LeagueParticipationService {
 	private ClubMemberEntity provideClubMemberIfClubMemberInClub(Long clubId, Long memberId) {
 		return clubMemberRepository.findByClub_ClubIdAndMember_MemberId(clubId, memberId).orElseThrow(
 			() -> new ClubMemberNotExistException(clubId, memberId));
+	}
+
+	private void checkPlayerCount(LeagueEntity league) {
+		// TODO: MatchCreateService와 중복 코드 발생
+		List<LeagueParticipantEntity> leagueParticipantList =
+			leagueParticipantRepository.findAllByLeague_LeagueId(league.getLeagueId());
+		if (league.getPlayerLimitCount() == leagueParticipantList.size()) {
+			league.completeLeagueRecruiting();
+		}
 	}
 
 }
