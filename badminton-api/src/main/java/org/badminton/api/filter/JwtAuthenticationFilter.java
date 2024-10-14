@@ -46,7 +46,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				jwtUtil.getRegistrationId(token), oAuthAccessToken);
 
 			for (ClubMemberEntity clubMember : clubMemberEntities) {
-				customOAuth2Member.addClubRole(clubMember.getClub().getClubId(), clubMember.getRole().name());
+				if (!clubMember.getClub().isClubDeleted()) {
+					customOAuth2Member.addClubRole(clubMember.getClub().getClubId(), clubMember.getRole().name());
+					break;
+				}
 			}
 
 			Authentication authToken = new UsernamePasswordAuthenticationToken(customOAuth2Member, null,

@@ -32,6 +32,7 @@ public class CustomOAuth2Member implements OAuth2User {
 	private Map<Long, String> clubRoles = new HashMap<>();
 
 	public void addClubRole(Long clubId, String role) {
+		this.clubRoles.clear();
 		this.clubRoles.put(clubId, role);
 	}
 

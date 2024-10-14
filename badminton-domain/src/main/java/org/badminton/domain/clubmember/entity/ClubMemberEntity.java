@@ -68,6 +68,10 @@ public class ClubMemberEntity extends BaseTimeEntity {
 		this.role = role;
 	}
 
+	public void deleteClubMember() {
+		this.deleted = true;
+	}
+
 	public void expel() {
 		this.deleted = true;
 		this.banned = true;
