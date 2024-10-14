@@ -62,7 +62,7 @@ public class MemberService {
 	private String naverClientSecret;
 
 	public MemberIsClubMemberResponse getMemberIsClubMember(Long memberId) {
-		boolean isClubMember = clubMemberRepository.existsByMember_MemberId(memberId);
+		boolean isClubMember = clubMemberRepository.existsByMember_MemberIdAndDeletedFalse(memberId);
 		if (isClubMember) {
 			ClubMemberEntity clubMemberEntity = clubMemberRepository.findByMember_MemberIdAndDeletedFalse(memberId).get();
 			ClubMemberRole clubMemberRole = clubMemberEntity.getRole();
