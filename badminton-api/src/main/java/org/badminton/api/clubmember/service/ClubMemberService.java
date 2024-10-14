@@ -57,7 +57,7 @@ public class ClubMemberService {
 		MemberEntity memberEntity = memberRepository.findByMemberId(memberId)
 			.orElseThrow(() -> new MemberNotExistException(memberId));
 
-		if (clubMemberRepository.existsByMember_MemberId(memberId)) {
+		if (clubMemberRepository.existsByMember_MemberIdAndDeletedFalse(memberId)) {
 			throw new ClubMemberDuplicateException(clubId, memberId);
 		}
 
