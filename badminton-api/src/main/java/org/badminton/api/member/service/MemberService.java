@@ -21,6 +21,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
@@ -128,6 +129,9 @@ public class MemberService {
 		Cookie refreshTokenCookie = new Cookie("refresh_token", null);
 		refreshTokenCookie.setMaxAge(0);
 		refreshTokenCookie.setPath("/");
+		refreshTokenCookie.setSecure(true);  // HTTPS에서만 전송
+		refreshTokenCookie.setHttpOnly(true);  // JavaScript에서 접근 불가
+		refreshTokenCookie.setAttribute("SameSite", "None");  // CSRF 방지
 		response.addCookie(refreshTokenCookie);
 	}
 
@@ -135,6 +139,9 @@ public class MemberService {
 		Cookie accessTokenCookie = new Cookie("access_token", null);
 		accessTokenCookie.setMaxAge(0);
 		accessTokenCookie.setPath("/");
+		accessTokenCookie.setSecure(true);  // HTTPS에서만 전송
+		accessTokenCookie.setHttpOnly(true);  // JavaScript에서 접근 불가
+		accessTokenCookie.setAttribute("SameSite", "None");  // CSRF 방지
 		response.addCookie(accessTokenCookie);
 	}
 
