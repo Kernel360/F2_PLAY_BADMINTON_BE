@@ -7,6 +7,7 @@ import org.badminton.domain.club.entity.ClubEntity;
 import org.badminton.domain.common.enums.MemberTier;
 
 public record ClubDetailsResponse(
+	Long clubId,
 	String clubName,
 	String clubDescription,
 	String clubImage,
@@ -15,9 +16,10 @@ public record ClubDetailsResponse(
 	LocalDateTime createdAt
 ) {
 
-	public static ClubDetailsResponse clubEntityToClubReadResponse(ClubEntity clubEntity,
+	public static ClubDetailsResponse fromClubEntityAndMemberCountByTier(ClubEntity clubEntity,
 		Map<MemberTier, Long> memberCountByTier) {
-		return new ClubDetailsResponse(clubEntity.getClubName(), clubEntity.getClubDescription(),
+		return new ClubDetailsResponse(clubEntity.getClubId(), clubEntity.getClubName(),
+			clubEntity.getClubDescription(),
 			clubEntity.getClubImage(),
 			ClubMemberCountByTier.ofClubMemberCountResponse(memberCountByTier),
 			clubEntity.getClubMembers().size(),

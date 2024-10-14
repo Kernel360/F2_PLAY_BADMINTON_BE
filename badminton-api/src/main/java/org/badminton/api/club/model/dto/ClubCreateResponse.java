@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import org.badminton.domain.club.entity.ClubEntity;
 
 public record ClubCreateResponse(
+	Long clubId,
 	String clubName,
 	String clubDescription,
 	String clubImage,
@@ -12,8 +13,8 @@ public record ClubCreateResponse(
 	LocalDateTime modifiedAt
 ) {
 
-	public static ClubCreateResponse clubEntityToClubCreateResponse(ClubEntity clubEntity) {
-		return new ClubCreateResponse(clubEntity.getClubName(), clubEntity.getClubDescription(),
+	public static ClubCreateResponse fromClubEntity(ClubEntity clubEntity) {
+		return new ClubCreateResponse(clubEntity.getClubId(), clubEntity.getClubName(), clubEntity.getClubDescription(),
 			clubEntity.getClubImage(),
 			clubEntity.getCreatedAt(),
 			clubEntity.getModifiedAt());
