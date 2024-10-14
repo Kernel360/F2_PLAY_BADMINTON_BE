@@ -105,6 +105,8 @@ public class ClubMemberService {
 		return responseMap;
 	}
 
+
+
 	private ClubMemberEntity getClubMember(Long clubMemberId) {
 		return clubMemberRepository.findByClubMemberId(clubMemberId)
 			.orElseThrow(() -> new ClubMemberNotExistException(clubMemberId));

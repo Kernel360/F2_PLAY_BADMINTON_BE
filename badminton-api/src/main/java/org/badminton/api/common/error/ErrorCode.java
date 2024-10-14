@@ -62,6 +62,8 @@ public enum ErrorCode {
 
 	INVALID_PLAYER_COUNT(411, "아직 모집 인원이 채워지지 않았습니다."),
 
+	INSUFFICIENT_TIER(412, "현재 경기의 티어와 맞지 않습니다"),
+
 	// 500 Errors
 	INTERNAL_SERVER_ERROR(500, "서버 내부 오류가 발생했습니다."),
 

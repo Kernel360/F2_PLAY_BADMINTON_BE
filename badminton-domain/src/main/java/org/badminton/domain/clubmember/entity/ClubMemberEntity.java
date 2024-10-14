@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.badminton.domain.club.entity.ClubEntity;
 import org.badminton.domain.common.BaseTimeEntity;
+import org.badminton.domain.common.enums.MemberTier;
 import org.badminton.domain.leaguerecord.entity.LeagueRecordEntity;
 import org.badminton.domain.member.entity.MemberEntity;
 
@@ -42,6 +43,9 @@ public class ClubMemberEntity extends BaseTimeEntity {
 	@Enumerated(EnumType.STRING)
 	private ClubMemberRole role;
 
+	@Enumerated(EnumType.STRING)
+	private MemberTier tier;
+
 	@ManyToOne
 	@JoinColumn(name = "clubId")
 	private ClubEntity club;
@@ -62,6 +66,7 @@ public class ClubMemberEntity extends BaseTimeEntity {
 		this.role = role;
 		this.deleted = false;
 		this.banned = false;
+		this.tier = MemberTier.BRONZE;
 	}
 
 	public void updateClubMemberRole(ClubMemberRole role) {
@@ -82,5 +87,8 @@ public class ClubMemberEntity extends BaseTimeEntity {
 		this.banned = true;
 	}
 
+	public void updateTier(MemberTier tier) {
+		this.tier = tier;
+	}
 
 }

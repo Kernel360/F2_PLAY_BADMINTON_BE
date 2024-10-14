@@ -71,7 +71,7 @@ public class ClubEntity extends BaseTimeEntity {
 			.filter(clubMember -> clubMember.getLeagueRecord() != null)
 			.filter(clubMember -> !clubMember.isDeleted() && !clubMember.isBanned())
 			.collect(Collectors.groupingBy(
-				clubMember -> clubMember.getLeagueRecord().getTier(),
+				ClubMemberEntity::getTier,
 				Collectors.counting()
 			));
 

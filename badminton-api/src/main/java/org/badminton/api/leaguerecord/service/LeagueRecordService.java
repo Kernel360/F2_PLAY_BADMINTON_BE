@@ -1,10 +1,8 @@
 package org.badminton.api.leaguerecord.service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.badminton.api.common.exception.clubmember.ClubMemberNotExistException;
+import org.badminton.domain.clubmember.entity.ClubMemberEntity;
+import org.badminton.domain.clubmember.repository.ClubMemberRepository;
 import org.badminton.domain.common.enums.MemberTier;
 import org.badminton.domain.leaguerecord.entity.LeagueRecordEntity;
 import org.badminton.domain.leaguerecord.repository.LeagueRecordRepository;
@@ -18,6 +16,11 @@ import lombok.RequiredArgsConstructor;
 public class LeagueRecordService {
 
 	private final LeagueRecordRepository leagueRecordRepository;
+	private final ClubMemberRepository clubMemberRepository;
+	private static final int GOLD_TIER_MIN_MATCHES = 20;
+	private static final int GOLD_TIER_MIN_WIN_RATE = 80;
+	private static final int SILVER_TIER_MIN_MATCHES = 10;
+	private static final int SILVER_TIER_MIN_WIN_RATE = 60;
 
 	@Transactional
 	public void addWin(Long clubMemberId) {
@@ -57,22 +60,28 @@ public class LeagueRecordService {
 	}
 
 	private void updateTier(Long clubMemberId) {
+		ClubMemberEntity clubMemberEntity = getClubMember(clubMemberId);
 		double winRate = getWinRate(clubMemberId);
 		LeagueRecordEntity record = getLeagueRecord(clubMemberId);
 		int matchCount = record.getMatchCount();
 
-		if (matchCount >= 20 && winRate >= 80) {
-			record.updateTier(MemberTier.GOLD);
-		} else if (matchCount >= 10 && winRate >= 60) {
-			record.updateTier(MemberTier.SILVER);
-		} else {
-			record.updateTier(MemberTier.BRONZE);
-		}
+		if (matchCount >= GOLD_TIER_MIN_MATCHES && winRate >= GOLD_TIER_MIN_WIN_RATE) {
+			clubMemberEntity.updateTier(MemberTier.GOLD);
+			} else if (matchCount >= SILVER_TIER_MIN_MATCHES && winRate >= SILVER_TIER_MIN_WIN_RATE) {
+			clubMemberEntity.updateTier(MemberTier.SILVER);
+			} else {
+			clubMemberEntity.updateTier(MemberTier.BRONZE);
+			}
 	}
 
 	@Transactional(readOnly = true)
 	public LeagueRecordEntity getLeagueRecord(Long clubMemberId) {
 		return leagueRecordRepository.findByClubMember_ClubMemberId(clubMemberId)
+			.orElseThrow(() -> new ClubMemberNotExistException(clubMemberId));
+	}
+
+	private ClubMemberEntity getClubMember(Long clubMemberId) {
+		return clubMemberRepository.findByClubMemberId(clubMemberId)
 			.orElseThrow(() -> new ClubMemberNotExistException(clubMemberId));
 	}
 

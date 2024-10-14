@@ -1,7 +1,7 @@
 package org.badminton.api.member.model.dto;
 
+import org.badminton.api.clubmember.model.dto.ClubMemberMyPageResponse;
 import org.badminton.api.leaguerecord.dto.LeagueRecordInfoResponse;
-import org.badminton.domain.clubmember.entity.ClubMemberRole;
 import org.badminton.domain.member.entity.MemberEntity;
 import org.badminton.domain.clubmember.entity.ClubMemberEntity;
 import org.badminton.domain.leaguerecord.entity.LeagueRecordEntity;
@@ -22,32 +22,31 @@ public record MemberMyPageResponse(
 	@Schema(description = "Profile image URL", example = "https://example.com/profile.jpg")
 	String profileImage,
 
-	@Schema(description = "Club ID", example = "1")
-	Long clubId,
-
-	@Schema(description = "Club member ID", example = "1")
-	Long clubMemberId,
-
-	@Schema(description = "Club name", example = "배드민턴 동호회")
-	String clubName,
-
-	@Schema(description = "Member role", example = "ROLE_USER")
-	ClubMemberRole role,
+	@Schema(description = "ClubMember information")
+	ClubMemberMyPageResponse clubMemberMyPageResponse,
 
 	@Schema(description = "League record information")
 	LeagueRecordInfoResponse leagueRecordInfo
 ) {
-	public static MemberMyPageResponse entityToMyPageResponse(MemberEntity memberEntity, ClubMemberEntity clubMemberEntity, LeagueRecordEntity leagueRecordEntity) {
+	public static MemberMyPageResponse fromMemberEntityAndClubMemberEntity(MemberEntity memberEntity, ClubMemberEntity clubMemberEntity, LeagueRecordEntity leagueRecordEntity) {
 		return new MemberMyPageResponse(
 			memberEntity.getMemberId(),
 			memberEntity.getName(),
 			memberEntity.getEmail(),
 			memberEntity.getProfileImage(),
-			clubMemberEntity != null ? clubMemberEntity.getClub().getClubId() : null,
-			clubMemberEntity != null ? clubMemberEntity.getClubMemberId() : null,
-			clubMemberEntity != null ? clubMemberEntity.getClub().getClubName() : null,
-			clubMemberEntity != null ? clubMemberEntity.getRole() : null,
-			leagueRecordEntity != null ? LeagueRecordInfoResponse.entityToLeagueRecordInfoResponse(leagueRecordEntity) : null
+			ClubMemberMyPageResponse.fromClubMemberEntity(clubMemberEntity),
+			LeagueRecordInfoResponse.entityToLeagueRecordInfoResponse(leagueRecordEntity)
+		);
+	}
+
+	public static MemberMyPageResponse fromMemberEntity(MemberEntity memberEntity) {
+		return new MemberMyPageResponse(
+			memberEntity.getMemberId(),
+			memberEntity.getName(),
+			memberEntity.getEmail(),
+			memberEntity.getProfileImage(),
+			null,
+			null
 		);
 	}
 }
