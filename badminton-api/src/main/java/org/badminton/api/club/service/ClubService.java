@@ -131,8 +131,8 @@ public class ClubService {
 	}
 
 	public void deleteAllClubMembers(Long clubId) {
-		List<ClubMemberEntity> allByClubClubId = clubMemberRepository.findAllByClub_ClubId(clubId);
-		allByClubClubId.forEach(clubMember -> {
+		List<ClubMemberEntity> clubMembers = clubMemberRepository.findAllByClub_ClubId(clubId);
+		clubMembers.forEach(clubMember -> {
 			clubMember.deleteClubMember();
 			clubMemberRepository.save(clubMember);
 		});
@@ -173,9 +173,6 @@ public class ClubService {
 
 	private void checkIfMemberAlreadyClubMember(Long memberId) {
 		clubMemberRepository.findByMember_MemberIdAndDeletedFalse(memberId).ifPresent(clubMember -> {
-			if (clubMember.getClub().isClubDeleted()) {
-				return;
-			}
 			throw new MemberAlreadyExistInClubException(memberId, clubMember.getClub().getClubId(),
 				clubMember.getRole());
 		});
