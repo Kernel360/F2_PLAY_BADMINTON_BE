@@ -62,6 +62,9 @@ public class MemberService {
 	@Value("${NAVER_CLIENT_SECRET}")
 	private String naverClientSecret;
 
+	@Value("${custom.server.domain}")
+	private String domain;
+
 	public MemberIsClubMemberResponse getMemberIsClubMember(Long memberId) {
 		boolean isClubMember = clubMemberRepository.existsByMember_MemberIdAndDeletedFalse(memberId);
 		if (isClubMember) {
@@ -126,23 +129,27 @@ public class MemberService {
 	}
 
 	public void clearRefreshCookie(HttpServletResponse response) {
-		Cookie refreshTokenCookie = new Cookie("refresh_token", null);
-		refreshTokenCookie.setMaxAge(0);
-		refreshTokenCookie.setPath("/");
-		refreshTokenCookie.setSecure(true);  // HTTPS에서만 전송
-		refreshTokenCookie.setHttpOnly(true);  // JavaScript에서 접근 불가
-		refreshTokenCookie.setAttribute("SameSite", "None");  // CSRF 방지
-		response.addCookie(refreshTokenCookie);
+		ResponseCookie cookie = ResponseCookie.from("refresh_token", "")
+			.httpOnly(true)
+			.secure(true)
+			.sameSite("None")
+			.domain(domain)
+			.path("/")
+			.maxAge(0)  // 만료 시간을 0으로 설정하여 쿠키 삭제
+			.build();
+		response.addHeader("Set-Cookie", cookie.toString());
 	}
 
 	public void clearAccessCookie(HttpServletResponse response) {
-		Cookie accessTokenCookie = new Cookie("access_token", null);
-		accessTokenCookie.setMaxAge(0);
-		accessTokenCookie.setPath("/");
-		accessTokenCookie.setSecure(true);  // HTTPS에서만 전송
-		accessTokenCookie.setHttpOnly(true);  // JavaScript에서 접근 불가
-		accessTokenCookie.setAttribute("SameSite", "None");  // CSRF 방지
-		response.addCookie(accessTokenCookie);
+		ResponseCookie cookie = ResponseCookie.from("access_token", "")
+			.httpOnly(true)
+			.secure(true)
+			.sameSite("None")
+			.domain(domain)
+			.path("/")
+			.maxAge(0)  // 만료 시간을 0으로 설정하여 쿠키 삭제
+			.build();
+		response.addHeader("Set-Cookie", cookie.toString());
 	}
 
 	public MemberDeleteResponse changeIsDeleted(Long memberId) {
