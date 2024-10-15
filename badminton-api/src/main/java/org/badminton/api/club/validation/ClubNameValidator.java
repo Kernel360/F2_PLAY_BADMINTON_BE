@@ -1,20 +1,21 @@
 package org.badminton.api.club.validation;
 
-import jakarta.validation.ConstraintValidator;
-import jakarta.validation.ConstraintValidatorContext;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-public class ClubNameValidator implements ConstraintValidator<ClubNameValid, String> {
+import jakarta.validation.Constraint;
+import jakarta.validation.Payload;
 
-	@Override
-	public void initialize(ClubNameValid constraintAnnotation) {
-		ConstraintValidator.super.initialize(constraintAnnotation);
-	}
+@Constraint(validatedBy = ClubNameValidatorImpl.class)
+@Target({ElementType.FIELD, ElementType.PARAMETER})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface ClubNameValidator {
 
-	@Override
-	public boolean isValid(String value, ConstraintValidatorContext context) {
-		if (value == null || value.trim().isEmpty()) {
-			return false;
-		}
-		return value.trim().length() >= 2 && value.trim().length() <= 20;
-	}
+	String message() default "동호회 이름은 필수이며 2자 이상 20자 이하여야 합니다";
+
+	Class<?>[] groups() default {};
+
+	Class<? extends Payload>[] payload() default {};
 }

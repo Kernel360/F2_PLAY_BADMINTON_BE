@@ -1,14 +1,13 @@
 package org.badminton.api.club.model.dto;
 
-import org.badminton.api.club.validation.ClubNameValid;
+import org.badminton.api.club.validation.ClubNameValidator;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.NonNull;
 
 public record ClubCreateRequest(
 
-	@ClubNameValid
+	@ClubNameValidator
 	String clubName,
 
 	@NotBlank
