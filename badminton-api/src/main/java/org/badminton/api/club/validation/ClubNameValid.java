@@ -13,7 +13,7 @@ import jakarta.validation.constraints.Size;
 @Constraint(validatedBy = ClubNameValidator.class)
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ValidClubName {
+public @interface ClubNameValid {
 
 	String message() default "동호회 이름은 필수이며 2자 이상 20자 이하여야 합니다";
 

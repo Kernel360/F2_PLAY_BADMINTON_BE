@@ -3,10 +3,10 @@ package org.badminton.api.club.validation;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-public class ClubNameValidator implements ConstraintValidator<ValidClubName, String> {
+public class ClubNameValidator implements ConstraintValidator<ClubNameValid, String> {
 
 	@Override
-	public void initialize(ValidClubName constraintAnnotation) {
+	public void initialize(ClubNameValid constraintAnnotation) {
 		ConstraintValidator.super.initialize(constraintAnnotation);
 	}
 
