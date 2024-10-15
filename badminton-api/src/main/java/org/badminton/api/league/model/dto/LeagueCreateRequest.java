@@ -2,7 +2,8 @@ package org.badminton.api.league.model.dto;
 
 import java.time.LocalDateTime;
 
-import org.badminton.api.league.validation.LeagueNameValidator;
+import org.badminton.api.league.validation.annotation.LeagueDescriptionValidator;
+import org.badminton.api.league.validation.annotation.LeagueNameValidator;
 import org.badminton.domain.common.enums.MatchGenerationType;
 import org.badminton.domain.common.enums.MatchType;
 import org.badminton.domain.common.enums.MemberTier;
@@ -16,6 +17,7 @@ public record LeagueCreateRequest(
 	@Schema(description = "경기 이름", example = "배드민턴 경기")
 	String leagueName,
 
+	@LeagueDescriptionValidator
 	@Schema(description = "경기 설명", example = "이 경기는 지역 예선 경기입니다.")
 	String description,
 
