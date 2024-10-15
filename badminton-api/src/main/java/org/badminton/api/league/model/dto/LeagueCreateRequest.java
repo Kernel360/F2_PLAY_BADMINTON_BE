@@ -2,19 +2,22 @@ package org.badminton.api.league.model.dto;
 
 import java.time.LocalDateTime;
 
+import org.badminton.api.league.validation.annotation.LeagueDescriptionValidator;
+import org.badminton.api.league.validation.annotation.LeagueNameValidator;
 import org.badminton.domain.common.enums.MatchGenerationType;
 import org.badminton.domain.common.enums.MatchType;
 import org.badminton.domain.common.enums.MemberTier;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.Pattern;
 
 // TODO: 필드가 너무 많다. 분리 고민
 public record LeagueCreateRequest(
 
+	@LeagueNameValidator
 	@Schema(description = "경기 이름", example = "배드민턴 경기")
 	String leagueName,
 
+	@LeagueDescriptionValidator
 	@Schema(description = "경기 설명", example = "이 경기는 지역 예선 경기입니다.")
 	String description,
 
@@ -22,11 +25,9 @@ public record LeagueCreateRequest(
 	String leagueLocation,
 
 	//TODO: DTO 마다 검증 로직을 두지 않는 방법 알아보기
-	@Pattern(regexp = "GOLD|SILVER|BRONZE", message = "리그 상태 값이 올바르지 않습니다.")
 	@Schema(description = "최소 티어", example = "GOLD")
 	MemberTier tierLimit,
 
-	@Pattern(regexp = "SINGLE|DOUBLES", message = "경기 방식 값이 올바르지 않습니다.")
 	@Schema(description = "경기 방식", example = "SINGLES")
 	MatchType matchType,
 
