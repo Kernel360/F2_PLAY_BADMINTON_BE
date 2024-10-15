@@ -1,9 +1,13 @@
 package org.badminton.api.exceptionhandler;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.badminton.api.common.error.ErrorCode;
 import org.badminton.api.common.exception.BadmintonException;
 import org.badminton.api.common.response.ExceptionResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -29,6 +33,26 @@ public class BadmintonExceptionHandler {
 					.errorMessage(errorMessage)
 					.build()
 			);
+	}
+
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public ResponseEntity<ExceptionResponse> handleValidationExceptions(
+		MethodArgumentNotValidException ex) {
+
+		var errorCode = ErrorCode.VALIDATION_ERROR;
+		var errorMessage = ex.getBindingResult().getFieldErrors().stream()
+			.map(error -> error.getField() + ": " + error.getDefaultMessage())
+			.reduce((msg1, msg2) -> msg1 + ", " + msg2)
+			.orElse("입력값 검증에 실패했습니다.");
+
+		log.error(wrapLogMessage(errorCode, errorMessage));
+
+		return ResponseEntity.status(errorCode.getHttpStatusCode())
+			.body(ExceptionResponse.builder()
+				.httpStatusCode(errorCode.getHttpStatusCode())
+				.errorCode(errorCode)
+				.errorMessage(errorMessage)
+				.build());
 	}
 
 	@ExceptionHandler(Exception.class)

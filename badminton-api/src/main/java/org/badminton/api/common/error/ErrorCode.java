@@ -15,6 +15,7 @@ public enum ErrorCode {
 	LIMIT_EXCEEDED(400, "파라미터 또는 리소스 속성값이 제한을 초과했습니다."),
 	OUT_OF_RANGE(400, "파라미터 또는 리소스 속성값이 범위를 벗어났습니다."),
 	FILE_NOT_EXIST(400, "파일이 존재하지 않거나 잘못된 파일입니다."),
+	VALIDATION_ERROR(400, "입력값 검증에 실패했습니다"),
 
 	// 401 Errors
 	UNAUTHORIZED(401, "요구되는 인증 정보가 누락되었거나 잘못되었습니다."),
