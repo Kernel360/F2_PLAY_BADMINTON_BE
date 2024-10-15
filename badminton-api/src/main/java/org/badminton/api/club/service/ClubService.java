@@ -45,18 +45,22 @@ public class ClubService {
 	private final MemberRepository memberRepository;
 	private final LeagueRecordRepository leagueRecordRepository;
 
-	public ClubDetailsResponse readClub(Long clubId) {
+	public ClubDetailsResponse readClub(Long clubId, Long memberId) {
 		ClubEntity club = checkIfClubPresent(clubId);
 		Map<MemberTier, Long> memberCountByTier = club.getClubMemberCountByTier();
 
-		return ClubDetailsResponse.fromClubEntityAndMemberCountByTier(club, memberCountByTier);
+		boolean isClubMember = checkIfMemberBelongsToClub(memberId, clubId);
+
+		return ClubDetailsResponse.fromClubEntityAndMemberCountByTier(club, memberCountByTier, isClubMember);
 	}
 
-	public ClubDetailsResponse readCurrentClub(Long memberId) {
-		ClubMemberEntity clubMember = findClubMemberByClubMemberId(memberId);
-		Map<MemberTier, Long> memberCountByTier = clubMember.getClub().getClubMemberCountByTier();
-
-		return ClubDetailsResponse.fromClubEntityAndMemberCountByTier(clubMember.getClub(), memberCountByTier);
+	private boolean checkIfMemberBelongsToClub(Long memberId, Long clubId) {
+		if (Objects.isNull(memberId)) {
+			return false;
+		}
+		return clubMemberRepository.findByMember_MemberIdAndDeletedFalse(memberId)
+			.map(clubMember -> Objects.equals(clubMember.getClub().getClubId(), clubId))
+			.orElse(false);
 	}
 
 	public Page<ClubCardResponse> readAllClubs(Pageable pageable) {

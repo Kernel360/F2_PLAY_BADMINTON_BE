@@ -78,7 +78,7 @@ public class CustomOAuth2Member implements OAuth2User {
 	}
 
 	public String getProfileImage() {
-		return memberResponse.getProfileImag();
+		return memberResponse.getProfileImage();
 	}
 
 }

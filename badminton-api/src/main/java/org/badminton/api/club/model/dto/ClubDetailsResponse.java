@@ -13,16 +13,20 @@ public record ClubDetailsResponse(
 	String clubImage,
 	ClubMemberCountByTier clubMemberCountByTier,
 	int clubMemberCount,
-	LocalDateTime createdAt
+	LocalDateTime createdAt,
+	boolean isClubMember
 ) {
 
 	public static ClubDetailsResponse fromClubEntityAndMemberCountByTier(ClubEntity clubEntity,
-		Map<MemberTier, Long> memberCountByTier) {
-		return new ClubDetailsResponse(clubEntity.getClubId(), clubEntity.getClubName(),
+		Map<MemberTier, Long> memberCountByTier, boolean isClubMember) {
+		return new ClubDetailsResponse(
+			clubEntity.getClubId(),
+			clubEntity.getClubName(),
 			clubEntity.getClubDescription(),
 			clubEntity.getClubImage(),
 			ClubMemberCountByTier.ofClubMemberCountResponse(memberCountByTier),
 			clubEntity.getClubMembers().size(),
-			clubEntity.getCreatedAt());
+			clubEntity.getCreatedAt(),
+			isClubMember);
 	}
 }

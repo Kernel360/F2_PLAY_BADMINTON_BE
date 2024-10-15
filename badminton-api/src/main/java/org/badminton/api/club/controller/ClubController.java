@@ -1,7 +1,5 @@
 package org.badminton.api.club.controller;
 
-import java.util.List;
-
 import org.badminton.api.club.model.dto.ClubCardResponse;
 import org.badminton.api.club.model.dto.ClubCreateRequest;
 import org.badminton.api.club.model.dto.ClubCreateResponse;
@@ -50,15 +48,10 @@ public class ClubController {
 	@Operation(summary = "동호회 조회",
 		description = "동호회를 조회합니다.",
 		tags = {"Club"})
-	public ResponseEntity<ClubDetailsResponse> readClub(@PathVariable Long clubId) {
-		ClubDetailsResponse clubDetailsResponse = clubService.readClub(clubId);
-		return ResponseEntity.ok(clubDetailsResponse);
-	}
-
-	@GetMapping("/me")
-	@Operation(summary = "현재 로그인된 사용자의 동호회 조회", description = "현재 로그인되어 있는 사용자의 동호회를 조회합니다", tags = {"Club"})
-	public ResponseEntity<ClubDetailsResponse> readCurrentClub(@AuthenticationPrincipal CustomOAuth2Member member) {
-		ClubDetailsResponse clubDetailsResponse = clubService.readCurrentClub(member.getMemberId());
+	public ResponseEntity<ClubDetailsResponse> readClub(@PathVariable Long clubId,
+		@AuthenticationPrincipal(errorOnInvalidType = false) CustomOAuth2Member member) {
+		Long memberId = member != null ? member.getMemberId() : null;
+		ClubDetailsResponse clubDetailsResponse = clubService.readClub(clubId, memberId);
 		return ResponseEntity.ok(clubDetailsResponse);
 	}
 
