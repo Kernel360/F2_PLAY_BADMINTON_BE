@@ -27,7 +27,7 @@ public class MemberResponse {
 	private String providerId;
 
 	@Schema(description = "oAuth 제공 이미지", example = "1070449979547641023123")
-	private String profileImag;
+	private String profileImage;
 
 	public static MemberResponse memberEntityToResponse(MemberEntity memberEntity) {
 		return new MemberResponse(memberEntity.getMemberId(), memberEntity.getAuthorization(), memberEntity.getName(),
