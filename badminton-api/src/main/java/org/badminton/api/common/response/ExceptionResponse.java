@@ -1,5 +1,7 @@
 package org.badminton.api.common.response;
 
+import java.util.Map;
+
 import org.badminton.api.common.error.ErrorCode;
 
 import lombok.Builder;

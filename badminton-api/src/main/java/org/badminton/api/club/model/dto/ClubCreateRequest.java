@@ -1,12 +1,13 @@
 package org.badminton.api.club.model.dto;
 
+import org.badminton.api.club.validation.ClubNameValidator;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 public record ClubCreateRequest(
 
-	@NotBlank(message = "동호회 이름은 필수 입력 항목입니다.")
-	@Size(min = 2, max = 20)
+	@ClubNameValidator
 	String clubName,
 
 	@NotBlank
