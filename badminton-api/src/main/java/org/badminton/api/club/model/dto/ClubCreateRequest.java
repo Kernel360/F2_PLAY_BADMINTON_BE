@@ -1,20 +1,18 @@
 package org.badminton.api.club.model.dto;
 
+import org.badminton.api.club.validation.ClubDescriptionValidator;
+import org.badminton.api.club.validation.ClubImageValidator;
 import org.badminton.api.club.validation.ClubNameValidator;
-
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 
 public record ClubCreateRequest(
 
 	@ClubNameValidator
 	String clubName,
 
-	@NotBlank
-	@Size(max = 1000, message = "동호회 소개란에는 최대 1000자까지 입력할 수 있습니다.")
+	@ClubDescriptionValidator
 	String clubDescription,
 
-	// TODO: validation 추가 또는 VO 추가
+	@ClubImageValidator
 	String clubImage
 ) {
 }
