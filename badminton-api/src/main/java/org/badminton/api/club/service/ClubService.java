@@ -121,7 +121,7 @@ public class ClubService {
 	public ClubUpdateResponse updateClub(ClubUpdateRequest clubUpdateRequest, Long clubId) {
 		ClubEntity club = checkIfClubPresent(clubId);
 		club.updateClub(clubUpdateRequest.clubName(), clubUpdateRequest.clubDescription(),
-			clubUpdateRequest.clubDescription());
+			clubUpdateRequest.clubImage());
 		clubRepository.save(club);
 		return ClubUpdateResponse.fromClubEntity(club);
 	}
