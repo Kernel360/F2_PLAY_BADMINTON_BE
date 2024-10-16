@@ -64,9 +64,8 @@ public class MatchInitService {
 		// TODO: League의 League Status가 COMPLETED 일 경우에만 생성할 수 있다.
 		// TODO: League의 시작 날짜가 되어야 경기를 생성할 수 있다.
 
-		// TODO: 참여 취소한 애들도 포함됨
 		List<LeagueParticipantEntity> leagueParticipantList =
-			leagueParticipantRepository.findAllByLeague_LeagueId(leagueId);
+			leagueParticipantRepository.findAllByLeague_LeagueIdAndCanceled_False(leagueId);
 
 		if (leagueParticipantList.isEmpty()) {
 			throw new InvalidPlayerCountException(leagueId, 0);

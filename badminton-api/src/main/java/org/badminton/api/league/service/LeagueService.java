@@ -97,10 +97,9 @@ public class LeagueService {
 			endOfDay);
 
 		// LeagueEntity 리스트를 LeagueReadResponse 리스트로 변환하여 반환
-		// TODO: 참여 신청한 사람들까지 조회되고 있음
 		return leaguesByDate.stream()
 			.map(league -> LeagueByDateResponse.fromLeagueEntity(league,
-				leagueParticipantRepository.findAllByLeague_LeagueId(league.getLeagueId()).size()))
+				leagueParticipantRepository.findAllByLeague_LeagueIdAndCanceled_False(league.getLeagueId()).size()))
 			.collect(Collectors.toList());
 	}
 
