@@ -33,7 +33,7 @@ public class LeagueParticipationService {
 	private final LeagueRepository leagueRepository;
 
 	public List<LeagueParticipantResponse> findAllLeagueParticipantByLeague(Long leagueId) {
-		return leagueParticipantRepository.findAllByLeague_LeagueIdAndCanceled_False(leagueId)
+		return leagueParticipantRepository.findAllByLeagueLeagueIdAndCanceledFalse(leagueId)
 			.stream()
 			.map(LeagueParticipantResponse::entityToLeagueParticipantResponse)
 			.toList();
@@ -93,7 +93,7 @@ public class LeagueParticipationService {
 	}
 
 	private void checkIfClubMemberInLeague(Long leagueId, Long clubMemberId) {
-		LeagueParticipantEntity leagueParticipant = leagueParticipantRepository.findByLeague_LeagueIdAndClubMember_ClubMemberId(
+		LeagueParticipantEntity leagueParticipant = leagueParticipantRepository.findByLeagueLeagueIdAndClubMemberClubMemberId(
 			leagueId, clubMemberId).orElse(null);
 		if (Objects.isNull(leagueParticipant)) {
 			return;
@@ -111,7 +111,7 @@ public class LeagueParticipationService {
 	}
 
 	private LeagueParticipantEntity provideLeagueParticipantIfClubMemberInLeague(Long leagueId, Long clubMemberId) {
-		return leagueParticipantRepository.findByLeague_LeagueIdAndClubMember_ClubMemberId(leagueId, clubMemberId)
+		return leagueParticipantRepository.findByLeagueLeagueIdAndClubMemberClubMemberId(leagueId, clubMemberId)
 			.orElseThrow(
 				() -> new LeagueParticipationNotExistException(leagueId, clubMemberId));
 	}
@@ -125,7 +125,7 @@ public class LeagueParticipationService {
 	private void checkPlayerCount(LeagueEntity league) {
 		// TODO: MatchCreateService와 중복 코드 발생
 		List<LeagueParticipantEntity> leagueParticipantList =
-			leagueParticipantRepository.findAllByLeague_LeagueIdAndCanceled_False(league.getLeagueId());
+			leagueParticipantRepository.findAllByLeagueLeagueIdAndCanceledFalse(league.getLeagueId());
 		if (league.getPlayerLimitCount() == leagueParticipantList.size()) {
 			league.completeLeagueRecruiting();
 		}

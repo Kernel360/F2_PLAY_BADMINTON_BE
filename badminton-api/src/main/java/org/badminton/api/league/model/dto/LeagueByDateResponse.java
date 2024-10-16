@@ -20,7 +20,7 @@ public record LeagueByDateResponse(
 	public static LeagueByDateResponse fromLeagueEntity(LeagueEntity league, int recruitedMemberCount) {
 		return new LeagueByDateResponse(
 			league.getLeagueId(), league.getLeagueAt(), league.getLeagueName(),
-			league.getMatchType(), league.getRequiredTier(), league.getClosedAt(),
+			league.getMatchType(), league.getRequiredTier(), league.getRecruitingClosedAt(),
 			league.getPlayerLimitCount(), recruitedMemberCount
 		);
 	}

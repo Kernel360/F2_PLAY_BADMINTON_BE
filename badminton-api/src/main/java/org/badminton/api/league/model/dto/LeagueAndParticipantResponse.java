@@ -58,7 +58,7 @@ public record LeagueAndParticipantResponse(
 			entity.getLeagueStatus(),
 			entity.getMatchType(),
 			entity.getLeagueAt(),
-			entity.getClosedAt(),
+			entity.getRecruitingClosedAt(),
 			entity.getPlayerLimitCount(),
 			entity.getCreatedAt(),
 			entity.getModifiedAt(),

@@ -53,7 +53,7 @@ public class LeagueEntity extends BaseTimeEntity {
 	// TODO: Convert 등 사용하여 날짜 형식 맞추기
 	private LocalDateTime leagueAt;
 
-	private LocalDateTime closedAt;
+	private LocalDateTime recruitingClosedAt;
 
 	private int playerLimitCount;
 
@@ -65,14 +65,14 @@ public class LeagueEntity extends BaseTimeEntity {
 	private ClubEntity club;
 
 	public LeagueEntity(String leagueName, String description, String leagueLocation, LocalDateTime leagueAt,
-		MemberTier tierLimit, LocalDateTime closedAt, int playerLimitCount,
+		MemberTier tierLimit, LocalDateTime recruitingClosedAt, int playerLimitCount,
 		MatchType matchType, MatchGenerationType matchGenerationType, ClubEntity club) {
 		this.leagueName = leagueName;
 		this.description = description;
 		this.leagueLocation = leagueLocation;
 		this.leagueAt = leagueAt;
 		this.requiredTier = tierLimit;
-		this.closedAt = closedAt;
+		this.recruitingClosedAt = recruitingClosedAt;
 		this.leagueStatus = LeagueStatus.RECRUITING;
 		this.playerLimitCount = playerLimitCount;
 		this.matchType = matchType;
@@ -89,7 +89,7 @@ public class LeagueEntity extends BaseTimeEntity {
 		this.leagueLocation = leagueLocation;
 		this.leagueAt = leagueAt;
 		this.requiredTier = requiredTier;
-		this.closedAt = closedAt;
+		this.recruitingClosedAt = closedAt;
 		this.playerLimitCount = playerLimitCount;
 		this.matchType = matchType;
 		this.matchGenerationType = matchGenerationType;

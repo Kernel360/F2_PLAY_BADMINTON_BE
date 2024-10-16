@@ -65,7 +65,7 @@ public class MatchInitService {
 		// TODO: League의 시작 날짜가 되어야 경기를 생성할 수 있다.
 
 		List<LeagueParticipantEntity> leagueParticipantList =
-			leagueParticipantRepository.findAllByLeague_LeagueIdAndCanceled_False(leagueId);
+			leagueParticipantRepository.findAllByLeagueLeagueIdAndCanceledFalse(leagueId);
 
 		if (leagueParticipantList.isEmpty()) {
 			throw new InvalidPlayerCountException(leagueId, 0);
@@ -97,7 +97,7 @@ public class MatchInitService {
 	private void checkLeagueRecruitingStatus(LeagueEntity league) {
 		if (league.getLeagueStatus() != LeagueStatus.COMPLETED) {
 			league.cancelLeague();
-			throw new InvalidPlayerCountException(league.getLeagueId(), league.getClosedAt());
+			throw new InvalidPlayerCountException(league.getLeagueId(), league.getRecruitingClosedAt());
 		}
 	}
 

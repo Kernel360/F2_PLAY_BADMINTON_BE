@@ -94,7 +94,7 @@ public class LeagueService {
 
 		return leaguesByDate.stream()
 			.map(league -> LeagueByDateResponse.fromLeagueEntity(league,
-				leagueParticipantRepository.findAllByLeague_LeagueIdAndCanceled_False(league.getLeagueId()).size()))
+				leagueParticipantRepository.findAllByLeagueLeagueIdAndCanceledFalse(league.getLeagueId()).size()))
 			.collect(Collectors.toList());
 	}
 

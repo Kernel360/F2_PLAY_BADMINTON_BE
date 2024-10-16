@@ -79,19 +79,19 @@ VALUES ('Badminton Club 1', 'This is the first badminton club.',
 -- ClubMember 데이터 삽입
 INSERT INTO club_member (clubId, memberId, role, tier, deleted, banned, createdAt, modifiedAt)
 VALUES (1, 1, 'ROLE_OWNER', 'GOLD', false, false, '2024-01-01 09:00:00', '2024-01-01 09:00:00'),
-       (1, 2, 'ROLE_MANAGER', 'SILVER',false, false, '2024-01-02 09:00:00', '2024-01-02 09:00:00'),
-       (1, 3, 'ROLE_USER', 'GOLD',false, false, '2024-01-03 09:00:00', '2024-01-03 09:00:00'),
-       (1, 4, 'ROLE_USER', 'BRONZE',false, false, '2024-01-04 09:00:00', '2024-01-04 09:00:00'),
-       (1, 5, 'ROLE_USER', 'SILVER',false, false, '2024-01-05 09:00:00', '2024-01-05 09:00:00'),
-       (1, 6, 'ROLE_USER', 'GOLD',false, false, '2024-01-06 09:00:00', '2024-01-06 09:00:00'),
-       (2, 7, 'ROLE_OWNER', 'BRONZE',false, false, '2024-01-07 09:00:00', '2024-01-07 09:00:00'),
-       (2, 8, 'ROLE_USER', 'GOLD',false, false, '2024-01-08 09:00:00', '2024-01-08 09:00:00'),
-       (2, 9, 'ROLE_OWNER', 'GOLD',false, false, '2024-01-09 09:00:00', '2024-01-09 09:00:00'),
-       (2, 10, 'ROLE_MANAGER', 'SILVER',false, false, '2024-01-10 09:00:00', '2024-01-10 09:00:00');
+       (1, 2, 'ROLE_MANAGER', 'SILVER', false, false, '2024-01-02 09:00:00', '2024-01-02 09:00:00'),
+       (1, 3, 'ROLE_USER', 'GOLD', false, false, '2024-01-03 09:00:00', '2024-01-03 09:00:00'),
+       (1, 4, 'ROLE_USER', 'BRONZE', false, false, '2024-01-04 09:00:00', '2024-01-04 09:00:00'),
+       (1, 5, 'ROLE_USER', 'SILVER', false, false, '2024-01-05 09:00:00', '2024-01-05 09:00:00'),
+       (1, 6, 'ROLE_USER', 'GOLD', false, false, '2024-01-06 09:00:00', '2024-01-06 09:00:00'),
+       (2, 7, 'ROLE_OWNER', 'BRONZE', false, false, '2024-01-07 09:00:00', '2024-01-07 09:00:00'),
+       (2, 8, 'ROLE_USER', 'GOLD', false, false, '2024-01-08 09:00:00', '2024-01-08 09:00:00'),
+       (2, 9, 'ROLE_OWNER', 'GOLD', false, false, '2024-01-09 09:00:00', '2024-01-09 09:00:00'),
+       (2, 10, 'ROLE_MANAGER', 'SILVER', false, false, '2024-01-10 09:00:00', '2024-01-10 09:00:00');
 
 
 -- League 데이터 삽입 (leagueLocation 필드 추가)
-INSERT INTO league (leagueName, description, requiredTier, leagueStatus, matchType, leagueAt, closedAt,
+INSERT INTO league (leagueName, description, requiredTier, leagueStatus, matchType, leagueAt, recruitingClosedAt,
                     playerLimitCount,
                     matchGenerationType, clubId, createdAt, modifiedAt, leagueLocation)
 VALUES ('League 1', 'First league description', 'GOLD', 'COMPLETED', 'SINGLES', '2024-01-01 10:00:00',
@@ -118,7 +118,7 @@ VALUES ('League 1', 'First league description', 'GOLD', 'COMPLETED', 'SINGLES', 
 
 
 -- LeagueParticipant 데이터 삽입
-INSERT INTO league_participant (clubMemberId, leagueId, isCanceled, createdAt, modifiedAt, memberId)
+INSERT INTO league_participant (clubMemberId, leagueId, canceled, createdAt, modifiedAt, memberId)
 VALUES (1, 1, false, '2024-01-01 09:00:00', '2024-01-01 09:00:00', 1),
        (2, 1, false, '2024-01-02 09:00:00', '2024-01-02 09:00:00', 2),
        (3, 1, false, '2024-01-03 09:00:00', '2024-01-03 09:00:00', 3),
@@ -142,13 +142,13 @@ VALUES (1, 1, false, '2024-01-01 09:00:00', '2024-01-01 09:00:00', 1),
 
 -- LeagueRecord 데이터 삽입 (티어 기준표 반영)
 INSERT INTO league_record (winCount, loseCount, drawCount, matchCount, clubMemberId, createdAt, modifiedAt)
-VALUES (16, 3, 1, 20,  1, '2024-01-01 09:00:00', '2024-01-01 09:00:00'),
-       (7, 2, 1, 10,  2, '2024-01-02 09:00:00', '2024-01-02 09:00:00'),
+VALUES (16, 3, 1, 20, 1, '2024-01-01 09:00:00', '2024-01-01 09:00:00'),
+       (7, 2, 1, 10, 2, '2024-01-02 09:00:00', '2024-01-02 09:00:00'),
        (19, 1, 0, 20, 3, '2024-01-03 09:00:00', '2024-01-03 09:00:00'),
-       (7, 3, 0, 10,  4, '2024-01-04 09:00:00', '2024-01-04 09:00:00'),
-       (4, 5, 1, 10,  5, '2024-01-05 09:00:00', '2024-01-05 09:00:00'),
-       (17, 2, 1, 20,  6, '2024-01-06 09:00:00', '2024-01-06 09:00:00'),
-       (3, 6, 1, 10,  7, '2024-01-07 09:00:00', '2024-01-07 09:00:00'),
-       (6, 3, 1, 10,  8, '2024-01-08 09:00:00', '2024-01-08 09:00:00'),
+       (7, 3, 0, 10, 4, '2024-01-04 09:00:00', '2024-01-04 09:00:00'),
+       (4, 5, 1, 10, 5, '2024-01-05 09:00:00', '2024-01-05 09:00:00'),
+       (17, 2, 1, 20, 6, '2024-01-06 09:00:00', '2024-01-06 09:00:00'),
+       (3, 6, 1, 10, 7, '2024-01-07 09:00:00', '2024-01-07 09:00:00'),
+       (6, 3, 1, 10, 8, '2024-01-08 09:00:00', '2024-01-08 09:00:00'),
        (7, 2, 1, 10, 9, '2024-01-09 09:00:00', '2024-01-09 09:00:00'),
        (18, 1, 1, 20, 10, '2024-01-10 09:00:00', '2024-01-10 09:00:00');
