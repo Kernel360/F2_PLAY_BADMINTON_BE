@@ -12,7 +12,11 @@ import org.badminton.domain.league.entity.LeagueParticipantEntity;
 
 public interface MatchProgress {
 
-	List<MatchResponse> getMatches(Long leagueId);
+	List<MatchResponse> getAllMatchesInLeague(Long leagueId);
+
+	List<MatchDetailsResponse> getAllMatchesDetailsInLeague(Long leagueId);
+
+	MatchDetailsResponse getMatchDetails(Long matchId);
 
 	List<MatchResponse> makeMatches(LeagueEntity league, List<LeagueParticipantEntity> leagueParticipantList);
 

@@ -3,6 +3,7 @@ package org.badminton.api.match;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.badminton.api.common.exception.match.MatchDetailsNotExistException;
 import org.badminton.api.common.exception.match.MatchDuplicateException;
 import org.badminton.api.common.exception.match.MatchNotExistException;
 import org.badminton.api.match.model.dto.MatchDetailsResponse;
@@ -26,11 +27,26 @@ public class SinglesMatchProgress implements MatchProgress {
 	private SinglesMatchRepository singlesMatchRepository;
 
 	@Override
-	public List<MatchResponse> getMatches(Long leagueId) {
+	public List<MatchResponse> getAllMatchesInLeague(Long leagueId) {
 		return singlesMatchRepository.findAllByLeague_LeagueId(leagueId)
 			.stream()
 			.map(MatchResponse::entityToSinglesMatchResponse)
 			.toList();
+	}
+
+	@Override
+	public List<MatchDetailsResponse> getAllMatchesDetailsInLeague(Long leagueId) {
+		return singlesMatchRepository.findAllByLeague_LeagueId(leagueId)
+			.stream()
+			.map(MatchDetailsResponse::entityToSinglesMatchDetailsResponse)
+			.toList();
+	}
+
+	@Override
+	public MatchDetailsResponse getMatchDetails(Long matchId) {
+		SinglesMatchEntity singlesMatch = singlesMatchRepository.findById(matchId)
+			.orElseThrow(() -> new MatchDetailsNotExistException(matchId));
+		return MatchDetailsResponse.entityToSinglesMatchDetailsResponse(singlesMatch);
 	}
 
 	@Override

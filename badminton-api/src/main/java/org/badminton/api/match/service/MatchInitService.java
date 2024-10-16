@@ -24,25 +24,43 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class MatchCreateService {
+public class MatchInitService {
 
 	private final DoublesMatchRepository doublesMatchRepository;
 	private final SinglesMatchRepository singlesMatchRepository;
 	private final LeagueParticipantRepository leagueParticipantRepository;
 	private final LeagueRepository leagueRepository;
 
-	public List<MatchResponse> getMatches(Long clubId, Long leagueId) {
+	public List<MatchResponse> getAllMatchesInLeague(Long clubId, Long leagueId) {
 
 		LeagueEntity league = checkIfLeaguePresent(clubId, leagueId);
 		MatchType matchType = league.getMatchType();
 
 		MatchProgress matchProgress = createMatchProgress(matchType);
 
-		return matchProgress.getMatches(leagueId);
+		return matchProgress.getAllMatchesInLeague(leagueId);
+	}
+
+	public List<MatchDetailsResponse> getAllMatchesDetailsInLeague(Long clubId, Long leagueId) {
+
+		LeagueEntity league = checkIfLeaguePresent(clubId, leagueId);
+		MatchType matchType = league.getMatchType();
+
+		MatchProgress matchProgress = createMatchProgress(matchType);
+
+		return matchProgress.getAllMatchesDetailsInLeague(leagueId);
+	}
+
+	public MatchDetailsResponse getMatchDetailsInLeague(Long clubId, Long leagueId, Long matchId) {
+		LeagueEntity league = checkIfLeaguePresent(clubId, leagueId);
+		MatchType matchType = league.getMatchType();
+
+		MatchProgress matchProgress = createMatchProgress(matchType);
+
+		return matchProgress.getMatchDetails(matchId);
 	}
 
 	public List<MatchResponse> makeMatches(Long leagueId) {
-		// TODO: 만약 리스트에 아무것도 없으면!?
 		// TODO: League의 League Status가 COMPLETED 일 경우에만 생성할 수 있다.
 		// TODO: League의 시작 날짜가 되어야 경기를 생성할 수 있다.
 
@@ -50,6 +68,9 @@ public class MatchCreateService {
 		List<LeagueParticipantEntity> leagueParticipantList =
 			leagueParticipantRepository.findAllByLeague_LeagueId(leagueId);
 
+		if (leagueParticipantList.isEmpty()) {
+			throw new InvalidPlayerCountException(leagueId, 0);
+		}
 		LeagueEntity league = leagueParticipantList.get(0).getLeague();
 		checkPlayerCount(league, leagueParticipantList.size());
 		checkLeagueRecruitingStatus(league);
