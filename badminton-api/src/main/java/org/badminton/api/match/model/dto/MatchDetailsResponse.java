@@ -20,11 +20,7 @@ public record MatchDetailsResponse(
 
 		return new MatchDetailsResponse(singlesMatch.getSinglesMatchId(), singlesMatch.getLeague().getLeagueId(),
 			MatchType.SINGLES,
-			new SinglesMatchResponse(
-				singlesMatch.getLeagueParticipant1().getMember().getName(),
-				singlesMatch.getLeagueParticipant1().getMember().getProfileImage(),
-				singlesMatch.getLeagueParticipant2().getMember().getName(),
-				singlesMatch.getLeagueParticipant2().getMember().getProfileImage()),
+			SinglesMatchResponse.fromSinglesMatch(singlesMatch),
 			null,
 			SinglesSetResponse.entityToSinglesSetResponse(singlesMatch.getSinglesSets()),
 			null
@@ -36,16 +32,10 @@ public record MatchDetailsResponse(
 		return new MatchDetailsResponse(
 			doublesMatch.getDoublesMatchId(),
 			doublesMatch.getLeague().getLeagueId(),
-			MatchType.DOUBLES,
-			null,
-			new DoublesMatchResponse(
-				TeamResponse.teamToTeamResponse(doublesMatch.getTeam1()),
-				TeamResponse.teamToTeamResponse(doublesMatch.getTeam2())
-			),
-			null,
+			MatchType.DOUBLES, null,
+			DoublesMatchResponse.fromDoublesMatchEntity(doublesMatch), null,
 			DoublesSetResponse.entityToDoublesSetResponse(doublesMatch.getDoublesSets())
 		);
-
 	}
 
 }

@@ -3,10 +3,12 @@ package org.badminton.api.match;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.badminton.api.common.exception.match.MatchDetailsNotExistException;
 import org.badminton.api.common.exception.match.MatchDuplicateException;
 import org.badminton.api.common.exception.match.MatchNotExistException;
 import org.badminton.api.match.model.dto.MatchDetailsResponse;
 import org.badminton.api.match.model.dto.MatchResponse;
+import org.badminton.api.match.model.dto.SetScoreResponse;
 import org.badminton.api.match.model.dto.SetScoreUpdateRequest;
 import org.badminton.api.match.model.dto.SetScoreUpdateResponse;
 import org.badminton.domain.common.enums.MatchType;
@@ -24,10 +26,28 @@ public class DoublesMatchProgress implements MatchProgress {
 	private DoublesMatchRepository doublesMatchRepository;
 
 	@Override
-	public List<MatchResponse> getMatches(Long leagueId) {
+	public List<MatchResponse> getAllMatchesInLeague(Long leagueId) {
 		return doublesMatchRepository.findAllByLeague_LeagueId(leagueId).stream()
 			.map(MatchResponse::entityToDoublesMatchResponse)
 			.toList();
+	}
+
+	@Override
+	public List<SetScoreResponse> getAllMatchesAndSetsScoreInLeague(Long leagueId) {
+		return doublesMatchRepository.findAllByLeague_LeagueId(leagueId).stream()
+			.flatMap(doublesMatch ->
+				doublesMatch.getDoublesSets().stream()
+					.map(doublesSet -> SetScoreResponse.fromDoublesSetEntity(doublesMatch.getDoublesMatchId(),
+						doublesSet.getSetIndex(), doublesSet))
+			)
+			.toList();
+	}
+
+	@Override
+	public MatchDetailsResponse getMatchDetails(Long matchId) {
+		DoublesMatchEntity doublesMatch = doublesMatchRepository.findById(matchId)
+			.orElseThrow(() -> new MatchDetailsNotExistException(matchId));
+		return MatchDetailsResponse.entityToDoublesMatchDetailsResponse(doublesMatch);
 	}
 
 	@Override
@@ -35,16 +55,9 @@ public class DoublesMatchProgress implements MatchProgress {
 		List<DoublesMatchEntity> doublesMatches = makeDoublesMatches(leagueParticipantList, league);
 		return doublesMatches
 			.stream()
+			.map(this::initDoublesMatch)
 			.map(MatchResponse::entityToDoublesMatchResponse)
 			.toList();
-	}
-
-	@Override
-	public List<MatchDetailsResponse> initDetails(Long leagueId) {
-		List<DoublesMatchEntity> doublesMatchList = doublesMatchRepository.findAllByLeague_LeagueId(leagueId);
-		return doublesMatchList.stream()
-			.map(this::initDoublesMatch)
-			.map(MatchDetailsResponse::entityToDoublesMatchDetailsResponse).toList();
 	}
 
 	@Override

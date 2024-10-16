@@ -39,21 +39,21 @@ public class LeagueParticipantEntity extends BaseTimeEntity {
 	@JoinColumn(name = "leagueId")
 	private LeagueEntity league;
 
-	private boolean isCanceled;
+	private boolean canceled;
 
 	public LeagueParticipantEntity(ClubMemberEntity clubMember, LeagueEntity league) {
 		this.clubMember = clubMember;
 		this.league = league;
-		this.isCanceled = false;
+		this.canceled = false;
 		this.member = clubMember.getMember();
 	}
 
 	public void cancelLeagueParticipation() {
-		this.isCanceled = true;
+		this.canceled = true;
 	}
 
 	public void reactiveParticipation() {
-		this.isCanceled = false;
+		this.canceled = false;
 	}
 
 }

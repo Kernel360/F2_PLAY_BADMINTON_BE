@@ -10,6 +10,7 @@ import org.badminton.api.match.MatchProgress;
 import org.badminton.api.match.SinglesMatchProgress;
 import org.badminton.api.match.model.dto.MatchDetailsResponse;
 import org.badminton.api.match.model.dto.MatchResponse;
+import org.badminton.api.match.model.dto.SetScoreResponse;
 import org.badminton.domain.common.enums.MatchType;
 import org.badminton.domain.league.entity.LeagueEntity;
 import org.badminton.domain.league.entity.LeagueParticipantEntity;
@@ -24,32 +25,52 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class MatchCreateService {
+public class MatchInitService {
 
 	private final DoublesMatchRepository doublesMatchRepository;
 	private final SinglesMatchRepository singlesMatchRepository;
 	private final LeagueParticipantRepository leagueParticipantRepository;
 	private final LeagueRepository leagueRepository;
 
-	public List<MatchResponse> getMatches(Long clubId, Long leagueId) {
+	public List<MatchResponse> getAllMatchesInLeague(Long clubId, Long leagueId) {
 
 		LeagueEntity league = checkIfLeaguePresent(clubId, leagueId);
 		MatchType matchType = league.getMatchType();
 
 		MatchProgress matchProgress = createMatchProgress(matchType);
 
-		return matchProgress.getMatches(leagueId);
+		return matchProgress.getAllMatchesInLeague(leagueId);
 	}
 
-	public List<MatchResponse> makeMatches(Long leagueId) {
-		// TODO: 만약 리스트에 아무것도 없으면!?
+	public List<SetScoreResponse> getAllSetsScoreInLeague(Long clubId, Long leagueId) {
+
+		LeagueEntity league = checkIfLeaguePresent(clubId, leagueId);
+		MatchType matchType = league.getMatchType();
+
+		MatchProgress matchProgress = createMatchProgress(matchType);
+
+		return matchProgress.getAllMatchesAndSetsScoreInLeague(leagueId);
+	}
+
+	public MatchDetailsResponse getMatchDetailsInLeague(Long clubId, Long leagueId, Long matchId) {
+		LeagueEntity league = checkIfLeaguePresent(clubId, leagueId);
+		MatchType matchType = league.getMatchType();
+
+		MatchProgress matchProgress = createMatchProgress(matchType);
+
+		return matchProgress.getMatchDetails(matchId);
+	}
+
+	public List<MatchResponse> makeMatches(Long clubId, Long leagueId) {
 		// TODO: League의 League Status가 COMPLETED 일 경우에만 생성할 수 있다.
 		// TODO: League의 시작 날짜가 되어야 경기를 생성할 수 있다.
 
-		// TODO: 참여 취소한 애들도 포함됨
 		List<LeagueParticipantEntity> leagueParticipantList =
-			leagueParticipantRepository.findAllByLeague_LeagueId(leagueId);
+			leagueParticipantRepository.findAllByLeagueLeagueIdAndCanceledFalse(leagueId);
 
+		if (leagueParticipantList.isEmpty()) {
+			throw new InvalidPlayerCountException(leagueId, 0);
+		}
 		LeagueEntity league = leagueParticipantList.get(0).getLeague();
 		checkPlayerCount(league, leagueParticipantList.size());
 		checkLeagueRecruitingStatus(league);
@@ -60,24 +81,14 @@ public class MatchCreateService {
 		matchProgress.checkDuplicateMatchInLeague(leagueId, matchType);
 
 		Collections.shuffle(leagueParticipantList);
-
 		return matchProgress.makeMatches(league, leagueParticipantList);
-	}
-
-	public List<MatchDetailsResponse> initMatchDetails(Long clubId, Long leagueId) {
-		// 경기 일정이 있는지 확인하고 꺼내기
-		LeagueEntity league = checkIfLeaguePresent(clubId, leagueId);
-		MatchType matchType = league.getMatchType();
-
-		MatchProgress matchProgress = createMatchProgress(matchType);
-		return matchProgress.initDetails(leagueId);
 	}
 
 	// TODO: 예외 체이닝 걸 수 있음.
 	private void checkLeagueRecruitingStatus(LeagueEntity league) {
 		if (league.getLeagueStatus() != LeagueStatus.COMPLETED) {
 			league.cancelLeague();
-			throw new InvalidPlayerCountException(league.getLeagueId(), league.getClosedAt());
+			throw new InvalidPlayerCountException(league.getLeagueId(), league.getRecruitingClosedAt());
 		}
 	}
 
