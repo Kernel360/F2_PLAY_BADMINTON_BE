@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.badminton.api.match.model.dto.MatchDetailsResponse;
 import org.badminton.api.match.model.dto.MatchResponse;
+import org.badminton.api.match.model.dto.SetScoreResponse;
 import org.badminton.api.match.model.dto.SetScoreUpdateRequest;
 import org.badminton.api.match.model.dto.SetScoreUpdateResponse;
 import org.badminton.api.match.service.MatchInitService;
@@ -42,30 +43,17 @@ public class MatchController {
 		return ResponseEntity.ok(matchResponseList);
 	}
 
-	@GetMapping("/details")
-	@Operation(summary = "대진표 상세 조회",
-		description = "대진표를 상세 조회합니다. 모든 대진 정보와 대진별, 세트별 점수를 조회할 수 있습니다.",
-		tags = {"Match"})
-	public ResponseEntity<List<MatchDetailsResponse>> getAllMatchesDetails(
-		@PathVariable Long clubId,
-		@PathVariable Long leagueId
-	) {
-		List<MatchDetailsResponse> matchDetailsResponseList = matchInitService.getAllMatchesDetailsInLeague(clubId,
-			leagueId);
-		return ResponseEntity.ok(matchDetailsResponseList);
-	}
-
 	@GetMapping("/{matchId}")
-	@Operation(summary = "각 대진별 상세 조회",
-		description = "각 대진별로 세트별 점수를 조회합니다.",
+	@Operation(summary = "특정 게임의 세트별 점수 상세 조회",
+		description = "특정 게임의 세트별 점수를 상세 조회합니다.",
 		tags = {"Match"})
 	public ResponseEntity<MatchDetailsResponse> getMatchDetails(
 		@PathVariable Long clubId,
 		@PathVariable Long leagueId,
 		@PathVariable Long matchId
 	) {
-		MatchDetailsResponse matchDetailsREsponse = matchInitService.getMatchDetailsInLeague(clubId, leagueId, matchId);
-		return ResponseEntity.ok(matchDetailsREsponse);
+		MatchDetailsResponse matchDetailsResponse = matchInitService.getMatchDetailsInLeague(clubId, leagueId, matchId);
+		return ResponseEntity.ok(matchDetailsResponse);
 	}
 
 	@PostMapping
@@ -76,22 +64,24 @@ public class MatchController {
 		@PathVariable Long clubId,
 		@PathVariable Long leagueId
 	) {
-		List<MatchResponse> matchResponseList = matchInitService.makeMatches(leagueId);
+		List<MatchResponse> matchResponseList = matchInitService.makeMatches(clubId, leagueId);
 		return ResponseEntity.ok(matchResponseList);
 	}
 
-	@PostMapping("/details")
-	@Operation(summary = "대진표 대진별, 세트별, 점수 초기화",
+	@GetMapping("/sets")
+	@Operation(summary = "모든 게임의 세트 점수 상세 조회",
+		description = "모든 게임의 세트 점수를 상세 조회합니다. 모든 게임의 세트별 점수를 조회할 수 있습니다.",
 		tags = {"Match"})
-	public ResponseEntity<List<MatchDetailsResponse>> makeMatchesDetails(
+	public ResponseEntity<List<SetScoreResponse>> getAllMatchesDetails(
 		@PathVariable Long clubId,
 		@PathVariable Long leagueId
 	) {
-		List<MatchDetailsResponse> matchDetailsResponseList = matchInitService.initMatchDetails(clubId, leagueId);
-		return ResponseEntity.ok(matchDetailsResponseList);
+		List<SetScoreResponse> setScoreResponseList = matchInitService.getAllSetsScoreInLeague(clubId,
+			leagueId);
+		return ResponseEntity.ok(setScoreResponseList);
 	}
 
-	@PostMapping("/{matchId}/set/{setIndex}")
+	@PostMapping("/{matchId}/sets/{setIndex}")
 	@Operation(summary = "세트별 점수 저장",
 		tags = {"Match"})
 	public ResponseEntity<SetScoreUpdateResponse> updateSetsScore(

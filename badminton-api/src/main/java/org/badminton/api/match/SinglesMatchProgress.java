@@ -8,6 +8,7 @@ import org.badminton.api.common.exception.match.MatchDuplicateException;
 import org.badminton.api.common.exception.match.MatchNotExistException;
 import org.badminton.api.match.model.dto.MatchDetailsResponse;
 import org.badminton.api.match.model.dto.MatchResponse;
+import org.badminton.api.match.model.dto.SetScoreResponse;
 import org.badminton.api.match.model.dto.SetScoreUpdateRequest;
 import org.badminton.api.match.model.dto.SetScoreUpdateResponse;
 import org.badminton.domain.common.enums.MatchType;
@@ -35,10 +36,14 @@ public class SinglesMatchProgress implements MatchProgress {
 	}
 
 	@Override
-	public List<MatchDetailsResponse> getAllMatchesDetailsInLeague(Long leagueId) {
+	public List<SetScoreResponse> getAllMatchesAndSetsScoreInLeague(Long leagueId) {
 		return singlesMatchRepository.findAllByLeague_LeagueId(leagueId)
 			.stream()
-			.map(MatchDetailsResponse::entityToSinglesMatchDetailsResponse)
+			.flatMap(singlesMatch ->
+				singlesMatch.getSinglesSets().stream()
+					.map(singlesSet -> SetScoreResponse.fromSinglesSetEntity(singlesMatch.getSinglesMatchId(),
+						singlesSet.getSetIndex(), singlesSet))
+			)
 			.toList();
 	}
 
@@ -52,16 +57,9 @@ public class SinglesMatchProgress implements MatchProgress {
 	@Override
 	public List<MatchResponse> makeMatches(LeagueEntity league, List<LeagueParticipantEntity> leagueParticipantList) {
 		List<SinglesMatchEntity> singlesMatches = makeSinglesMatches(leagueParticipantList, league);
-		return singlesMatches.stream().map(MatchResponse::entityToSinglesMatchResponse).toList();
-	}
-
-	@Override
-	public List<MatchDetailsResponse> initDetails(Long leagueId) {
-		List<SinglesMatchEntity> singlesMatchList = singlesMatchRepository.findAllByLeague_LeagueId(leagueId);
-
-		return singlesMatchList.stream()
+		return singlesMatches.stream()
 			.map(this::initSinglesMatch)
-			.map(MatchDetailsResponse::entityToSinglesMatchDetailsResponse)
+			.map(MatchResponse::entityToSinglesMatchResponse)
 			.toList();
 	}
 

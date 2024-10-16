@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.badminton.domain.common.BaseTimeEntity;
 import org.badminton.domain.common.enums.MatchResult;
+import org.badminton.domain.common.enums.MatchStatus;
 import org.badminton.domain.league.entity.LeagueEntity;
 import org.badminton.domain.match.model.vo.Team;
 
@@ -69,6 +70,9 @@ public class DoublesMatchEntity extends BaseTimeEntity {
 	@OneToMany(mappedBy = "doublesMatch", cascade = CascadeType.ALL, orphanRemoval = true)
 	List<DoublesSetEntity> doublesSets;
 
+	@Enumerated(EnumType.STRING)
+	private MatchStatus matchStatus = MatchStatus.NOT_STARTED;
+
 	public DoublesMatchEntity(LeagueEntity league, Team team1, Team team2) {
 		this.league = league;
 		this.team1 = team1;
@@ -87,6 +91,7 @@ public class DoublesMatchEntity extends BaseTimeEntity {
 		if (team1WinSetCount == SETS_REQUIRED_TO_WIN_MATCH) {
 			this.team1MatchResult = MatchResult.WIN;
 			this.team2MatchResult = MatchResult.LOSE;
+			this.matchStatus = MatchStatus.COMPLETED;
 		}
 	}
 
@@ -95,6 +100,7 @@ public class DoublesMatchEntity extends BaseTimeEntity {
 		if (team2WinSetCount == SETS_REQUIRED_TO_WIN_MATCH) {
 			this.team2MatchResult = MatchResult.WIN;
 			this.team1MatchResult = MatchResult.LOSE;
+			this.matchStatus = MatchStatus.COMPLETED;
 		}
 	}
 }

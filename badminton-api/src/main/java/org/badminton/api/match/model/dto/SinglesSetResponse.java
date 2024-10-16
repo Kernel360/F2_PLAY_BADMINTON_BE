@@ -15,7 +15,7 @@ public record SinglesSetResponse(
 	public static List<SinglesSetResponse> entityToSinglesSetResponse(List<SinglesSetEntity> singlesSets) {
 		List<SinglesSetResponse> singlesSetResponseList = new ArrayList<>();
 		for (SinglesSetEntity singlesSet : singlesSets) {
-			singlesSetResponseList.add(new SinglesSetResponse(singlesSet.getSet_index(), singlesSet.getPlayer1Score(),
+			singlesSetResponseList.add(new SinglesSetResponse(singlesSet.getSetIndex(), singlesSet.getPlayer1Score(),
 				singlesSet.getPlayer2Score()));
 		}
 		return singlesSetResponseList;

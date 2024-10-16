@@ -30,13 +30,13 @@ public class SinglesSetEntity extends BaseTimeEntity {
 	@JoinColumn(name = "singlesMatchId")
 	SinglesMatchEntity singlesMatch;
 
-	private int set_index;
+	private int setIndex;
 	private int player1Score;
 	private int player2Score;
 
 	public SinglesSetEntity(SinglesMatchEntity singlesMatch, int setIndex) {
 		this.singlesMatch = singlesMatch;
-		this.set_index = setIndex;
+		this.setIndex = setIndex;
 		this.player1Score = INITIAL_SET_SCORE;
 		this.player2Score = INITIAL_SET_SCORE;
 	}

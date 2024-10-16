@@ -10,6 +10,7 @@ import org.badminton.api.match.MatchProgress;
 import org.badminton.api.match.SinglesMatchProgress;
 import org.badminton.api.match.model.dto.MatchDetailsResponse;
 import org.badminton.api.match.model.dto.MatchResponse;
+import org.badminton.api.match.model.dto.SetScoreResponse;
 import org.badminton.domain.common.enums.MatchType;
 import org.badminton.domain.league.entity.LeagueEntity;
 import org.badminton.domain.league.entity.LeagueParticipantEntity;
@@ -41,14 +42,14 @@ public class MatchInitService {
 		return matchProgress.getAllMatchesInLeague(leagueId);
 	}
 
-	public List<MatchDetailsResponse> getAllMatchesDetailsInLeague(Long clubId, Long leagueId) {
+	public List<SetScoreResponse> getAllSetsScoreInLeague(Long clubId, Long leagueId) {
 
 		LeagueEntity league = checkIfLeaguePresent(clubId, leagueId);
 		MatchType matchType = league.getMatchType();
 
 		MatchProgress matchProgress = createMatchProgress(matchType);
 
-		return matchProgress.getAllMatchesDetailsInLeague(leagueId);
+		return matchProgress.getAllMatchesAndSetsScoreInLeague(leagueId);
 	}
 
 	public MatchDetailsResponse getMatchDetailsInLeague(Long clubId, Long leagueId, Long matchId) {
@@ -60,7 +61,7 @@ public class MatchInitService {
 		return matchProgress.getMatchDetails(matchId);
 	}
 
-	public List<MatchResponse> makeMatches(Long leagueId) {
+	public List<MatchResponse> makeMatches(Long clubId, Long leagueId) {
 		// TODO: League의 League Status가 COMPLETED 일 경우에만 생성할 수 있다.
 		// TODO: League의 시작 날짜가 되어야 경기를 생성할 수 있다.
 
@@ -80,17 +81,7 @@ public class MatchInitService {
 		matchProgress.checkDuplicateMatchInLeague(leagueId, matchType);
 
 		Collections.shuffle(leagueParticipantList);
-
 		return matchProgress.makeMatches(league, leagueParticipantList);
-	}
-
-	public List<MatchDetailsResponse> initMatchDetails(Long clubId, Long leagueId) {
-		// 경기 일정이 있는지 확인하고 꺼내기
-		LeagueEntity league = checkIfLeaguePresent(clubId, leagueId);
-		MatchType matchType = league.getMatchType();
-
-		MatchProgress matchProgress = createMatchProgress(matchType);
-		return matchProgress.initDetails(leagueId);
 	}
 
 	// TODO: 예외 체이닝 걸 수 있음.
