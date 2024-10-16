@@ -2,10 +2,10 @@ package org.badminton.api.league.controller;
 
 import java.util.List;
 
-import org.badminton.api.league.model.dto.LeagueAndParticipantResponse;
 import org.badminton.api.league.model.dto.LeagueByDateResponse;
 import org.badminton.api.league.model.dto.LeagueCreateRequest;
 import org.badminton.api.league.model.dto.LeagueCreateResponse;
+import org.badminton.api.league.model.dto.LeagueDetailsResponse;
 import org.badminton.api.league.model.dto.LeagueReadResponse;
 import org.badminton.api.league.model.dto.LeagueStatusUpdateResponse;
 import org.badminton.api.league.model.dto.LeagueUpdateRequest;
@@ -85,7 +85,7 @@ public class LeagueController {
 		tags = {"league"}
 	)
 	@GetMapping("/{leagueId}")
-	public ResponseEntity<LeagueAndParticipantResponse> leagueRead(@PathVariable Long clubId,
+	public ResponseEntity<LeagueDetailsResponse> leagueRead(@PathVariable Long clubId,
 		@PathVariable Long leagueId) {
 		return ResponseEntity.ok(leagueService.getLeague(clubId, leagueId));
 	}

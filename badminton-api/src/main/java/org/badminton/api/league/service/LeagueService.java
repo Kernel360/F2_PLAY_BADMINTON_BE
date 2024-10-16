@@ -10,10 +10,10 @@ import java.util.stream.Collectors;
 import org.badminton.api.common.exception.club.ClubNotExistException;
 import org.badminton.api.common.exception.league.InvalidDateTimeException;
 import org.badminton.api.common.exception.league.LeagueNotExistException;
-import org.badminton.api.league.model.dto.LeagueAndParticipantResponse;
 import org.badminton.api.league.model.dto.LeagueByDateResponse;
 import org.badminton.api.league.model.dto.LeagueCreateRequest;
 import org.badminton.api.league.model.dto.LeagueCreateResponse;
+import org.badminton.api.league.model.dto.LeagueDetailsResponse;
 import org.badminton.api.league.model.dto.LeagueReadResponse;
 import org.badminton.api.league.model.dto.LeagueStatusUpdateResponse;
 import org.badminton.api.league.model.dto.LeagueUpdateRequest;
@@ -54,12 +54,12 @@ public class LeagueService {
 		return LeagueCreateResponse.leagueCreateEntityToResponse(leagueRepository.save(league));
 	}
 
-	public LeagueAndParticipantResponse getLeague(Long clubId, Long leagueId) {
+	public LeagueDetailsResponse getLeague(Long clubId, Long leagueId) {
 		ClubEntity club = provideClub(clubId);
 		LeagueEntity league = provideLeagueIfLeagueInClub(club.getClubId(), leagueId);
-		int participateCount = leagueParticipantRepository.countByLeagueLeagueId(leagueId);
-
-		return LeagueAndParticipantResponse.leagueAndParticipantEntityToResponse(league, participateCount);
+		int recruitedMemberCount = leagueParticipantRepository.countByLeagueLeagueId(leagueId);
+		return LeagueDetailsResponse.fromLeagueEntityAndRecruitedMemberCountAndIsParticipated(league,
+			recruitedMemberCount, true);
 	}
 
 	public List<LeagueReadResponse> getLeaguesByMonth(Long clubId, String date) {
