@@ -10,13 +10,13 @@ import java.util.stream.Collectors;
 import org.badminton.api.common.exception.club.ClubNotExistException;
 import org.badminton.api.common.exception.league.InvalidDateTimeException;
 import org.badminton.api.common.exception.league.LeagueNotExistException;
-import org.badminton.api.league.model.dto.LeagueAndParticipantResponse;
 import org.badminton.api.league.model.dto.LeagueByDateResponse;
 import org.badminton.api.league.model.dto.LeagueCreateRequest;
 import org.badminton.api.league.model.dto.LeagueCreateResponse;
+import org.badminton.api.league.model.dto.LeagueDetailsResponse;
 import org.badminton.api.league.model.dto.LeagueReadResponse;
-import org.badminton.api.league.model.dto.LeagueStatusUpdateResponse;
 import org.badminton.api.league.model.dto.LeagueUpdateRequest;
+import org.badminton.api.league.model.dto.LeagueUpdateResponse;
 import org.badminton.api.league.model.enums.EndDateType;
 import org.badminton.api.league.model.enums.StartDateType;
 import org.badminton.domain.club.entity.ClubEntity;
@@ -54,12 +54,12 @@ public class LeagueService {
 		return LeagueCreateResponse.leagueCreateEntityToResponse(leagueRepository.save(league));
 	}
 
-	public LeagueAndParticipantResponse getLeague(Long clubId, Long leagueId) {
+	public LeagueDetailsResponse getLeague(Long clubId, Long leagueId) {
 		ClubEntity club = provideClub(clubId);
 		LeagueEntity league = provideLeagueIfLeagueInClub(club.getClubId(), leagueId);
-		int participateCount = leagueParticipantRepository.countByLeagueLeagueId(leagueId);
-
-		return LeagueAndParticipantResponse.leagueAndParticipantEntityToResponse(league, participateCount);
+		int recruitedMemberCount = leagueParticipantRepository.countByLeagueLeagueId(leagueId);
+		return LeagueDetailsResponse.fromLeagueEntityAndRecruitedMemberCountAndIsParticipated(league,
+			recruitedMemberCount, true);
 	}
 
 	public List<LeagueReadResponse> getLeaguesByMonth(Long clubId, String date) {
@@ -98,19 +98,20 @@ public class LeagueService {
 			.collect(Collectors.toList());
 	}
 
-	public LeagueStatusUpdateResponse updateLeague(Long clubId, Long leagueId, LeagueUpdateRequest leagueUpdateRequest
+	public LeagueUpdateResponse updateLeague(Long clubId, Long leagueId, LeagueUpdateRequest leagueUpdateRequest
 	) {
 		LeagueEntity league = provideLeagueIfLeagueInClub(clubId, leagueId);
-
-		// TODO: 개선 방법
+		// TODO: 개선 방법, 변경할 수 있는 필드에 제한
 		league.updateLeague(leagueUpdateRequest.leagueName(),
 			leagueUpdateRequest.description(), leagueUpdateRequest.leagueLocation(), leagueUpdateRequest.tierLimit(),
 			leagueUpdateRequest.leagueAt(), leagueUpdateRequest.closedAt(),
 			leagueUpdateRequest.playerCount(),
 			leagueUpdateRequest.matchType(), leagueUpdateRequest.matchGenerationType());
 
+		int recruitedMemberCount = leagueParticipantRepository.countByLeagueLeagueId(leagueId);
 		leagueRepository.save(league);
-		return new LeagueStatusUpdateResponse(league);
+		return LeagueUpdateResponse.fromLeagueEntityAndRecruitedMemberCountAndIsParticipated(league,
+			recruitedMemberCount);
 	}
 
 	@Transactional

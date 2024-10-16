@@ -50,7 +50,6 @@ public class LeagueEntity extends BaseTimeEntity {
 	@Enumerated(EnumType.STRING)
 	private MatchType matchType;
 
-	// TODO: Convert 등 사용하여 날짜 형식 맞추기
 	private LocalDateTime leagueAt;
 
 	private LocalDateTime recruitingClosedAt;
