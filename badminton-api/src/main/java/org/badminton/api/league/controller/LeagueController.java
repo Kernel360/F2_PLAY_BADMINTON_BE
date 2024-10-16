@@ -7,8 +7,8 @@ import org.badminton.api.league.model.dto.LeagueCreateRequest;
 import org.badminton.api.league.model.dto.LeagueCreateResponse;
 import org.badminton.api.league.model.dto.LeagueDetailsResponse;
 import org.badminton.api.league.model.dto.LeagueReadResponse;
-import org.badminton.api.league.model.dto.LeagueStatusUpdateResponse;
 import org.badminton.api.league.model.dto.LeagueUpdateRequest;
+import org.badminton.api.league.model.dto.LeagueUpdateResponse;
 import org.badminton.api.league.service.LeagueService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -96,7 +96,7 @@ public class LeagueController {
 		tags = {"league"}
 	)
 	@PatchMapping("/{leagueId}")
-	public ResponseEntity<LeagueStatusUpdateResponse> updateLeague(
+	public ResponseEntity<LeagueUpdateResponse> updateLeague(
 		@PathVariable Long clubId,
 		@PathVariable Long leagueId,
 		@Valid @RequestBody LeagueUpdateRequest leagueUpdateRequest) {

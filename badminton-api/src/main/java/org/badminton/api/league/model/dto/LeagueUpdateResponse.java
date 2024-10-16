@@ -10,7 +10,7 @@ import org.badminton.domain.league.enums.LeagueStatus;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-public record LeagueDetailsResponse(
+public record LeagueUpdateResponse(
 	@Schema(description = "경기 아이디", example = "1L")
 	Long leagueId,
 
@@ -47,9 +47,6 @@ public record LeagueDetailsResponse(
 	@Schema(description = "현재까지 참여한 인원", example = "12")
 	int recruitedMemberCount,
 
-	@Schema(description = "해당하는 경기에 참여 신청을 했는지 여부", example = "true")
-	boolean isParticipatedInLeague,
-
 	@Schema(description = "생성 일자", example = "2024-09-10T15:30:00")
 	LocalDateTime createdAt,
 
@@ -58,9 +55,9 @@ public record LeagueDetailsResponse(
 
 ) {
 
-	public static LeagueDetailsResponse fromLeagueEntityAndRecruitedMemberCountAndIsParticipated(LeagueEntity league,
-		int recruitedMemberCount, boolean isParticipatedInLeague) {
-		return new LeagueDetailsResponse(
+	public static LeagueUpdateResponse fromLeagueEntityAndRecruitedMemberCountAndIsParticipated(LeagueEntity league,
+		int recruitedMemberCount) {
+		return new LeagueUpdateResponse(
 			league.getLeagueId(),
 			league.getLeagueName(),
 			league.getDescription(),
@@ -73,7 +70,6 @@ public record LeagueDetailsResponse(
 			league.getMatchGenerationType(),
 			league.getPlayerLimitCount(),
 			recruitedMemberCount,
-			isParticipatedInLeague,
 			league.getCreatedAt(),
 			league.getModifiedAt()
 		);
