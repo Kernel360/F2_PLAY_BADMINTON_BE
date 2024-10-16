@@ -85,18 +85,13 @@ public class LeagueService {
 			throw new InvalidDateTimeException(date);
 		}
 
-		// 주어진 String 날짜를 LocalDate로 파싱 (예: 2024-10-16)
 		LocalDate parsedDate = parseDateByDate(date);
-
-		// 해당 날짜의 시작과 끝 (00:00:00 ~ 23:59:59)
 		LocalDateTime startOfDay = getStartOfDay(parsedDate);
 		LocalDateTime endOfDay = getEndOfDay(parsedDate);
 
-		// 리포지토리에서 해당 클럽의 ID와 날짜 범위로 LeagueEntity 조회
 		List<LeagueEntity> leaguesByDate = leagueRepository.findAllByClubClubIdAndLeagueAtBetween(clubId, startOfDay,
 			endOfDay);
 
-		// LeagueEntity 리스트를 LeagueReadResponse 리스트로 변환하여 반환
 		return leaguesByDate.stream()
 			.map(league -> LeagueByDateResponse.fromLeagueEntity(league,
 				leagueParticipantRepository.findAllByLeague_LeagueIdAndCanceled_False(league.getLeagueId()).size()))
@@ -164,18 +159,15 @@ public class LeagueService {
 			date.lengthOfMonth(), EndDateType.END_HOUR.getDescription(), EndDateType.END_MINUTE.getDescription());
 	}
 
-	// String 형식의 날짜를 LocalDate로 파싱
 	private LocalDate parseDateByDate(String date) {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 		return LocalDate.parse(date, formatter);
 	}
 
-	// 해당 날짜의 시작 (00:00:00)
 	private LocalDateTime getStartOfDay(LocalDate date) {
 		return date.atStartOfDay();
 	}
 
-	// 해당 날짜의 끝 (23:59:59)
 	private LocalDateTime getEndOfDay(LocalDate date) {
 		return date.atTime(23, 59, 59);
 	}
