@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -63,29 +64,67 @@ public class ClubMemberController {
 		return ResponseEntity.ok(clubMemberJoinResponse);
 	}
 
-	@Operation(summary = "동호회원 역할 변경",
-		description = "동호회원의 역할을 변경합니다.",
-		tags = {"ClubMember"})
+	@Operation(
+		summary = "동호회원 역할 변경시키기",
+		description = """
+			동호회원의 역할을 변경시킵니다. 다음 제약 사항과 정보를 반드시 확인해야 합니다:
+			
+			1. 회원 역할:
+			   - 탈퇴 대상 회원의 현재 역할을 나타냅니다.
+			   - 다음 중 하나여야 합니다:
+			     * ROLE_MANAGER: 동호회 관리자
+			     * ROLE_USER: 일반 회원
+			주의사항:\s
+			- ROLE_MANAGER(동호회 관리자)를 강제 탈퇴시키려면 ROLE_OWNER 권한이 필요합니다.""",
+
+		tags = {"ClubMember"}
+	)
 	@PatchMapping("/role")
-	public ResponseEntity<ClubMemberResponse> updateClubMemberRole(@RequestBody ClubMemberRoleUpdateRequest request,
+	public ResponseEntity<ClubMemberResponse> updateClubMemberRole(@Valid @RequestBody ClubMemberRoleUpdateRequest request,
 		@RequestParam Long clubMemberId, @PathVariable Long clubId) {
 		return ResponseEntity.ok(clubMemberService.updateClubMemberRole(request, clubMemberId));
 	}
 
-	@Operation(summary = "동호회원 강제 탈퇴시키기",
-		description = "동호회원을 강제 탈퇴시킵니다.",
-		tags = {"ClubMember"})
+	@Operation(
+		summary = "동호회원 강제 탈퇴시키기",
+		description = """
+			동호회원을 강제로 탈퇴시킵니다. 다음 제약 사항을 반드시 준수해야 합니다:
+			
+			1. 회원 제제 사유:
+			   - 필수 입력 항목입니다.
+			   - 최소 2자 이상이어야 합니다.
+			   - 최대 100자 이하여야 합니다.
+			
+			""",
+		tags = {"ClubMember"}
+	)
 	@PatchMapping("/expel")
-	public ResponseEntity<clubMemberBanRecordResponse> expelClubMember(@RequestParam Long clubMemberId, @PathVariable Long clubId, @RequestBody
+	public ResponseEntity<clubMemberBanRecordResponse> expelClubMember(@RequestParam Long clubMemberId, @PathVariable Long clubId, @Valid @RequestBody
 		ClubMemberExpelRequest request) {
 		return ResponseEntity.ok(clubMemberService.expelClubMember(request, clubMemberId));
 	}
 
-	@Operation(summary = "동호회원 정지",
-		description = "동호회원의 활동을 정지시킵니다.",
-		tags = {"ClubMember"})
+	@Operation(
+		summary = "동호회원 정지시키기",
+		description = """
+			동호회원을 정지시킵니다. 다음 제약 사항을 반드시 준수해야 합니다:
+			
+			1. 회원 제제 사유:
+			   - 필수 입력 항목입니다.
+			   - 최소 2자 이상이어야 합니다.
+			   - 최대 100자 이하여야 합니다.
+			2. 정지 유형:
+			   - 필수 선택 항목입니다.\\n" +
+			   - 다음 중 하나를 입력해야 합니다:\\n" +
+			     THREE_DAYS: 3일 정지
+			     SEVEN_DAYS: 7일 정지
+			     TWO_WEEKS: 14일 정지
+			
+			""",
+		tags = {"ClubMember"}
+	)
 	@PatchMapping("/ban")
-	public ResponseEntity<clubMemberBanRecordResponse> banClubMember(@RequestParam Long clubMemberId, @PathVariable Long clubId, @RequestBody ClubMemberBanRequest request) {
+	public ResponseEntity<clubMemberBanRecordResponse> banClubMember(@RequestParam Long clubMemberId, @PathVariable Long clubId, @Valid @RequestBody ClubMemberBanRequest request) {
 		return ResponseEntity.ok(clubMemberService.banClubMember(request, clubMemberId));
 	}
 }

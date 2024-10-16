@@ -8,6 +8,7 @@ import org.badminton.api.member.model.dto.MemberDeleteResponse;
 import org.badminton.api.member.model.dto.MemberIsClubMemberResponse;
 import org.badminton.api.member.model.dto.MemberMyPageResponse;
 import org.badminton.api.member.model.dto.MemberResponse;
+import org.badminton.api.member.model.dto.MemberUpdateRequest;
 import org.badminton.api.member.oauth2.dto.CustomOAuth2Member;
 import org.badminton.api.member.service.MemberService;
 import org.badminton.domain.clubmember.entity.ClubMemberRole;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -29,6 +31,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -116,14 +119,20 @@ public class MemberController {
 
 	@Operation(
 		summary = "프로필 사진을 수정합니다",
-		description = "프로필 사진을 수정합니다",
+		description = """
+			프로필 사진을 수정합니다. 다음 조건을 만족해야 합니다:
+			
+			1. 프로필 이미지 URL:
+			   - 호스트: badminton-team.s3.ap-northeast-2.amazonaws.com
+			   - 경로: /member-profile/로 시작
+			   - 파일 확장자: png, jpg, jpeg, gif 중 하나""",
 		tags = {"Member"}
 	)
 	@PutMapping("/profileImage")
 	public ResponseEntity<MemberResponse> updateProfileImage(
-		@RequestParam String imageUrl,
+		@Valid @RequestBody MemberUpdateRequest request,
 		@AuthenticationPrincipal CustomOAuth2Member member) {
-		return ResponseEntity.ok(memberService.updateProfileImage(member.getMemberId(), imageUrl));
+		return ResponseEntity.ok(memberService.updateProfileImage(member.getMemberId(), request.profileImageUrl()));
 	}
 
 

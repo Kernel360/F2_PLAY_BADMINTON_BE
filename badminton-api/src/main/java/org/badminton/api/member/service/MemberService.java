@@ -2,13 +2,13 @@ package org.badminton.api.member.service;
 
 import java.util.List;
 
+import org.badminton.api.common.exception.member.MemberNotExistException;
 import org.badminton.api.member.jwt.JwtUtil;
 import org.badminton.api.member.model.dto.MemberDeleteResponse;
 import org.badminton.api.member.model.dto.MemberIsClubMemberResponse;
 import org.badminton.api.member.model.dto.MemberMyPageResponse;
 import org.badminton.api.member.model.dto.MemberResponse;
 import org.badminton.api.member.oauth2.dto.CustomOAuth2Member;
-import org.badminton.api.member.validator.MemberValidator;
 import org.badminton.domain.clubmember.entity.ClubMemberEntity;
 import org.badminton.domain.clubmember.entity.ClubMemberRole;
 import org.badminton.domain.clubmember.repository.ClubMemberRepository;
@@ -29,7 +29,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +40,6 @@ import lombok.extern.slf4j.Slf4j;
 public class MemberService {
 
 	private final JwtUtil jwtUtil;
-	private final MemberValidator memberValidator;
 	private final MemberRepository memberRepository;
 	private final ClubMemberRepository clubMemberRepository;
 	private final LeagueRecordRepository leagueRecordRepository;
@@ -78,7 +76,7 @@ public class MemberService {
 	}
 
 	public MemberMyPageResponse getMemberInfo(Long memberId) {
-		MemberEntity memberEntity = memberValidator.findMemberByMemberId(memberId);
+		MemberEntity memberEntity = findMemberByMemberId(memberId);
 		ClubMemberEntity clubMemberEntity = clubMemberRepository.findByMember_MemberIdAndDeletedFalse(memberId).orElse(null);
 		LeagueRecordEntity leagueRecordEntity = null;
 
@@ -92,14 +90,14 @@ public class MemberService {
 
 	@Transactional
 	public MemberResponse updateProfileImage(Long memberId, String imageUrl) {
-		MemberEntity memberEntity = memberValidator.findMemberByMemberId(memberId);
+		MemberEntity memberEntity = findMemberByMemberId(memberId);
 		memberEntity.updateMember(imageUrl);
 		memberRepository.save(memberEntity);
 		return MemberResponse.memberEntityToResponse(memberEntity);
 	}
 
 	public void logoutMember(Long memberId, HttpServletResponse response) {
-		MemberEntity member = memberValidator.findMemberByMemberId(memberId);
+		MemberEntity member = findMemberByMemberId(memberId);
 		member.updateRefreshToken(null);
 		memberRepository.save(member);
 		response.setHeader("Authorization", "");
@@ -153,7 +151,7 @@ public class MemberService {
 	}
 
 	public MemberDeleteResponse changeIsDeleted(Long memberId) {
-		MemberEntity memberEntity = memberValidator.findMemberByMemberId(memberId);
+		MemberEntity memberEntity = findMemberByMemberId(memberId);
 		memberEntity.doWithdrawal();
 		memberRepository.save(memberEntity);
 		log.info("Member marked as deleted: {}", memberId);
@@ -262,5 +260,10 @@ public class MemberService {
 			log.error("Failed to unlink Kakao account. Status: {}, Body: {}",
 				response.getStatusCode(), response.getBody());
 		}
+	}
+
+	private MemberEntity findMemberByMemberId(Long memberId) {
+		return memberRepository.findByMemberId(memberId).orElseThrow(() ->
+			new MemberNotExistException(memberId));
 	}
 }
