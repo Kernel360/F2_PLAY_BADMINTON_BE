@@ -3,6 +3,7 @@ package org.badminton.api.league.service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -10,6 +11,7 @@ import org.badminton.api.common.exception.club.ClubNotExistException;
 import org.badminton.api.common.exception.league.InvalidDateTimeException;
 import org.badminton.api.common.exception.league.LeagueNotExistException;
 import org.badminton.api.league.model.dto.LeagueAndParticipantResponse;
+import org.badminton.api.league.model.dto.LeagueByDateResponse;
 import org.badminton.api.league.model.dto.LeagueCreateRequest;
 import org.badminton.api.league.model.dto.LeagueCreateResponse;
 import org.badminton.api.league.model.dto.LeagueReadResponse;
@@ -60,12 +62,12 @@ public class LeagueService {
 		return LeagueAndParticipantResponse.leagueAndParticipantEntityToResponse(league, participateCount);
 	}
 
-	public List<LeagueReadResponse> getLeagues(Long clubId, String date) {
+	public List<LeagueReadResponse> getLeaguesByMonth(Long clubId, String date) {
 		if (!validateDate(date)) {
 			throw new InvalidDateTimeException(date);
 		}
 
-		LocalDate parsedDate = parseDate(date);
+		LocalDate parsedDate = parseDateByMonth(date);
 		LocalDateTime startOfMonth = getStartOfMonth(parsedDate);
 		LocalDateTime endOfMonth = getEndOfMonth(parsedDate);
 
@@ -76,6 +78,30 @@ public class LeagueService {
 			.map(LeagueReadResponse::leagueReadEntityToResponse)
 			.collect(
 				Collectors.toList());
+	}
+
+	public List<LeagueByDateResponse> getLeaguesByDate(Long clubId, String date) {
+		if (!validateDate(date)) {
+			throw new InvalidDateTimeException(date);
+		}
+
+		// 주어진 String 날짜를 LocalDate로 파싱 (예: 2024-10-16)
+		LocalDate parsedDate = parseDateByDate(date);
+
+		// 해당 날짜의 시작과 끝 (00:00:00 ~ 23:59:59)
+		LocalDateTime startOfDay = getStartOfDay(parsedDate);
+		LocalDateTime endOfDay = getEndOfDay(parsedDate);
+
+		// 리포지토리에서 해당 클럽의 ID와 날짜 범위로 LeagueEntity 조회
+		List<LeagueEntity> leaguesByDate = leagueRepository.findAllByClubClubIdAndLeagueAtBetween(clubId, startOfDay,
+			endOfDay);
+
+		// LeagueEntity 리스트를 LeagueReadResponse 리스트로 변환하여 반환
+		// TODO: 참여 신청한 사람들까지 조회되고 있음
+		return leaguesByDate.stream()
+			.map(league -> LeagueByDateResponse.fromLeagueEntity(league,
+				leagueParticipantRepository.findAllByLeague_LeagueId(league.getLeagueId()).size()))
+			.collect(Collectors.toList());
 	}
 
 	public LeagueStatusUpdateResponse updateLeague(Long clubId, Long leagueId, LeagueUpdateRequest leagueUpdateRequest
@@ -122,7 +148,7 @@ public class LeagueService {
 		return month >= Month.JANUARY.getValue() && month <= Month.DECEMBER.getValue();
 	}
 
-	private LocalDate parseDate(String date) {
+	private LocalDate parseDateByMonth(String date) {
 		String[] parts = date.split("-");
 		int year = Integer.parseInt(parts[0]);
 		int month = Integer.parseInt(parts[1]);
@@ -137,6 +163,22 @@ public class LeagueService {
 	private LocalDateTime getEndOfMonth(LocalDate date) {
 		return LocalDateTime.of(date.getYear(), date.getMonthValue(),
 			date.lengthOfMonth(), EndDateType.END_HOUR.getDescription(), EndDateType.END_MINUTE.getDescription());
+	}
+
+	// String 형식의 날짜를 LocalDate로 파싱
+	private LocalDate parseDateByDate(String date) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		return LocalDate.parse(date, formatter);
+	}
+
+	// 해당 날짜의 시작 (00:00:00)
+	private LocalDateTime getStartOfDay(LocalDate date) {
+		return date.atStartOfDay();
+	}
+
+	// 해당 날짜의 끝 (23:59:59)
+	private LocalDateTime getEndOfDay(LocalDate date) {
+		return date.atTime(23, 59, 59);
 	}
 
 }

@@ -3,6 +3,7 @@ package org.badminton.api.league.controller;
 import java.util.List;
 
 import org.badminton.api.league.model.dto.LeagueAndParticipantResponse;
+import org.badminton.api.league.model.dto.LeagueByDateResponse;
 import org.badminton.api.league.model.dto.LeagueCreateRequest;
 import org.badminton.api.league.model.dto.LeagueCreateResponse;
 import org.badminton.api.league.model.dto.LeagueReadResponse;
@@ -34,19 +35,36 @@ public class LeagueController {
 	private final LeagueService leagueService;
 
 	@Operation(
-		summary = "해당 일자 기준으로 데이터를 조회합니다.",
-		description = "특정 클럽 ID에 대한 리그 데이터를 조회합니다. 검색 조건으로 날짜를 사용하며, 날짜는 'yyyy-MM' 형식으로 제공되어야 합니다.",
+		summary = "월별로 경기 일정을 조회합니다.",
+		description = "월별로 경기 일정을 리스트로 조회할 수 있습니다. 날짜는 'yyyy-MM' 형식으로 제공되어야 합니다.",
 		tags = {"league"},
 		parameters = {
 			@Parameter(name = "clubId", description = "조회할 클럽의 ID", required = true),
 			@Parameter(name = "date", description = "조회할 날짜, 'yyyy-MM' 형식으로 입력", required = true)
 		}
 	)
-	@GetMapping()
-	public ResponseEntity<List<LeagueReadResponse>> leagueReadByCondition(@PathVariable Long clubId,
+	@GetMapping("/month")
+	public ResponseEntity<List<LeagueReadResponse>> getLeagueByMonth(@PathVariable Long clubId,
 		@RequestParam
 		@DateTimeFormat(pattern = "yyyy-MM") String date) {
-		return ResponseEntity.ok(leagueService.getLeagues(clubId, date));
+		return ResponseEntity.ok(leagueService.getLeaguesByMonth(clubId, date));
+	}
+
+	@Operation(
+		summary = "일자별로 경기 일정을 조회합니다.",
+		description = "일별로 경기 일정을 리스트로 조회할 수 있습니다. 검색 조건으로 날짜를 사용하며, 날짜는 'yyyy-MM' 형식으로 제공되어야 합니다.",
+		tags = {"league"},
+		parameters = {
+			@Parameter(name = "clubId", description = "조회할 클럽의 ID", required = true),
+			@Parameter(name = "date", description = "조회할 날짜, 'yyyy-MM-dd' 형식으로 입력", required = true)
+		}
+	)
+
+	@GetMapping("/date")
+	public ResponseEntity<List<LeagueByDateResponse>> getLeagueByDate(@PathVariable Long clubId,
+		@RequestParam
+		@DateTimeFormat(pattern = "yyyy-MM-dd") String date) {
+		return ResponseEntity.ok(leagueService.getLeaguesByDate(clubId, date));
 	}
 
 	@Operation(
