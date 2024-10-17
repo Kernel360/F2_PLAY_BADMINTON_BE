@@ -21,9 +21,12 @@ import org.badminton.api.league.model.enums.EndDateType;
 import org.badminton.api.league.model.enums.StartDateType;
 import org.badminton.domain.club.entity.ClubEntity;
 import org.badminton.domain.club.repository.ClubRepository;
+import org.badminton.domain.common.enums.MatchType;
 import org.badminton.domain.league.entity.LeagueEntity;
 import org.badminton.domain.league.repository.LeagueParticipantRepository;
 import org.badminton.domain.league.repository.LeagueRepository;
+import org.badminton.domain.match.repository.DoublesMatchRepository;
+import org.badminton.domain.match.repository.SinglesMatchRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -39,6 +42,9 @@ public class LeagueService {
 	private final LeagueRepository leagueRepository;
 	private final ClubRepository clubRepository;
 	private final LeagueParticipantRepository leagueParticipantRepository;
+	// TODO: 중간발표 이후 삭제 예정
+	private final SinglesMatchRepository singlesMatchRepository;
+	private final DoublesMatchRepository doublesMatchRepository;
 
 	public LeagueCreateResponse createLeague(Long clubId, LeagueCreateRequest leagueCreateRequest) {
 
@@ -60,9 +66,20 @@ public class LeagueService {
 			.isEmpty();
 		ClubEntity club = provideClub(clubId);
 		LeagueEntity league = provideLeagueIfLeagueInClub(club.getClubId(), leagueId);
+		// TODO: 중간발표 이후 삭제 예정
+		MatchType matchType = league.getMatchType();
+		boolean isMatchCreated = false;
+		if (matchType == MatchType.SINGLES) {
+			if (!singlesMatchRepository.findAllByLeague_LeagueId(leagueId).isEmpty())
+				isMatchCreated = true;
+		} else if (matchType == MatchType.DOUBLES) {
+			if (!doublesMatchRepository.findAllByLeague_LeagueId(leagueId).isEmpty())
+				isMatchCreated = true;
+		}
+
 		int recruitedMemberCount = leagueParticipantRepository.countByLeagueLeagueIdAndCanceledFalse(leagueId);
 		return LeagueDetailsResponse.fromLeagueEntityAndRecruitedMemberCountAndIsParticipated(league,
-			recruitedMemberCount, isParticipatedInLeague);
+			recruitedMemberCount, isParticipatedInLeague, isMatchCreated);
 	}
 
 	public List<LeagueReadResponse> getLeaguesByMonth(Long clubId, String date) {
