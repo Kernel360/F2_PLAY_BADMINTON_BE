@@ -18,14 +18,14 @@ public record ClubDetailsResponse(
 ) {
 
 	public static ClubDetailsResponse fromClubEntityAndMemberCountByTier(ClubEntity clubEntity,
-		Map<MemberTier, Long> memberCountByTier, boolean isClubMember, int clubMembers) {
+		Map<MemberTier, Long> memberCountByTier, boolean isClubMember, int clubMembersCount) {
 		return new ClubDetailsResponse(
 			clubEntity.getClubId(),
 			clubEntity.getClubName(),
 			clubEntity.getClubDescription(),
 			clubEntity.getClubImage(),
 			ClubMemberCountByTier.ofClubMemberCountResponse(memberCountByTier),
-			clubMembers,
+			clubMembersCount,
 			clubEntity.getCreatedAt(),
 			isClubMember);
 	}

@@ -51,9 +51,9 @@ public class ClubService {
 
 		boolean isClubMember = checkIfMemberBelongsToClub(memberId, clubId);
 
-		int clubMembers = clubMemberRepository.findAllByDeletedFalseAndClub_ClubId(
+		int clubMembersCount = clubMemberRepository.findAllByDeletedFalseAndClub_ClubId(
 			clubId).size();
-		return ClubDetailsResponse.fromClubEntityAndMemberCountByTier(club, memberCountByTier, isClubMember, clubMembers);
+		return ClubDetailsResponse.fromClubEntityAndMemberCountByTier(club, memberCountByTier, isClubMember, clubMembersCount);
 	}
 
 	private boolean checkIfMemberBelongsToClub(Long memberId, Long clubId) {
