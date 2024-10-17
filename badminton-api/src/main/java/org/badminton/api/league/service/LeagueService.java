@@ -54,12 +54,18 @@ public class LeagueService {
 		return LeagueCreateResponse.leagueCreateEntityToResponse(leagueRepository.save(league));
 	}
 
-	public LeagueDetailsResponse getLeague(Long clubId, Long leagueId) {
+	public LeagueDetailsResponse getLeague(Long clubId, Long leagueId, Long memberId) {
+		boolean isParticipatedInLeague = false;
+		if (memberId != null) {
+			isParticipatedInLeague = leagueParticipantRepository
+				.findByMemberMemberIdAndCanceledFalse(memberId)
+				.isPresent();
+		}
 		ClubEntity club = provideClub(clubId);
 		LeagueEntity league = provideLeagueIfLeagueInClub(club.getClubId(), leagueId);
 		int recruitedMemberCount = leagueParticipantRepository.countByLeagueLeagueId(leagueId);
 		return LeagueDetailsResponse.fromLeagueEntityAndRecruitedMemberCountAndIsParticipated(league,
-			recruitedMemberCount, true);
+			recruitedMemberCount, isParticipatedInLeague);
 	}
 
 	public List<LeagueReadResponse> getLeaguesByMonth(Long clubId, String date) {

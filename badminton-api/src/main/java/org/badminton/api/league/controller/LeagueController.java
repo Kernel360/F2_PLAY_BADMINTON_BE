@@ -10,9 +10,11 @@ import org.badminton.api.league.model.dto.LeagueReadResponse;
 import org.badminton.api.league.model.dto.LeagueUpdateRequest;
 import org.badminton.api.league.model.dto.LeagueUpdateResponse;
 import org.badminton.api.league.service.LeagueService;
+import org.badminton.api.member.oauth2.dto.CustomOAuth2Member;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -85,9 +87,9 @@ public class LeagueController {
 		tags = {"league"}
 	)
 	@GetMapping("/{leagueId}")
-	public ResponseEntity<LeagueDetailsResponse> leagueRead(@PathVariable Long clubId,
-		@PathVariable Long leagueId) {
-		return ResponseEntity.ok(leagueService.getLeague(clubId, leagueId));
+	public ResponseEntity<LeagueDetailsResponse> leagueRead(@PathVariable Long clubId, @PathVariable Long leagueId,
+		@AuthenticationPrincipal CustomOAuth2Member member) {
+		return ResponseEntity.ok(leagueService.getLeague(clubId, leagueId, member.getMemberId()));
 	}
 
 	@Operation(
