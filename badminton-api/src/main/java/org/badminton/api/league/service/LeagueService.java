@@ -57,9 +57,9 @@ public class LeagueService {
 	public LeagueDetailsResponse getLeague(Long clubId, Long leagueId, Long memberId) {
 		boolean isParticipatedInLeague = false;
 		if (memberId != null) {
-			isParticipatedInLeague = leagueParticipantRepository
+			isParticipatedInLeague = !leagueParticipantRepository
 				.findByMemberMemberIdAndCanceledFalse(memberId)
-				.isPresent();
+				.isEmpty();
 		}
 		ClubEntity club = provideClub(clubId);
 		LeagueEntity league = provideLeagueIfLeagueInClub(club.getClubId(), leagueId);
