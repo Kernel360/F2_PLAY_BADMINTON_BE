@@ -23,5 +23,7 @@ public interface ClubMemberRepository extends JpaRepository<ClubMemberEntity, Lo
 	boolean existsByMember_MemberIdAndClub_ClubId(Long memberId, Long clubId);
 
 	Optional<ClubMemberEntity> findByClubMemberId(Long clubMemberId);
+
+	List<ClubMemberEntity> findAllByDeletedFalseAndClub_ClubId(Long clubId);
 }
 
