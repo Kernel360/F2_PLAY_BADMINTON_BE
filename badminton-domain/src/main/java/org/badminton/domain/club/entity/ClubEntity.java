@@ -69,7 +69,7 @@ public class ClubEntity extends BaseTimeEntity {
 
 		Map<MemberTier, Long> actualCounts = clubMembers.stream()
 			.filter(clubMember -> clubMember.getLeagueRecord() != null)
-			.filter(clubMember -> !clubMember.isDeleted() && !clubMember.isBanned())
+			.filter(clubMember -> !clubMember.isDeleted())
 			.collect(Collectors.groupingBy(
 				ClubMemberEntity::getTier,
 				Collectors.counting()
