@@ -1,9 +1,12 @@
 
 package org.badminton.api.member.controller;
 
+import java.util.List;
 import org.badminton.api.aws.s3.model.dto.ImageUploadRequest;
 import org.badminton.api.aws.s3.service.MemberProfileImageService;
 import org.badminton.api.leaguerecord.service.LeagueRecordService;
+import org.badminton.api.match.model.dto.MatchResultResponse;
+import org.badminton.api.match.service.MatchResultService;
 import org.badminton.api.member.model.dto.MemberDeleteResponse;
 import org.badminton.api.member.model.dto.MemberIsClubMemberResponse;
 import org.badminton.api.member.model.dto.MemberMyPageResponse;
@@ -11,7 +14,7 @@ import org.badminton.api.member.model.dto.MemberResponse;
 import org.badminton.api.member.model.dto.MemberUpdateRequest;
 import org.badminton.api.member.oauth2.dto.CustomOAuth2Member;
 import org.badminton.api.member.service.MemberService;
-import org.badminton.domain.clubmember.entity.ClubMemberRole;
+import org.badminton.domain.clubmember.entity.ClubMemberEntity;
 import org.badminton.domain.clubmember.repository.ClubMemberRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -21,7 +24,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -45,6 +47,23 @@ public class MemberController {
 	private final ClubMemberRepository clubMemberRepository;
 	private final LeagueRecordService leagueRecordService;
 	private final MemberProfileImageService memberProfileImageService;
+	private final MatchResultService matchResultService;
+
+	@GetMapping("/matchesRecord")
+	@Operation(summary = "동호회 회원 경기 조회",
+		description = "동호회 회원 경기 조회.",
+		tags = {"Member"})
+	public ResponseEntity<List<MatchResultResponse>> readMemberLeagueRecord(
+		@AuthenticationPrincipal CustomOAuth2Member member
+	) {
+		ClubMemberEntity clubMemberEntity = clubMemberRepository.findByMember_MemberIdAndDeletedFalse(
+			member.getMemberId()).orElse(null);
+		if (clubMemberEntity == null) {
+			return ResponseEntity.ok(null);
+		}
+		Long clubMemberId = clubMemberEntity.getClubMemberId();
+   		return ResponseEntity.ok(matchResultService.getAllMatchResultsByClubMember(clubMemberId));
+	}
 
 	//TODO: 티어 정상 작동 테스트용, 지울예정입니다
 	@Operation(
