@@ -88,9 +88,8 @@ public class LeagueController {
 	)
 	@GetMapping("/{leagueId}")
 	public ResponseEntity<LeagueDetailsResponse> leagueRead(@PathVariable Long clubId, @PathVariable Long leagueId,
-		@AuthenticationPrincipal(errorOnInvalidType = false) CustomOAuth2Member member) {
-		Long memberId = member != null ? member.getMemberId() : null;
-		return ResponseEntity.ok(leagueService.getLeague(clubId, leagueId, memberId));
+		@AuthenticationPrincipal CustomOAuth2Member member) {
+		return ResponseEntity.ok(leagueService.getLeague(clubId, leagueId, member.getMemberId()));
 	}
 
 	@Operation(
