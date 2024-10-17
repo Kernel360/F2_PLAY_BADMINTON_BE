@@ -55,15 +55,12 @@ public class LeagueService {
 	}
 
 	public LeagueDetailsResponse getLeague(Long clubId, Long leagueId, Long memberId) {
-		boolean isParticipatedInLeague = false;
-		if (memberId != null) {
-			isParticipatedInLeague = !leagueParticipantRepository
-				.findByMemberMemberIdAndLeagueLeagueIdAndCanceledFalse(memberId, leagueId)
-				.isEmpty();
-		}
+		boolean isParticipatedInLeague = !leagueParticipantRepository
+			.findByMemberMemberIdAndLeagueLeagueIdAndCanceledFalse(memberId, leagueId)
+			.isEmpty();
 		ClubEntity club = provideClub(clubId);
 		LeagueEntity league = provideLeagueIfLeagueInClub(club.getClubId(), leagueId);
-		int recruitedMemberCount = leagueParticipantRepository.countByLeagueLeagueId(leagueId);
+		int recruitedMemberCount = leagueParticipantRepository.countByLeagueLeagueIdAndCanceledFalse(leagueId);
 		return LeagueDetailsResponse.fromLeagueEntityAndRecruitedMemberCountAndIsParticipated(league,
 			recruitedMemberCount, isParticipatedInLeague);
 	}
@@ -114,7 +111,7 @@ public class LeagueService {
 			leagueUpdateRequest.playerCount(),
 			leagueUpdateRequest.matchType(), leagueUpdateRequest.matchGenerationType());
 
-		int recruitedMemberCount = leagueParticipantRepository.countByLeagueLeagueId(leagueId);
+		int recruitedMemberCount = leagueParticipantRepository.countByLeagueLeagueIdAndCanceledFalse(leagueId);
 		leagueRepository.save(league);
 		return LeagueUpdateResponse.fromLeagueEntityAndRecruitedMemberCountAndIsParticipated(league,
 			recruitedMemberCount);
