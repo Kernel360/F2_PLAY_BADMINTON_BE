@@ -33,6 +33,6 @@ public class MemberProfileImageService extends AbstractFileUploadService {
 		}
 		String[] originFile = originalFilename.split("\\.");
 		String extension = originFile[originFile.length - 1];
-		return "member-profile/" + this.currentMemberId + "/" + UUID.randomUUID() + "image." + extension;
+		return "member-profile/" + this.currentMemberId + "/" + UUID.randomUUID() + "." + extension;
 	}
 }
