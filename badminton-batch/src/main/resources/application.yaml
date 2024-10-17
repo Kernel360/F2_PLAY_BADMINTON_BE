@@ -27,3 +27,13 @@ spring:
     username: ${DATABASE_USER_NAME}
     password: ${DATABASE_USER_PASSWORD}
     driver-class-name: ${DATABASE_DRIVER}
+    hikari:
+      connection-timeout: 15000
+      idle-timeout: 300000
+      maximum-pool-size: 5
+      max-lifetime: 600000
+      validation-timeout: 3000
+  mvc:
+    async:
+      request-timeout: 20000
+
