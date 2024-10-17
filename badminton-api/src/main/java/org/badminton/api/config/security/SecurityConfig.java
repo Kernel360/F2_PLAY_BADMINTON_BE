@@ -113,7 +113,7 @@ public class SecurityConfig {
 				.access(hasClubRole("OWNER"))
 				.requestMatchers(HttpMethod.PATCH, "/v1/clubs/{clubId}")
 				.access(hasClubRole("OWNER", "MANAGER"))
-				.requestMatchers(HttpMethod.GET, "/v1/clubs/{clubId}/leagues/{leagueId}/**")
+				.requestMatchers(HttpMethod.GET, "/v1/clubs/{clubId}/leagues/{leagueId}")
 				.access(hasClubRole("OWNER", "MANAGER", "USER"))
 				.requestMatchers(HttpMethod.GET, "/v1/clubs/{clubId}/clubMembers")
 				.access(hasClubRole("OWNER", "MANAGER", "USER"))

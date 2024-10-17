@@ -51,9 +51,5 @@ public class LeagueParticipantEntity extends BaseTimeEntity {
 	public void cancelLeagueParticipation() {
 		this.canceled = true;
 	}
-
-	public void reactiveParticipation() {
-		this.canceled = false;
-	}
-
+	
 }

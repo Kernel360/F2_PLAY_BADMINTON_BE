@@ -93,16 +93,11 @@ public class LeagueParticipationService {
 	}
 
 	private void checkIfClubMemberInLeague(Long leagueId, Long clubMemberId) {
-		LeagueParticipantEntity leagueParticipant = leagueParticipantRepository.findByLeagueLeagueIdAndClubMemberClubMemberId(
+		LeagueParticipantEntity leagueParticipant = leagueParticipantRepository.findByLeagueLeagueIdAndClubMemberClubMemberIdAndCanceledFalse(
 			leagueId, clubMemberId).orElse(null);
-		if (Objects.isNull(leagueParticipant)) {
-			return;
-		}
-		if (leagueParticipant.isCanceled()) {
-			leagueParticipant.reactiveParticipation();
-		} else
+		if (Objects.nonNull(leagueParticipant)) {
 			throw new LeagueParticipationDuplicateException(leagueId, clubMemberId);
-
+		}
 	}
 
 	private LeagueEntity provideLeagueIfClubMemberInLeague(Long clubId, Long leagueId) {
@@ -111,7 +106,8 @@ public class LeagueParticipationService {
 	}
 
 	private LeagueParticipantEntity provideLeagueParticipantIfClubMemberInLeague(Long leagueId, Long clubMemberId) {
-		return leagueParticipantRepository.findByLeagueLeagueIdAndClubMemberClubMemberId(leagueId, clubMemberId)
+		return leagueParticipantRepository.findByLeagueLeagueIdAndClubMemberClubMemberIdAndCanceledFalse(leagueId,
+				clubMemberId)
 			.orElseThrow(
 				() -> new LeagueParticipationNotExistException(leagueId, clubMemberId));
 	}

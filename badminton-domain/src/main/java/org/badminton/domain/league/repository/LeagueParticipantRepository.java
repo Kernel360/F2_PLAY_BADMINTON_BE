@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface LeagueParticipantRepository extends JpaRepository<LeagueParticipantEntity, Long> {
 
-	Optional<LeagueParticipantEntity> findByLeagueLeagueIdAndClubMemberClubMemberId(Long leagueId,
+	Optional<LeagueParticipantEntity> findByLeagueLeagueIdAndClubMemberClubMemberIdAndCanceledFalse(Long leagueId,
 		Long clubMemberId);
 
 	List<LeagueParticipantEntity> findByMemberMemberIdAndLeagueLeagueIdAndCanceledFalse(Long memberId, Long leagueId);
