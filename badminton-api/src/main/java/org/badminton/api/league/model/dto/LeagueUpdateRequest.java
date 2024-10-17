@@ -7,7 +7,6 @@ import org.badminton.domain.common.enums.MatchType;
 import org.badminton.domain.common.enums.MemberTier;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.Pattern;
 
 public record LeagueUpdateRequest(
 
@@ -20,11 +19,9 @@ public record LeagueUpdateRequest(
 	@Schema(description = "경기 장소", example = "성동구 서울숲 체육센터")
 	String leagueLocation,
 
-	@Pattern(regexp = "GOLD|SILVER|BRONZE", message = "리그 상태 값이 올바르지 않습니다.")
 	@Schema(description = "최소 티어", example = "GOLD")
 	MemberTier tierLimit,
 
-	@Pattern(regexp = "SINGLE|DOUBLES", message = "경기 방식 값이 올바르지 않습니다.")
 	@Schema(description = "경기 방식", example = "SINGLES")
 	MatchType matchType,
 
