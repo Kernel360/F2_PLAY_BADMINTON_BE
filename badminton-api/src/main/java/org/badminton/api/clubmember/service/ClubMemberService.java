@@ -9,12 +9,13 @@ import org.badminton.api.clubmember.BanStrategy;
 import org.badminton.api.clubmember.ClubMemberPenaltyStrategy;
 import org.badminton.api.clubmember.ExpelStrategy;
 import org.badminton.api.clubmember.model.Comparator.ClubMemberRoleComparator;
-import org.badminton.api.clubmember.model.dto.clubMemberBanRecordResponse;
+import org.badminton.api.clubmember.model.dto.ClubMemberBanRecordResponse;
 import org.badminton.api.clubmember.model.dto.ClubMemberBanRequest;
 import org.badminton.api.clubmember.model.dto.ClubMemberExpelRequest;
 import org.badminton.api.clubmember.model.dto.ClubMemberJoinResponse;
 import org.badminton.api.clubmember.model.dto.ClubMemberResponse;
 import org.badminton.api.clubmember.model.dto.ClubMemberRoleUpdateRequest;
+import org.badminton.api.clubmember.model.dto.ClubMemberWithdrawResponse;
 import org.badminton.api.common.exception.club.ClubNotExistException;
 import org.badminton.api.common.exception.clubmember.ClubMemberDuplicateException;
 import org.badminton.api.common.exception.clubmember.ClubMemberNotExistException;
@@ -70,7 +71,6 @@ public class ClubMemberService {
 
 		return ClubMemberJoinResponse.clubMemberEntityToClubMemberJoinResponse(
 			clubMemberEntity);
-
 	}
 
 	public ClubMemberResponse updateClubMemberRole(ClubMemberRoleUpdateRequest request, Long clubMemberId) {
@@ -105,20 +105,24 @@ public class ClubMemberService {
 		return responseMap;
 	}
 
-
-
 	private ClubMemberEntity getClubMember(Long clubMemberId) {
 		return clubMemberRepository.findByClubMemberId(clubMemberId)
 			.orElseThrow(() -> new ClubMemberNotExistException(clubMemberId));
 	}
 
-	public clubMemberBanRecordResponse expelClubMember(ClubMemberExpelRequest request, Long clubMemberId) {
+	public ClubMemberBanRecordResponse expelClubMember(ClubMemberExpelRequest request, Long clubMemberId) {
 		ClubMemberEntity clubMemberEntity = getClubMember(clubMemberId);
 		return expelStrategy.execute(clubMemberEntity, request);
 	}
 
-	public clubMemberBanRecordResponse banClubMember(ClubMemberBanRequest request, Long clubMemberId) {
+	public ClubMemberBanRecordResponse banClubMember(ClubMemberBanRequest request, Long clubMemberId) {
 		ClubMemberEntity clubMemberEntity = getClubMember(clubMemberId);
 		return banStrategy.execute(clubMemberEntity, request);
+	}
+
+	public ClubMemberWithdrawResponse withDrawClubMember(Long clubId, Long clubMemberId) {
+		ClubMemberEntity clubmemberEntity = getClubMember(clubMemberId);
+		clubmemberEntity.withdrawal();
+		return new ClubMemberWithdrawResponse(clubId, clubMemberId, clubmemberEntity.isDeleted());
 	}
 }
