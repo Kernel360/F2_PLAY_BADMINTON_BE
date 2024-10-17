@@ -1,6 +1,8 @@
 
 package org.badminton.api.aws.s3.service;
 
+import java.util.UUID;
+
 import org.badminton.api.aws.s3.model.dto.ImageUploadRequest;
 import org.badminton.api.member.service.MemberService;
 import org.springframework.stereotype.Service;
@@ -31,6 +33,6 @@ public class MemberProfileImageService extends AbstractFileUploadService {
 		}
 		String[] originFile = originalFilename.split("\\.");
 		String extension = originFile[originFile.length - 1];
-		return "member-profile/" + this.currentMemberId + "/" + "image." + extension;
+		return "member-profile/" + this.currentMemberId + "/" + UUID.randomUUID() + "image." + extension;
 	}
 }
