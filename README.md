@@ -311,92 +311,269 @@ F2_PLAY_BADMINTON_BE/
 
 #### [서비스에 로그인하지 않아도 사용할 수 있는 기능]
 
-- 
+- 전체 동호회 조회
+- 동호회 소개 페이지 조회
 
 
 <br>
 
-
-
 #### [서비스에 로그인하고 동호회에 가입하지 않아도 사용할 수 있는 기능]
 
+- 프로필 사진 수정
+- 로그아웃
+- 이름, 이메일, 프로필 사진 조회
+- 회원 탈퇴
+- 동호회 가입 신청
 
 <br>
 
 
 #### [동호회에 가입하고 역할이 ROLE_USER일 때 사용할 수 있는 기능]
 
+- 가입한 동호회 이름, 역할, 티어, 전적 조회
+- 경기 참여 신청 및 취소
+- 특정 경기 월별, 일별로 조회
+- 대진표 조회
+- 게임의 세트 상세 점수 조회
 
 <br>
 
-
-
 #### [동호회에 가입하고 역할이 ROLE_MANAGER일 때 사용할 수 있는 기능]
 
+- 동호회 수정
+- 경기 생성, 삭제 및 수정
+- 대진표 생성
+- 세트별 점수 저장
+- 동호회원 강제 탈퇴
+- 동호회원 정지
+  
 <br>
 
 #### [동호회에 가입하고 역할이 ROLE_OWNER일 때 사용할 수 있는 기능]
 
+- 동호회원 역할 변경
 
 <br>
 
 
-### 🗾 5. 카카오 맵
+### 🗾 2. 스프링 시큐리티, oAuth 로그인
 
+- oAuth 로그인은 `naver`, `kakao`, `google` API 사용
 
+```java
+@Bean
+	@Order(2)
+	public SecurityFilterChain clubFilterChain(HttpSecurity http) throws Exception {
+		http
+			.securityMatcher("/v1/clubs/**")
+			.csrf(AbstractHttpConfigurer::disable)
+			.cors(this::corsConfigurer)
+			.addFilterBefore(new JwtAuthenticationFilter(jwtUtil, clubMemberService),
+				UsernamePasswordAuthenticationFilter.class)
+			.addFilterAfter(new ClubMembershipFilter(clubMemberService), JwtAuthenticationFilter.class)
+			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+			.authorizeHttpRequests(auth -> auth
+				.requestMatchers(HttpMethod.GET, "/v1/clubs", "/v1/clubs/{clubId}", "/v1/clubs/search")
+				.permitAll()
+				.requestMatchers(HttpMethod.POST, "/v1/clubs")
+				.permitAll()
+				.requestMatchers(HttpMethod.DELETE, "/v1/clubs/{clubId}")
+				.access(hasClubRole("OWNER"))
+				.requestMatchers(HttpMethod.PATCH, "/v1/clubs/{clubId}")
+				.access(hasClubRole("OWNER", "MANAGER"))
+				.requestMatchers(HttpMethod.GET, "/v1/clubs/{clubId}/leagues/{leagueId}")
+				.access(hasClubRole("OWNER", "MANAGER", "USER"))
+				.requestMatchers(HttpMethod.GET, "/v1/clubs/{clubId}/clubMembers")
+```
+
+필터를 사용해서 권한 별 api 사용 구현
+
+### 🔴 3. Custom Exception
+
+```java
+@Getter
+public class BadmintonException extends RuntimeException {
+
+	private final ErrorCode errorCode;
+	private final String errorMessage;
+
+	public BadmintonException(ErrorCode errorCode, String errorDetails) {
+		this(errorCode, errorDetails, null);
+	}
+
+	public BadmintonException(ErrorCode errorCode, String errorDetails, Exception e) {
+		super(errorCode.getDescription() + errorDetails, e);
+		this.errorCode = errorCode;
+		this.errorMessage = errorCode.getDescription() + errorDetails;
+	}
+
+	public BadmintonException(ErrorCode errorCode) {
+		this(errorCode, (Exception)null);
+	}
+
+	public BadmintonException(ErrorCode errorCode, Exception e) {
+		this.errorCode = errorCode;
+		this.errorMessage = errorCode.getDescription();
+	}
+
+}
+```
+
+`RuntimeException` 을 상속받은 `BadmintonException` 을 만들어 커스텀 예외 처리 구현
 
 
 <br>
 
-### 🔴 6. Custom Exception
+### 📆 3. 배치
+
+```java
+@Configuration
+@EnableBatchProcessing
+public class BatchConfig {
+
+	@Bean
+	public Job deleteMemberJob(Step deleteMemberStep, JobRepository jobRepository) {
+		return new JobBuilder("deleteMemberJob", jobRepository)
+			.start(deleteMemberStep)
+			.build();
+	}
+
+	@Bean
+	public Step deleteMemberStep(ItemReader<MemberEntity> reader, ItemProcessor<MemberEntity, MemberEntity> processor,
+		ItemWriter<MemberEntity> writer, JobRepository jobRepository, PlatformTransactionManager transactionManager) {
+		return new StepBuilder("deleteMemberStep", jobRepository)
+			.<MemberEntity, MemberEntity>chunk(10, transactionManager)
+			.reader(reader)
+			.processor(processor)
+			.writer(writer)
+			.build();
+	}
+
+	@Bean
+	public PlatformTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
+		return new JpaTransactionManager(entityManagerFactory);
+	}
+```
+배치와 스케줄러를 사용해 주기적으로 회원 삭제 및 정지 해제 로직 실행
+
+<br>
+
+### 🐑 4. 배포
+
+<img width="1121" alt="image" src="https://github.com/user-attachments/assets/5a59a5b6-7afd-4e3a-8add-cd8b98a6ba47">
+
+`AWS`의 EC2와 RDS를 사용해서 배포
+테스트용 EC2와 Production용 EC2 두 개 생성
+
+```java
+networks:
+
+  backend:
+    driver: bridge
+
+services:
+  badminton-api:
+    build: ./badminton-api  # badminton-api 모듈에 있는 Dockerfile을 빌드
+    ports:
+      - "8080:8080"  # API 서비스의 포트
+    networks:
+      - backend
+    image: speech2/badminton:api
+
+  badminton-batch:
+    build: ./badminton-batch  # badminton-batch 모듈에 있는 Dockerfile을 빌드
+    ports:
+      - "9090:9090"
+    networks:
+      - backend
+    image: speech2/badminton:batch
+```
+Docker-compose.yaml 파일 사용해서 jar 파일 대체
 
 
+### 👨‍💻 5. 로그
+
+<img width="1090" alt="image" src="https://github.com/user-attachments/assets/610b98df-9cc6-4068-b89f-75e1d194f665">
+
+`AWS`의 CloudWatch를 사용해서 로그 관리
 
 <br>
 
 
-### 👨‍💻 7. 로그 패키지
+### 🖼️ 6. 이미지 업로드
 
+<img width="1055" alt="image" src="https://github.com/user-attachments/assets/6aba940a-824f-4b25-8533-a15d117aa33c">
 
+`AWS`의 S3을 사용해서 회원 프로필 이미지나 동호회 배너 이미지 업로드
 
+### 📊 7. 부하 테스트, 성능 테스트
 
+ ![image](https://github.com/user-attachments/assets/d1aad490-fb28-43a9-a3ba-693b0d4ebdbf)
 
-<br>
+`jmeter` 를 사용해서 부하 테스트 및 성능 테스트
 
-### 🐑 8. 배포
+### 🔐 8. 키 보안
 
+```java
+spring:
+  profiles:
+    active: ${ACTIVE_PROFILE}
+  application:
+    name: badminton
+  jpa:
+    hibernate:
+      ddl-auto: ${DDL_METHOD_API}
+      show-sql: true
+      properties:
+        hibernate:
+          format_sql: true
+          dialect: org.hibernate.dialect.MySQL8Dialect
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    defer-datasource-initialization: true
+  messages:
+    encoding: UTF-8
+    basename: messages
+  sql:
+    init:
+      mode: ${SQL_MODE}
+  datasource:
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USER_NAME}
+    password: ${DATABASE_USER_PASSWORD}
+    driver-class-name: ${DATABASE_DRIVER}
+  jwt:
+    secret: ${JWT_SECRET}
+```
 
+.Env 파일을 이용해서 키 공개 X
 
-<br>
+### 🔑 9. 검증
 
-### 📆 9. 스케줄러
+```java
+@Constraint(validatedBy = ClubDescriptionValidatorImpl.class)
+@Target({ElementType.FIELD, ElementType.PARAMETER})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface ClubDescriptionValidator {
 
+	String message() default "동호회 소개란은 2자 이상 입력해야 하며 최대 1000자까지 입력할 수 있습니다.";
 
+	Class<?>[] groups() default {};
 
-<br>
-
-
-### 🖼️ 10. 이미지 업로드
-
-<br>
-
-
-### 🚨 11. 알림
-
-
-<br>
-
-
-### 📊 12. 통계
-
-
+	Class<? extends Payload>[] payload() default {};
+}
+```
+커스텀 Validation을 사용해서 검증
 
 
 
 ## 🍏 추후 구현 사항
 
+### Redis 사용
 
-### 
+### Polling 사용
+
+### 공공 API 사용
 
 
 ## BackEnd 깃 허브 주소
