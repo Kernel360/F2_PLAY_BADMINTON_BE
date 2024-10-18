@@ -92,7 +92,11 @@ public class SecurityConfig {
 				.anyRequest().authenticated());
 		return http.build();
 	}
-
+			/*
+			현재 동호회원의 역할에 맞게 권한을 설정해주기 위해서 Filter 를 세개로 나누고 같은 URL 이어도 Http 메서드가
+			다른 api 요청마다 권한이 다르기 때문에 현재와 같은 코드를 작성하였습니다.
+			현업에서도 역할에 맞게 권한을 나누기 위해서 현재 SecurityConfig 클래스처럼 코드를 작성하는지 또한 더 효율적인 방법이 있는지 궁금합니다!!
+			*/
 	@Bean
 	@Order(2)
 	public SecurityFilterChain clubFilterChain(HttpSecurity http) throws Exception {

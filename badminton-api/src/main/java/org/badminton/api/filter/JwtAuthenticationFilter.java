@@ -31,19 +31,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
-		String token = jwtUtil.extractAccessTokenFromCookie(request);
+		String customAccessToken = jwtUtil.extractCustomAccessTokenFromCookie(request);
 
-		if (token != null && jwtUtil.validateToken(token)) {
-			String memberId = jwtUtil.getMemberId(token);
+		if (customAccessToken != null && jwtUtil.validateToken(customAccessToken)) {
+			String memberId = jwtUtil.getMemberId(customAccessToken);
 			List<ClubMemberEntity> clubMemberEntities = clubMemberService.findAllClubMembersByMemberId(
 				Long.valueOf(memberId));
 
-			String oAuthAccessToken = jwtUtil.getOAuthToken(token);
+			String oAuthToken = jwtUtil.extractOAuthTokenFromCookie(request);
+			String oAuthAccessToken = jwtUtil.getOAuthAccessToken(oAuthToken);
 
 			MemberResponse memberResponse = new MemberResponse(Long.valueOf(memberId),
 				MemberAuthorization.AUTHORIZATION_USER.toString());
 			CustomOAuth2Member customOAuth2Member = new CustomOAuth2Member(memberResponse,
-				jwtUtil.getRegistrationId(token), oAuthAccessToken);
+				jwtUtil.getRegistrationId(oAuthToken), oAuthAccessToken);
 
 			for (ClubMemberEntity clubMember : clubMemberEntities) {
 				if (!clubMember.getClub().isClubDeleted()) {
