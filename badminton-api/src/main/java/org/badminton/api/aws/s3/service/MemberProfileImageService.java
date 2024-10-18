@@ -1,4 +1,3 @@
-
 package org.badminton.api.aws.s3.service;
 
 import java.util.UUID;
@@ -12,12 +11,10 @@ import com.amazonaws.services.s3.AmazonS3;
 @Service
 public class MemberProfileImageService extends AbstractFileUploadService {
 
-	private final MemberService memberService;
 	private Long currentMemberId;
 
 	public MemberProfileImageService(AmazonS3 s3Client, MemberService memberService) {
 		super(s3Client);
-		this.memberService = memberService;
 	}
 
 	public String uploadFile(ImageUploadRequest file, Long memberId) {
@@ -33,6 +30,6 @@ public class MemberProfileImageService extends AbstractFileUploadService {
 		}
 		String[] originFile = originalFilename.split("\\.");
 		String extension = originFile[originFile.length - 1];
-		return "member-profile/" + this.currentMemberId + "/" + UUID.randomUUID() + "." + extension;
+		return "member-profile/" + UUID.randomUUID() + "." + extension;
 	}
 }
