@@ -1,5 +1,3 @@
-
-
 package org.badminton.api.aws.s3.service;
 
 import java.util.UUID;
@@ -25,7 +23,7 @@ public class ClubImageService extends AbstractFileUploadService {
 	public String makeFileName(String originalFilename) {
 		String[] originFile = originalFilename.split("\\.");
 		String extension = originFile[originFile.length - 1];
-		return "club-banner/" + UUID.randomUUID() + "/" + "banner." + extension;
+		return "club-banner/" + UUID.randomUUID() + "." + extension;
 	}
 }
 
