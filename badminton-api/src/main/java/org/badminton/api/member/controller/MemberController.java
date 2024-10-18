@@ -94,13 +94,13 @@ public class MemberController {
 	}
 
 	@Operation(
-		summary = "액세스 토큰을 재발급합니다",
+		summary = "커스텀 액세스 토큰을 재발급합니다",
 		description = "리프레시 토큰을 이용해서 액세스 토큰을 재발급합니다",
 		tags = {"Member"}
 	)
 	@PostMapping("/refresh")
-	public ResponseEntity<?> refreshToken(HttpServletRequest request, HttpServletResponse response) {
-		return memberService.refreshToken(request, response);
+	public String refreshToken(HttpServletRequest request, HttpServletResponse response) {
+		return memberService.refreshCustomAccessToken(request, response);
 	}
 
 	@Operation(

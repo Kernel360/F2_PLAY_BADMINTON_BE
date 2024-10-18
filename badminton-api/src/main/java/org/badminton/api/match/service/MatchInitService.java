@@ -32,6 +32,9 @@ public class MatchInitService {
 	private final LeagueParticipantRepository leagueParticipantRepository;
 	private final LeagueRepository leagueRepository;
 
+	/*
+	컨트롤러 코드와 서비스 메서드 이름 문제
+	 */
 	public List<MatchResponse> getAllMatchesInLeague(Long clubId, Long leagueId) {
 
 		LeagueEntity league = checkIfLeaguePresent(clubId, leagueId);
