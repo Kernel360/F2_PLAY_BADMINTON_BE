@@ -1,5 +1,7 @@
 package org.badminton.api.member.service;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import org.badminton.api.common.exception.member.MemberNotExistException;
@@ -20,7 +22,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -28,6 +29,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
+import java.nio.charset.StandardCharsets;
+import java.util.Optional;
+import java.util.Set;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -62,6 +70,9 @@ public class MemberService {
 
 	@Value("${custom.server.domain}")
 	private String domain;
+
+	@Value("${spring.jwt.secret}")
+	private String jwtSecret;
 
 	public MemberIsClubMemberResponse getMemberIsClubMember(Long memberId) {
 		boolean isClubMember = clubMemberRepository.existsByMember_MemberIdAndDeletedFalse(memberId);
@@ -162,27 +173,39 @@ public class MemberService {
 		return MemberDeleteResponse.memberEntityToDeleteResponse(memberEntity);
 	}
 
-	private String refreshAccessToken(HttpServletRequest request, HttpServletResponse response) {
-		String refreshToken = jwtUtil.extractRefreshTokenFromCookie(request);
-		if (refreshToken != null && jwtUtil.validateToken(refreshToken)) {
-			String memberId = jwtUtil.getMemberId(refreshToken);
-			List<String> roles = jwtUtil.getRoles(refreshToken);
-			String registrationId = jwtUtil.getRegistrationId(refreshToken);
-			String oAuthAccessToken = jwtUtil.getOAuthToken(refreshToken);
+	public String refreshCustomAccessToken(HttpServletRequest request, HttpServletResponse response) {
+		String customAccessToken = jwtUtil.extractCustomAccessTokenFromCookie(request);
 
-			String newAccessToken = jwtUtil.createAccessToken(memberId, roles, registrationId, oAuthAccessToken);
-			jwtUtil.setAccessTokenHeader(response, newAccessToken);
-			return newAccessToken;
-		}
-		return null;
-	}
 
-	public ResponseEntity<String> refreshToken(HttpServletRequest request, HttpServletResponse response) {
-		String newAccessToken = refreshAccessToken(request, response);
-		if (newAccessToken != null) {
-			return ResponseEntity.ok(newAccessToken);
-		} else {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid refresh token");
+		try {
+			Claims claims = Jwts.parser()
+				.verifyWith(Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8)))
+				.build()
+				.parseSignedClaims(customAccessToken)
+				.getPayload();
+
+			String memberId = claims.get("memberId", String.class);
+
+			MemberEntity memberEntity = memberRepository.findByMemberId(Long.valueOf(memberId)).get();
+
+			ClubMemberEntity clubMemberEntity = clubMemberRepository.findByMember_MemberIdAndDeletedFalse(
+				Long.valueOf(memberId)).orElse(null);
+
+			Set<String> roles = new HashSet<>();
+
+			if (clubMemberEntity != null) {
+				roles.add(clubMemberEntity.getClub().getClubId() + ":ROLE_" + clubMemberEntity.getRole().name());
+			}
+			roles.add("ROLE_" + memberEntity.getAuthorization());
+
+
+			List<String> roleList = new ArrayList<>(roles);
+
+			return jwtUtil.createCustomAccessToken(memberId, roleList);
+
+		} catch (Exception e) {
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			return null;
 		}
 	}
 

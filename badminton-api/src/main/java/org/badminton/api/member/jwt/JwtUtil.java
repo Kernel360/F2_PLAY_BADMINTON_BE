@@ -34,28 +34,42 @@ public class JwtUtil {
 			Jwts.SIG.HS256.key().build().getAlgorithm());
 	}
 
-	public String createAccessToken(String memberId, List<String> roles, String registrationId, String oAuthAccessToken) {
+	public String createCustomAccessToken(String memberId, List<String> roles) {
 
 		return Jwts.builder()
 			.claim("memberId", memberId)
 			.claim("roles", String.join(",", roles))
-			.claim("registrationId", registrationId)
-			.claim("oAuthAccessToken", oAuthAccessToken)
 			.issuedAt(new Date(System.currentTimeMillis()))
 			.expiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRY))
 			.signWith(secretKey)
 			.compact();
 	}
 
-	public String createRefreshToken(String memberId, List<String> roles, String registrationId) {
+	public String createOAuthToken(String oAuthAccessToken, String registrationId) {
+		return Jwts.builder()
+			.claim("oAuthAccessToken", oAuthAccessToken)
+			.claim("registrationId", registrationId)
+			.issuedAt(new Date(System.currentTimeMillis()))
+			.expiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRY))
+			.signWith(secretKey)
+			.compact();
+	}
+	public String createCustomRefreshToken(String memberId) {
 		return Jwts.builder()
 			.claim("memberId", memberId)
-			.claim("roles", String.join(",", roles))
-			.claim("registrationId", registrationId)
 			.expiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRY))
 			.signWith(secretKey)
 			.compact();
 	}
+	// public String createRefreshToken(String memberId, List<String> roles, String registrationId) {
+	// 	return Jwts.builder()
+	// 		.claim("memberId", memberId)
+	// 		.claim("roles", String.join(",", roles))
+	// 		.claim("registrationId", registrationId)
+	// 		.expiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRY))
+	// 		.signWith(secretKey)
+	// 		.compact();
+	// }
 
 	public void setAccessTokenHeader(HttpServletResponse response, String accessToken) {
 		response.setHeader("Authorization", "Bearer %s".formatted(accessToken));
@@ -73,8 +87,20 @@ public class JwtUtil {
 		response.addHeader("Set-Cookie", cookie.toString());
 	}
 
-	public void setAccessTokenCookie(HttpServletResponse response, String accessToken) {
-		ResponseCookie cookie = ResponseCookie.from("access_token", accessToken)
+	public void setCustomAccessTokenCookie(HttpServletResponse response, String customAccessToken) {
+		ResponseCookie cookie = ResponseCookie.from("custom_access_token", customAccessToken)
+			.httpOnly(true)
+			.secure(true)
+			.sameSite("None")
+			.domain(domain)
+			.path("/")
+			.maxAge(ACCESS_TOKEN_EXPIRY) // 14일
+			.build();
+		response.addHeader("Set-Cookie", cookie.toString());
+	}
+
+	public void setOAuthTokenCookie(HttpServletResponse response, String oAuthToken) {
+		ResponseCookie cookie = ResponseCookie.from("oauth_token", oAuthToken)
 			.httpOnly(true)
 			.secure(true)
 			.sameSite("None")
@@ -92,6 +118,10 @@ public class JwtUtil {
 	public String getRegistrationId(String token) {
 		return getDetail(token, "registrationId");
 
+	}
+
+	public String getOAuthAccessToken(String token) {
+		return getDetail(token, "oAuthAccessToken");
 	}
 
 	public String getOAuthToken(String token) {
@@ -119,11 +149,11 @@ public class JwtUtil {
 		return null;
 	}
 
-	public String extractRefreshTokenFromCookie(HttpServletRequest request) {
+	public String extractOAuthTokenFromCookie(HttpServletRequest request) {
 		Cookie[] cookies = request.getCookies();
 		if (cookies != null) {
 			for (Cookie cookie : cookies) {
-				if ("refresh_token".equals(cookie.getName())) {
+				if ("oauth_token".equals(cookie.getName())) {
 					return cookie.getValue();
 				}
 			}
@@ -131,11 +161,11 @@ public class JwtUtil {
 		return null;
 	}
 
-	public String extractAccessTokenFromCookie(HttpServletRequest request) {
+	public String extractCustomAccessTokenFromCookie(HttpServletRequest request) {
 		Cookie[] cookies = request.getCookies();
 		if (cookies != null) {
 			for (Cookie cookie : cookies) {
-				if ("access_token".equals(cookie.getName())) {
+				if ("custom_access_token".equals(cookie.getName())) {
 					return cookie.getValue();
 				}
 			}

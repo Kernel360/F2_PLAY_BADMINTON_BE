@@ -28,7 +28,6 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
 	private final JwtUtil jwtUtil;
 	private final MemberRepository memberRepository;
-	private final ClubMemberRepository clubMemberRepository;
 
 	@Value("${custom.server.front}")
 	private String frontUrl;
@@ -49,31 +48,40 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
 		String registrationId = customUserDetails.getRegistrationId();
 
-		String oAuthAccessToken = customUserDetails.getOAuthAccessToken();
+		// String oAuthAccessToken = customUserDetails.getOAuthAccessToken();
 
 		List<String> roles = customUserDetails.getAuthorities().stream()
 			.map(GrantedAuthority::getAuthority)
 			.toList();
 
+		/*
+		1. Jwt 토큰을 두 개로 나누어서 관리해도 될 지 궁금합니다
 
+			첫 번째 토큰은 사용자의 정보를 불러올 수 있고, 두 번째 토큰은 oAuth API 기능을 사용하기 위한 토큰입니다.
+			하나의 JWT 토큰에 사용자의 정보와 oAuthAccessToken 을 넣으면 토큰의 정보의 양이 과해지고, 두 액세스 토큰을 재발급하기 위한
+			데이터가 다르기 때문입니다.
 
-		log.info("roles: {}", roles);
+		2. 액세스 토큰을 쿠키에 저장하고, 리프레시 토큰을 DB 에 저장해 관리 해도 될 지 궁금합니다.
 
-		String accessToken = jwtUtil.createAccessToken(String.valueOf(memberId), roles, registrationId, oAuthAccessToken);
+		 */
+
+		String accessToken = jwtUtil.createCustomAccessToken(String.valueOf(memberId), roles);
+		String oAuthToken = jwtUtil.createOAuthToken(customUserDetails.getOAuthAccessToken(), registrationId);
 
 		log.info("Extracted from JWT - registrationId: {}, oAuthAccessToken: {}",
-			jwtUtil.getRegistrationId(accessToken), jwtUtil.getOAuthToken(accessToken));
+			jwtUtil.getRegistrationId(oAuthToken), jwtUtil.getOAuthAccessToken(oAuthToken));
 
-		String refreshToken = jwtUtil.createRefreshToken(String.valueOf(memberId), roles, registrationId);
+		String customRefreshToken = jwtUtil.createCustomRefreshToken(String.valueOf(memberId));
 
-		memberEntity.updateRefreshToken(refreshToken);
+		memberEntity.updateRefreshToken(customRefreshToken);
 		memberRepository.save(memberEntity);
 
 		clearSession(request, response);
 
-		jwtUtil.setAccessTokenHeader(response, accessToken);
-		jwtUtil.setAccessTokenCookie(response, accessToken);
-		jwtUtil.setRefreshTokenCookie(response, refreshToken);
+		// jwtUtil.setAccessTokenHeader(response, accessToken);
+		jwtUtil.setCustomAccessTokenCookie(response, accessToken);
+		jwtUtil.setOAuthTokenCookie(response, oAuthToken);
+		// jwtUtil.setRefreshTokenCookie(response, refreshToken);
 
 		response.sendRedirect(frontUrl);
 
