@@ -18,7 +18,7 @@ public record ClubCreateRequest(
 	String clubDescription,
 
 	@ClubImageValidator
-	@Schema(description = "동호회 이미지 URL", example = "https://badminton-team.s3.ap-northeast-2.amazonaws.com/club-banner/920d209c-7c26-4813-b002-7b582e02ce9f/banner.png")
+	@Schema(description = "동호회 이미지 URL", example = "https://d36om9pjoifd2y.cloudfront.net/club-banner/3257bbf2-52dc-41b2-9d1f-a6c66f3c7216.avif")
 	String clubImage
 ) {
 }
