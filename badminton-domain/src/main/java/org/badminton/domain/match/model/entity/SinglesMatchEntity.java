@@ -27,6 +27,11 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+/*
+league, match, set, league participant 사이의 연관관계가 너무 복잡한데 이를 어떻게 개선해야 할지
+감이 오지 않습니다.
+연관관계를 끊고 id를 필드로 갖는 방법을 사용해보는게 좋을까요?
+*/
 @Entity
 @Table(name = "singles_match")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

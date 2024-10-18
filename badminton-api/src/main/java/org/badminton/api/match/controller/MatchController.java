@@ -31,6 +31,11 @@ public class MatchController {
 	private final MatchInitService matchInitService;
 	private final MatchProgressService matchProgressService;
 
+	/*
+	컨트롤러 메서드 이름과 서비스 메서드 이름을 어떻게 지어야 할지 고민이 됩니다.
+	모든 Match 를 조회하는 컨트롤러 메서드 이름을 getAllMatches 로 지었습니다.
+	서비스 코드의 메서드 이름은 getAllMatchesInLeague 입니다.
+	 */
 	@GetMapping
 	@Operation(summary = "대진표 조회",
 		description = "대진표를 조회합니다.",
