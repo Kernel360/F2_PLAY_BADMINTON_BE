@@ -54,12 +54,15 @@ public record LeagueDetailsResponse(
 	LocalDateTime createdAt,
 
 	@Schema(description = "수정 일자", example = "2024-09-10T15:30:00")
-	LocalDateTime modifiedAt
+	LocalDateTime modifiedAt,
+
+	@Schema(description = "대진표 생성 여부", example = "true")
+	boolean isMatchCreated
 
 ) {
 
 	public static LeagueDetailsResponse fromLeagueEntityAndRecruitedMemberCountAndIsParticipated(LeagueEntity league,
-		int recruitedMemberCount, boolean isParticipatedInLeague) {
+		int recruitedMemberCount, boolean isParticipatedInLeague, boolean isMatchCreated) {
 		return new LeagueDetailsResponse(
 			league.getLeagueId(),
 			league.getLeagueName(),
@@ -75,7 +78,8 @@ public record LeagueDetailsResponse(
 			recruitedMemberCount,
 			isParticipatedInLeague,
 			league.getCreatedAt(),
-			league.getModifiedAt()
+			league.getModifiedAt(),
+			isMatchCreated
 		);
 	}
 }

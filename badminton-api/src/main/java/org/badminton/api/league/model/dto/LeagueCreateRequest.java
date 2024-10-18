@@ -25,7 +25,7 @@ public record LeagueCreateRequest(
 	String leagueLocation,
 
 	//TODO: DTO 마다 검증 로직을 두지 않는 방법 알아보기
-	@Schema(description = "최소 티어", example = "GOLD")
+	@Schema(description = "최소 티어", example = "BRONZE")
 	MemberTier tierLimit,
 
 	@Schema(description = "경기 방식", example = "SINGLES")

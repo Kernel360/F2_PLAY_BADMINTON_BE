@@ -66,7 +66,8 @@ public class MemberService {
 	public MemberIsClubMemberResponse getMemberIsClubMember(Long memberId) {
 		boolean isClubMember = clubMemberRepository.existsByMember_MemberIdAndDeletedFalse(memberId);
 		if (isClubMember) {
-			ClubMemberEntity clubMemberEntity = clubMemberRepository.findByMember_MemberIdAndDeletedFalse(memberId).get();
+			ClubMemberEntity clubMemberEntity = clubMemberRepository.findByMember_MemberIdAndDeletedFalse(memberId)
+				.get();
 			ClubMemberRole clubMemberRole = clubMemberEntity.getRole();
 			Long clubId = clubMemberEntity.getClub().getClubId();
 
@@ -77,13 +78,15 @@ public class MemberService {
 
 	public MemberMyPageResponse getMemberInfo(Long memberId) {
 		MemberEntity memberEntity = findMemberByMemberId(memberId);
-		ClubMemberEntity clubMemberEntity = clubMemberRepository.findByMember_MemberIdAndDeletedFalse(memberId).orElse(null);
+		ClubMemberEntity clubMemberEntity = clubMemberRepository.findByMember_MemberIdAndDeletedFalse(memberId)
+			.orElse(null);
 		LeagueRecordEntity leagueRecordEntity = null;
 
 		if (clubMemberEntity != null) {
 			leagueRecordEntity = leagueRecordRepository.findByClubMember(clubMemberEntity)
 				.orElse(new LeagueRecordEntity(clubMemberEntity));
-			return MemberMyPageResponse.fromMemberEntityAndClubMemberEntity(memberEntity, clubMemberEntity, leagueRecordEntity);
+			return MemberMyPageResponse.fromMemberEntityAndClubMemberEntity(memberEntity, clubMemberEntity,
+				leagueRecordEntity);
 		}
 		return MemberMyPageResponse.fromMemberEntity(memberEntity);
 	}
@@ -108,6 +111,7 @@ public class MemberService {
 		log.info("Logged out member: {}", memberId);
 	}
 
+	// TODO: http request service 까지 오면 안됨
 	public MemberDeleteResponse deleteMember(@AuthenticationPrincipal CustomOAuth2Member member,
 		HttpServletRequest request,
 		HttpServletResponse response) {

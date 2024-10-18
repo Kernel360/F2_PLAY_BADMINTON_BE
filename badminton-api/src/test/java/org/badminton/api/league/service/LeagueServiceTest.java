@@ -38,6 +38,6 @@ class LeagueServiceTest {
 	}
 
 	@Test
-	void deleteLeague() {
+	void cancelLeague() {
 	}
 }

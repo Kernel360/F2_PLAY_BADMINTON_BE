@@ -120,9 +120,11 @@ public class ClubMemberService {
 		return banStrategy.execute(clubMemberEntity, request);
 	}
 
-	public ClubMemberWithdrawResponse withDrawClubMember(Long clubId, Long clubMemberId) {
-		ClubMemberEntity clubmemberEntity = getClubMember(clubMemberId);
-		clubmemberEntity.withdrawal();
-		return new ClubMemberWithdrawResponse(clubId, clubMemberId, clubmemberEntity.isDeleted());
+	public ClubMemberWithdrawResponse withDrawClubMember(Long clubId, Long memberId) {
+		ClubMemberEntity clubMember = clubMemberRepository.findByMember_MemberIdAndDeletedFalse(memberId)
+			.orElseThrow(() -> new ClubMemberNotExistException(clubId, memberId));
+		clubMember.withdrawal();
+		clubMemberRepository.save(clubMember);
+		return new ClubMemberWithdrawResponse(clubId, clubMember.getClubMemberId(), clubMember.isDeleted());
 	}
 }
