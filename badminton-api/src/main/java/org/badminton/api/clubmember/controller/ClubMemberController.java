@@ -9,11 +9,13 @@ import org.badminton.api.clubmember.model.dto.ClubMemberExpelRequest;
 import org.badminton.api.clubmember.model.dto.ClubMemberJoinResponse;
 import org.badminton.api.clubmember.model.dto.ClubMemberResponse;
 import org.badminton.api.clubmember.model.dto.ClubMemberRoleUpdateRequest;
+import org.badminton.api.clubmember.model.dto.ClubMemberWithdrawResponse;
 import org.badminton.api.clubmember.service.ClubMemberService;
 import org.badminton.api.member.oauth2.dto.CustomOAuth2Member;
 import org.badminton.domain.clubmember.entity.ClubMemberRole;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -132,11 +134,16 @@ public class ClubMemberController {
 		return ResponseEntity.ok(clubMemberService.banClubMember(request, clubMemberId));
 	}
 
-	// @DeleteMapping
-	// public ResponseEntity<ClubMemberWithdrawResponse> withdrawMember(@RequestParam Long clubMemberId,
-	// 	@PathVariable Long clubId) {
-	// 	return ResponseEntity.ok(clubMemberService.banClubMember(request, clubMemberId));
-	// }
+	@Operation(
+		summary = "동호회에서 탈퇴하기",
+		description = "동호회에서 탈퇴하기",
+		tags = {"clubMember"}
+	)
+	@DeleteMapping
+	public ResponseEntity<ClubMemberWithdrawResponse> withdrawMember(@AuthenticationPrincipal CustomOAuth2Member member,
+		@PathVariable Long clubId) {
+		return ResponseEntity.ok(clubMemberService.withDrawClubMember(clubId, member.getMemberId()));
+	}
 
 }
 

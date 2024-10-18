@@ -81,7 +81,8 @@ public class SecurityConfig {
 						.startsWith("/v1/members")
 						|| request.getRequestURI().equals("/v1/members/profileImage") || request.getRequestURI()
 						.equals("/v1/clubs/images")
-						|| request.getRequestURI().equals("/v1/members/is-club-member") || request.getRequestURI().equals("/v1/members/matchesRecord")
+						|| request.getRequestURI().equals("/v1/members/is-club-member") || request.getRequestURI()
+						.equals("/v1/members/matchesRecord")
 			)
 			.csrf(AbstractHttpConfigurer::disable)
 			.cors(this::corsConfigurer)
@@ -105,7 +106,7 @@ public class SecurityConfig {
 			.addFilterAfter(new ClubMembershipFilter(clubMemberService), JwtAuthenticationFilter.class)
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.authorizeHttpRequests(auth -> auth
-				.requestMatchers(HttpMethod.GET, "/v1/clubs", "/v1/clubs/{clubId}", "/v1/clubs/search")
+				.requestMatchers(HttpMethod.GET, "/v1/clubs/{clubId}")
 				.permitAll()
 				.requestMatchers(HttpMethod.POST, "/v1/clubs")
 				.permitAll()
