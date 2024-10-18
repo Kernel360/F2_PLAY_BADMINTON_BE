@@ -3,6 +3,7 @@ package org.badminton.api.league.controller;
 import java.util.List;
 
 import org.badminton.api.league.model.dto.LeagueByDateResponse;
+import org.badminton.api.league.model.dto.LeagueCancelResponse;
 import org.badminton.api.league.model.dto.LeagueCreateRequest;
 import org.badminton.api.league.model.dto.LeagueCreateResponse;
 import org.badminton.api.league.model.dto.LeagueDetailsResponse;
@@ -12,7 +13,6 @@ import org.badminton.api.league.model.dto.LeagueUpdateResponse;
 import org.badminton.api.league.service.LeagueService;
 import org.badminton.api.member.oauth2.dto.CustomOAuth2Member;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -106,17 +106,14 @@ public class LeagueController {
 	}
 
 	@Operation(
-		summary = "특정 경기를 삭제합니다.",
-		description = "특정 경기를 데이터베이스 테이블에서 제거합니다.",
+		summary = "경기 취소",
+		description = "경기를 취소합니다.",
 		tags = {"league"}
 	)
-
 	@DeleteMapping("/{leagueId}")
-	public ResponseEntity<HttpStatus> deleteLeague(
+	public ResponseEntity<LeagueCancelResponse> cancelLeague(
 		@PathVariable Long clubId,
 		@PathVariable Long leagueId) {
-		leagueService.deleteLeague(clubId, leagueId);
-		return ResponseEntity.ok(HttpStatus.OK);
+		return ResponseEntity.ok(leagueService.cancelLeague(clubId, leagueId));
 	}
-
 }

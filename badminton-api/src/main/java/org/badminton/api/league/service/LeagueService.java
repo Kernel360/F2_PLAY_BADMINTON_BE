@@ -11,6 +11,7 @@ import org.badminton.api.common.exception.club.ClubNotExistException;
 import org.badminton.api.common.exception.league.InvalidDateTimeException;
 import org.badminton.api.common.exception.league.LeagueNotExistException;
 import org.badminton.api.league.model.dto.LeagueByDateResponse;
+import org.badminton.api.league.model.dto.LeagueCancelResponse;
 import org.badminton.api.league.model.dto.LeagueCreateRequest;
 import org.badminton.api.league.model.dto.LeagueCreateResponse;
 import org.badminton.api.league.model.dto.LeagueDetailsResponse;
@@ -135,9 +136,11 @@ public class LeagueService {
 	}
 
 	@Transactional
-	public void deleteLeague(Long clubId, Long leagueId) {
+	public LeagueCancelResponse cancelLeague(Long clubId, Long leagueId) {
 		LeagueEntity league = provideLeagueIfLeagueInClub(clubId, leagueId);
-		leagueRepository.deleteByLeagueId(league.getLeagueId());
+		league.cancelLeague();
+		leagueRepository.save(league);
+		return new LeagueCancelResponse(leagueId, league.getLeagueStatus());
 	}
 
 	private LeagueEntity provideLeagueIfLeagueInClub(Long clubId, Long leagueId) {

@@ -137,7 +137,7 @@ public class ClubMemberController {
 	@Operation(
 		summary = "동호회에서 탈퇴하기",
 		description = "동호회에서 탈퇴하기",
-		tags = {"clubMember"}
+		tags = {"ClubMember"}
 	)
 	@DeleteMapping
 	public ResponseEntity<ClubMemberWithdrawResponse> withdrawMember(@AuthenticationPrincipal CustomOAuth2Member member,
