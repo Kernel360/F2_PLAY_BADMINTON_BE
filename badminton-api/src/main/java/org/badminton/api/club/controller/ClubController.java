@@ -71,7 +71,8 @@ public class ClubController {
 			   - 호스트: badminton-team.s3.ap-northeast-2.amazonaws.com
 			   - 경로: /club-banner/로 시작
 			   - 파일 확장자: png, jpg, jpeg, gif 중 하나
-			   - https://badminton-team.s3.ap-northeast-2.amazonaws.com/club-banner/85e45bf0-2f68-4566-b17d-0f08c8b2c333/banner.png
+			   - https://d36om9pjoifd2y.cloudfront.net/club-banner/804a0dfc-947f-4039-acbe-d95a85893087.png
+			
 			""",
 		tags = {"Club"})
 	public ResponseEntity<ClubCreateResponse> createClub(@Valid @RequestBody ClubCreateRequest clubCreateRequest,

@@ -9,7 +9,7 @@ import jakarta.validation.ConstraintValidatorContext;
 public class MemberImageValidatorImpl implements ConstraintValidator<MemberImageValidator, String> {
 
 
-	private static final String S3_DOMAIN = "badminton-team.s3.ap-northeast-2.amazonaws.com";
+	private static final String S3_DOMAIN = "d36om9pjoifd2y.cloudfront.net";
 	private static final Pattern IMAGE_PATTERN = Pattern.compile(".*\\.(png|jpg|jpeg|gif)$", Pattern.CASE_INSENSITIVE);
 
 

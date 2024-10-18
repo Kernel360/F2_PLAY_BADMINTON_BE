@@ -62,7 +62,7 @@ public class MemberController {
 			return ResponseEntity.ok(null);
 		}
 		Long clubMemberId = clubMemberEntity.getClubMemberId();
-   		return ResponseEntity.ok(matchResultService.getAllMatchResultsByClubMember(clubMemberId));
+		return ResponseEntity.ok(matchResultService.getAllMatchResultsByClubMember(clubMemberId));
 	}
 
 	//TODO: 티어 정상 작동 테스트용, 지울예정입니다
