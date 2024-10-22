@@ -3,12 +3,12 @@ package org.badminton.api.filter;
 import java.io.IOException;
 import java.util.List;
 
-import org.badminton.api.clubmember.service.ClubMemberService;
-import org.badminton.api.member.jwt.JwtUtil;
-import org.badminton.api.member.model.dto.MemberResponse;
-import org.badminton.api.member.oauth2.dto.CustomOAuth2Member;
-import org.badminton.domain.clubmember.entity.ClubMemberEntity;
-import org.badminton.domain.member.entity.MemberAuthorization;
+import org.badminton.api.service.clubmember.ClubMemberService;
+import org.badminton.api.interfaces.oauth.jwt.JwtUtil;
+import org.badminton.api.interfaces.member.dto.MemberResponse;
+import org.badminton.api.interfaces.oauth.dto.CustomOAuth2Member;
+import org.badminton.domain.domain.clubmember.entity.ClubMemberEntity;
+import org.badminton.domain.domain.member.entity.MemberAuthorization;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,48 +25,48 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-	private final JwtUtil jwtUtil;
-	private final ClubMemberService clubMemberService;
+    private final JwtUtil jwtUtil;
+    private final ClubMemberService clubMemberService;
 
-	@Override
-	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-		FilterChain filterChain) throws ServletException, IOException {
-		String token = jwtUtil.extractAccessTokenFromCookie(request);
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
+                                    FilterChain filterChain) throws ServletException, IOException {
+        String token = jwtUtil.extractAccessTokenFromCookie(request);
 
-		if (token != null && jwtUtil.validateToken(token)) {
-			String memberId = jwtUtil.getMemberId(token);
-			List<ClubMemberEntity> clubMemberEntities = clubMemberService.findAllClubMembersByMemberId(
-				Long.valueOf(memberId));
+        if (token != null && jwtUtil.validateToken(token)) {
+            String memberId = jwtUtil.getMemberId(token);
+            List<ClubMemberEntity> clubMemberEntities = clubMemberService.findAllClubMembersByMemberId(
+                    Long.valueOf(memberId));
 
-			String oAuthAccessToken = jwtUtil.getOAuthToken(token);
+            String oAuthAccessToken = jwtUtil.getOAuthToken(token);
 
-			MemberResponse memberResponse = new MemberResponse(Long.valueOf(memberId),
-				MemberAuthorization.AUTHORIZATION_USER.toString());
-			CustomOAuth2Member customOAuth2Member = new CustomOAuth2Member(memberResponse,
-				jwtUtil.getRegistrationId(token), oAuthAccessToken);
+            MemberResponse memberResponse = new MemberResponse(Long.valueOf(memberId),
+                    MemberAuthorization.AUTHORIZATION_USER.toString());
+            CustomOAuth2Member customOAuth2Member = new CustomOAuth2Member(memberResponse,
+                    jwtUtil.getRegistrationId(token), oAuthAccessToken);
 
-			for (ClubMemberEntity clubMember : clubMemberEntities) {
-				if (!clubMember.getClub().isClubDeleted()) {
-					customOAuth2Member.addClubRole(clubMember.getClub().getClubId(), clubMember.getRole().name());
-					break;
-				}
-			}
+            for (ClubMemberEntity clubMember : clubMemberEntities) {
+                if (!clubMember.getClub().isClubDeleted()) {
+                    customOAuth2Member.addClubRole(clubMember.getClub().getClubId(), clubMember.getRole().name());
+                    break;
+                }
+            }
 
-			Authentication authToken = new UsernamePasswordAuthenticationToken(customOAuth2Member, null,
-				customOAuth2Member.getAuthorities());
+            Authentication authToken = new UsernamePasswordAuthenticationToken(customOAuth2Member, null,
+                    customOAuth2Member.getAuthorities());
 
-			SecurityContextHolder.getContext().setAuthentication(authToken);
-		}
+            SecurityContextHolder.getContext().setAuthentication(authToken);
+        }
 
-		filterChain.doFilter(request, response);
-	}
+        filterChain.doFilter(request, response);
+    }
 
-	@Override
-	protected boolean shouldNotFilter(HttpServletRequest request) {
-		String path = request.getRequestURI();
-		return path.equals("/") || path.equals("/groups") || path.startsWith("/oauth2") || path.startsWith("/login")
-			|| path.startsWith("/api") || path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs")
-			;
-	}
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getRequestURI();
+        return path.equals("/") || path.equals("/groups") || path.startsWith("/oauth2") || path.startsWith("/login")
+                || path.startsWith("/api") || path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs")
+                ;
+    }
 
 }
