@@ -16,13 +16,21 @@ public record MatchDetailsResponse(
 
     public static MatchDetailsResponse fromMatchDetailsInfo(MatchInfo.SetScoreDetails matchDetails) {
         return new MatchDetailsResponse(
-                matchDetails.getMatchId(),
-                matchDetails.getLeagueId(),
-                matchDetails.getMatchType(),
-                SinglesMatchResponse.fromSinglesMatchInfo(matchDetails.getSinglesMatch()),
-                DoublesMatchResponse.fromDoublesMatchInfo(matchDetails.getDoublesMatch()),
-                SinglesSetResponse.fromSinglesSetInfoList(matchDetails.getSinglesSets()),
-                DoublesSetResponse.fromDoublesSetInfoList(matchDetails.getDoublesSets())
+                matchDetails.matchId(),
+                matchDetails.leagueId(),
+                matchDetails.matchType(),
+                matchDetails.matchType() == MatchType.SINGLES
+                        ? SinglesMatchResponse.fromSinglesMatchInfo(matchDetails.singlesMatch())
+                        : null,
+                matchDetails.matchType() == MatchType.DOUBLES
+                        ? DoublesMatchResponse.fromDoublesMatchInfo(matchDetails.doublesMatch())
+                        : null,
+                matchDetails.matchType() == MatchType.SINGLES
+                        ? SinglesSetResponse.fromSinglesSetInfoList(matchDetails.singlesSets())
+                        : null,
+                matchDetails.matchType() == MatchType.DOUBLES
+                        ? DoublesSetResponse.fromDoublesSetInfoList(matchDetails.doublesSets())
+                        : null
         );
     }
 }

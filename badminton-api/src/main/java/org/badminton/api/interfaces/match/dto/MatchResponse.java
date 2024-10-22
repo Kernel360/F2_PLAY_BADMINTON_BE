@@ -14,9 +14,17 @@ public record MatchResponse(
 ) {
 
     public static MatchResponse fromMatchInfo(MatchInfo.Main matchInfo) {
-        return new MatchResponse(matchInfo.getMatchId(), matchInfo.getLeagueId(), matchInfo.getMatchType(),
-                SinglesMatchResponse.fromSinglesMatchInfo(matchInfo.getSinglesMatchInfo()),
-                DoublesMatchResponse.fromDoublesMatchInfo(matchInfo.getDoublesMatchInfo()),
-                matchInfo.getMatchStatus());
+        return new MatchResponse(
+                matchInfo.matchId(),
+                matchInfo.leagueId(),
+                matchInfo.matchType(),
+                matchInfo.matchType() == MatchType.SINGLES
+                        ? SinglesMatchResponse.fromSinglesMatchInfo(matchInfo.singlesMatchInfo())
+                        : null,
+                matchInfo.matchType() == MatchType.DOUBLES
+                        ? DoublesMatchResponse.fromDoublesMatchInfo(matchInfo.doublesMatchInfo())
+                        : null,
+                matchInfo.matchStatus()
+        );
     }
 }

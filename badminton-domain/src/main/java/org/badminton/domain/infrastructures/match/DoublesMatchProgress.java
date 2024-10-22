@@ -24,7 +24,7 @@ public class DoublesMatchProgress implements MatchProgress {
     @Override
     public List<MatchInfo.Main> getAllMatchesInLeague(Long leagueId) {
         return doublesMatchRepository.findAllByLeague_LeagueId(leagueId).stream()
-                .map(MatchInfo::fromDoublesMatchToMain)
+                .map(MatchInfo.Main::fromDoublesMatchToMain)
                 .toList();
     }
 
@@ -43,7 +43,7 @@ public class DoublesMatchProgress implements MatchProgress {
     public MatchInfo.SetScoreDetails getMatchDetails(Long matchId) {
         DoublesMatchEntity doublesMatch = doublesMatchRepository.findById(matchId)
                 .orElseThrow(() -> new MatchDetailsNotExistException(matchId));
-        return MatchInfo.fromDoublesMatchToMatchDetails(doublesMatch);
+        return MatchInfo.SetScoreDetails.fromDoublesMatchToMatchDetails(doublesMatch);
     }
 
     @Override
@@ -52,7 +52,7 @@ public class DoublesMatchProgress implements MatchProgress {
         return doublesMatches
                 .stream()
                 .map(this::initDoublesMatch)
-                .map(MatchInfo::fromDoublesMatchToMain)
+                .map(MatchInfo.Main::fromDoublesMatchToMain)
                 .toList();
     }
 

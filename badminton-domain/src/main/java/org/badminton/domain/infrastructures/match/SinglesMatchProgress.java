@@ -27,7 +27,7 @@ public class SinglesMatchProgress implements MatchProgress {
     public List<MatchInfo.Main> getAllMatchesInLeague(Long leagueId) {
         return singlesMatchRepository.findAllByLeague_LeagueId(leagueId)
                 .stream()
-                .map(MatchInfo::fromSinglesMatchToMain)
+                .map(MatchInfo.Main::fromSinglesMatchToMain)
                 .toList();
     }
 
@@ -48,7 +48,7 @@ public class SinglesMatchProgress implements MatchProgress {
     public MatchInfo.SetScoreDetails getMatchDetails(Long matchId) {
         SinglesMatchEntity singlesMatch = singlesMatchRepository.findById(matchId)
                 .orElseThrow(() -> new MatchDetailsNotExistException(matchId));
-        return MatchInfo.fromSinglesMatchToMatchDetails(singlesMatch);
+        return MatchInfo.SetScoreDetails.fromSinglesMatchToMatchDetails(singlesMatch);
     }
 
     @Override
@@ -56,7 +56,7 @@ public class SinglesMatchProgress implements MatchProgress {
         List<SinglesMatchEntity> singlesMatches = makeSinglesMatches(leagueParticipantList, league);
         return singlesMatches.stream()
                 .map(this::initSinglesMatch)
-                .map(MatchInfo::fromSinglesMatchToMain)
+                .map(MatchInfo.Main::fromSinglesMatchToMain)
                 .toList();
     }
 
