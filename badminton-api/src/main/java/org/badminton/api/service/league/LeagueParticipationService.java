@@ -17,9 +17,9 @@ import org.badminton.domain.domain.clubmember.entity.ClubMemberEntity;
 import org.badminton.domain.domain.league.entity.LeagueEntity;
 import org.badminton.domain.domain.league.entity.LeagueParticipantEntity;
 import org.badminton.domain.domain.league.enums.LeagueStatus;
+import org.badminton.domain.infrastructures.clubmember.ClubMemberRepository;
 import org.badminton.domain.infrastructures.league.LeagueParticipantRepository;
 import org.badminton.domain.infrastructures.league.LeagueRepository;
-import org.badminton.infra.clubmember.ClubMemberRepository;
 import org.springframework.stereotype.Service;
 
 @Service

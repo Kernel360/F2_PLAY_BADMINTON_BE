@@ -5,7 +5,7 @@ import org.badminton.domain.common.exception.clubmember.ClubMemberAlreadyBannedE
 import org.badminton.domain.domain.clubmember.entity.BannedType;
 import org.badminton.domain.domain.clubmember.entity.ClubMemberBanRecordEntity;
 import org.badminton.domain.domain.clubmember.entity.ClubMemberEntity;
-import org.badminton.infra.clubmember.ClubMemberRepository;
+import org.badminton.domain.infrastructures.clubmember.ClubMemberRepository;
 
 public abstract class AbstractClubMemberBanStrategy implements ClubMemberPenaltyStrategy {
     protected final ClubMemberRepository clubMemberRepository;

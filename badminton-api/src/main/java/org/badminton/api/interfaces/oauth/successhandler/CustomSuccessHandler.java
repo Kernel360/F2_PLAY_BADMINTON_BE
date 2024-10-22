@@ -1,23 +1,25 @@
 package org.badminton.api.interfaces.oauth.successhandler;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+
 import org.badminton.api.common.exception.member.MemberNotExistException;
-import org.badminton.api.interfaces.oauth.dto.CustomOAuth2Member;
 import org.badminton.api.interfaces.oauth.jwt.JwtUtil;
+import org.badminton.api.interfaces.oauth.dto.CustomOAuth2Member;
+import org.badminton.domain.infrastructures.clubmember.ClubMemberRepository;
 import org.badminton.domain.domain.member.entity.MemberEntity;
 import org.badminton.domain.infrastructures.member.MemberRepository;
-import org.badminton.infra.clubmember.ClubMemberRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @RequiredArgsConstructor

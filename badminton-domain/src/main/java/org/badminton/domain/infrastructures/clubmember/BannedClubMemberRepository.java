@@ -1,4 +1,4 @@
-package org.badminton.infra.clubmember;
+package org.badminton.domain.infrastructures.clubmember;
 
 import org.badminton.domain.domain.clubmember.entity.ClubMemberBanRecordEntity;
 import org.springframework.data.jpa.repository.JpaRepository;

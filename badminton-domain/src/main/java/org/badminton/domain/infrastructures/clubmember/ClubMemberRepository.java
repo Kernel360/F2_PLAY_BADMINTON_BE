@@ -1,7 +1,8 @@
-package org.badminton.infra.clubmember;
+package org.badminton.domain.infrastructures.clubmember;
 
 import java.util.List;
 import java.util.Optional;
+
 import org.badminton.domain.domain.clubmember.entity.ClubMemberEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 

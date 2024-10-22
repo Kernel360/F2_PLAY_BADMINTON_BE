@@ -22,7 +22,7 @@ import org.badminton.api.interfaces.oauth.dto.CustomOAuth2Member;
 import org.badminton.api.service.leaguerecord.LeagueRecordService;
 import org.badminton.api.service.match.MatchResultService;
 import org.badminton.domain.domain.clubmember.entity.ClubMemberEntity;
-import org.badminton.infra.clubmember.ClubMemberRepository;
+import org.badminton.domain.infrastructures.clubmember.ClubMemberRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
