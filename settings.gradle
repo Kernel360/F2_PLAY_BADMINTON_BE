@@ -2,3 +2,5 @@ rootProject.name = 'badminton'
 include 'badminton-domain'
 include 'badminton-api'
 include 'badminton-batch'
+include 'badminton-infra'
+

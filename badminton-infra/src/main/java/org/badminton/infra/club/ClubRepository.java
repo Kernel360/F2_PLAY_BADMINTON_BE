@@ -1,7 +1,6 @@
-package org.badminton.domain.infrastructures.club;
+package org.badminton.infra.club;
 
 import java.util.Optional;
-
 import org.badminton.domain.domain.club.entity.ClubEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

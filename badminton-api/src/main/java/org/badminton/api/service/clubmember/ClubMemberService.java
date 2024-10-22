@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-
+import org.badminton.api.common.exception.member.MemberNotExistException;
 import org.badminton.api.interfaces.clubmember.dto.ClubMemberBanRecordResponse;
 import org.badminton.api.interfaces.clubmember.dto.ClubMemberBanRequest;
 import org.badminton.api.interfaces.clubmember.dto.ClubMemberExpelRequest;
@@ -15,16 +15,15 @@ import org.badminton.api.interfaces.clubmember.dto.ClubMemberWithdrawResponse;
 import org.badminton.domain.common.exception.club.ClubNotExistException;
 import org.badminton.domain.common.exception.clubmember.ClubMemberDuplicateException;
 import org.badminton.domain.common.exception.clubmember.ClubMemberNotExistException;
-import org.badminton.api.common.exception.member.MemberNotExistException;
 import org.badminton.domain.domain.club.entity.ClubEntity;
-import org.badminton.domain.infrastructures.club.ClubRepository;
 import org.badminton.domain.domain.clubmember.entity.ClubMemberEntity;
 import org.badminton.domain.domain.clubmember.entity.ClubMemberRole;
-import org.badminton.domain.infrastructures.clubmember.ClubMemberRepository;
 import org.badminton.domain.domain.league.entity.LeagueRecordEntity;
-import org.badminton.domain.infrastructures.league.LeagueRecordRepository;
 import org.badminton.domain.domain.member.entity.MemberEntity;
+import org.badminton.domain.infrastructures.league.LeagueRecordRepository;
 import org.badminton.domain.infrastructures.member.MemberRepository;
+import org.badminton.infra.club.ClubRepository;
+import org.badminton.infra.clubmember.ClubMemberRepository;
 import org.springframework.stereotype.Service;
 
 @Service

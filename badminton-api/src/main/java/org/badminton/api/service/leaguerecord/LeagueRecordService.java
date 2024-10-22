@@ -1,15 +1,14 @@
 package org.badminton.api.service.leaguerecord;
 
+import lombok.RequiredArgsConstructor;
+import org.badminton.domain.common.enums.MemberTier;
 import org.badminton.domain.common.exception.clubmember.ClubMemberNotExistException;
 import org.badminton.domain.domain.clubmember.entity.ClubMemberEntity;
-import org.badminton.domain.infrastructures.clubmember.ClubMemberRepository;
-import org.badminton.domain.common.enums.MemberTier;
 import org.badminton.domain.domain.league.entity.LeagueRecordEntity;
 import org.badminton.domain.infrastructures.league.LeagueRecordRepository;
+import org.badminton.infra.clubmember.ClubMemberRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor

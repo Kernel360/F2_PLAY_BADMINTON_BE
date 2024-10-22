@@ -1,8 +1,8 @@
 package org.badminton.api.league.service;
 
 import org.badminton.api.service.league.LeagueService;
-import org.badminton.domain.infrastructures.club.ClubRepository;
 import org.badminton.domain.infrastructures.league.LeagueRepository;
+import org.badminton.infra.club.ClubRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

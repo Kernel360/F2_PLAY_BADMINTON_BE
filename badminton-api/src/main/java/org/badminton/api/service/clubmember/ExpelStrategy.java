@@ -1,10 +1,10 @@
 package org.badminton.api.service.clubmember;
 
 import org.badminton.api.interfaces.clubmember.dto.ClubMemberExpelRequest;
-import org.badminton.domain.domain.clubmember.entity.ClubMemberBanRecordEntity;
 import org.badminton.domain.domain.clubmember.entity.BannedType;
+import org.badminton.domain.domain.clubmember.entity.ClubMemberBanRecordEntity;
 import org.badminton.domain.domain.clubmember.entity.ClubMemberEntity;
-import org.badminton.domain.infrastructures.clubmember.ClubMemberRepository;
+import org.badminton.infra.clubmember.ClubMemberRepository;
 
 public class ExpelStrategy extends AbstractClubMemberBanStrategy {
 

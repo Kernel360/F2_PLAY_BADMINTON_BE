@@ -1,21 +1,24 @@
 package org.badminton.api.application.member;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
-
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.badminton.api.common.exception.member.MemberNotExistException;
-import org.badminton.api.interfaces.oauth.jwt.JwtUtil;
 import org.badminton.api.interfaces.member.dto.MemberDeleteResponse;
 import org.badminton.api.interfaces.member.dto.MemberIsClubMemberResponse;
 import org.badminton.api.interfaces.member.dto.MemberMyPageResponse;
 import org.badminton.api.interfaces.member.dto.MemberResponse;
 import org.badminton.api.interfaces.oauth.dto.CustomOAuth2Member;
+import org.badminton.api.interfaces.oauth.jwt.JwtUtil;
 import org.badminton.domain.domain.clubmember.entity.ClubMemberEntity;
 import org.badminton.domain.domain.clubmember.entity.ClubMemberRole;
-import org.badminton.domain.infrastructures.clubmember.ClubMemberRepository;
 import org.badminton.domain.domain.league.entity.LeagueRecordEntity;
-import org.badminton.domain.infrastructures.league.LeagueRecordRepository;
 import org.badminton.domain.domain.member.entity.MemberEntity;
+import org.badminton.domain.infrastructures.league.LeagueRecordRepository;
 import org.badminton.domain.infrastructures.member.MemberRepository;
+import org.badminton.infra.clubmember.ClubMemberRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -28,11 +31,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
-
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
