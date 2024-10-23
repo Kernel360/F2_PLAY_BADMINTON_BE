@@ -2,19 +2,19 @@ package org.badminton.domain.infrastructures.club;
 
 import java.util.Optional;
 
-import org.badminton.domain.domain.club.entity.ClubEntity;
+import org.badminton.domain.domain.club.Club;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ClubRepository extends JpaRepository<ClubEntity, Long> {
+public interface ClubRepository extends JpaRepository<Club, Long> {
 
-    Optional<ClubEntity> findByClubNameAndIsClubDeletedFalse(String clubName);
+	Optional<Club> findByClubNameAndIsClubDeletedFalse(String clubName);
 
-    Optional<ClubEntity> findByClubIdAndIsClubDeletedFalse(Long clubId);
+	Optional<Club> findByClubIdAndIsClubDeletedFalse(Long clubId);
 
-    Page<ClubEntity> findAllByIsClubDeletedIsFalse(Pageable pageable);
+	Page<Club> findAllByIsClubDeletedIsFalse(Pageable pageable);
 
-    Page<ClubEntity> findAllByClubNameContainingIgnoreCaseAndIsClubDeletedIsFalse(String keyword, Pageable pageable);
+	Page<Club> findAllByClubNameContainingIgnoreCaseAndIsClubDeletedIsFalse(String keyword, Pageable pageable);
 }
 

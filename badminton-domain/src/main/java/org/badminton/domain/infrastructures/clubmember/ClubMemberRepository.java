@@ -5,25 +5,30 @@ import java.util.Optional;
 
 import org.badminton.domain.domain.clubmember.entity.ClubMemberEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface ClubMemberRepository extends JpaRepository<ClubMemberEntity, Long> {
 
-    List<ClubMemberEntity> findAllByClub_ClubId(Long clubId);
+	List<ClubMemberEntity> findAllByClub_ClubId(Long clubId);
 
-    Optional<ClubMemberEntity> findByMember_MemberIdAndDeletedFalse(Long memberId);
+	Optional<ClubMemberEntity> findByMember_MemberIdAndDeletedFalse(Long memberId);
 
-    Optional<ClubMemberEntity> findByClub_ClubIdAndMember_MemberId(Long clubId, Long memberId);
+	Optional<ClubMemberEntity> findByClub_ClubIdAndMember_MemberId(Long clubId, Long memberId);
 
-    boolean existsByMember_MemberIdAndDeletedFalse(Long memberId);
+	boolean existsByMember_MemberIdAndDeletedFalse(Long memberId);
 
-    List<ClubMemberEntity> findAllByMember_MemberId(Long memberId);
+	List<ClubMemberEntity> findAllByMember_MemberId(Long memberId);
 
-    List<ClubMemberEntity> findAllByClubClubIdAndBannedFalseAndDeletedFalse(Long clubId);
+	List<ClubMemberEntity> findAllByClubClubIdAndBannedFalseAndDeletedFalse(Long clubId);
 
-    boolean existsByMember_MemberIdAndClub_ClubId(Long memberId, Long clubId);
+	boolean existsByMember_MemberIdAndClub_ClubId(Long memberId, Long clubId);
 
-    Optional<ClubMemberEntity> findByClubMemberId(Long clubMemberId);
+	Optional<ClubMemberEntity> findByClubMemberId(Long clubMemberId);
 
-    List<ClubMemberEntity> findAllByDeletedFalseAndClub_ClubId(Long clubId);
+	List<ClubMemberEntity> findAllByDeletedFalseAndClub_ClubId(Long clubId);
+
+	@Query("SELECT COUNT(cm) FROM ClubMemberEntity cm WHERE cm.member.memberId = :memberId AND cm.role = 'ROLE_OWNER'")
+	long countByMemberIdAndRoleOwner(@Param("memberId") Long memberId);
 }
 

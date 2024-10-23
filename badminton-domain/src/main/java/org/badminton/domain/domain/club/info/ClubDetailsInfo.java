@@ -1,4 +1,4 @@
-package org.badminton.api.interfaces.club.dto;
+package org.badminton.domain.domain.club.info;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -7,7 +7,7 @@ import org.badminton.domain.common.enums.MemberTier;
 import org.badminton.domain.domain.club.Club;
 import org.badminton.domain.domain.club.ClubMemberCountByTier;
 
-public record ClubDetailsResponse(
+public record ClubDetailsInfo(
 	Long clubId,
 	String clubName,
 	String clubDescription,
@@ -18,10 +18,10 @@ public record ClubDetailsResponse(
 	boolean isClubMember
 ) {
 
-	public static ClubDetailsResponse fromClubEntityAndMemberCountByTier(Club club,
+	public static ClubDetailsInfo fromClubEntityAndMemberCountByTier(Club club,
 		Map<MemberTier, Long> memberCountByTier,
 		boolean isClubMember, int clubMembersCount) {
-		return new ClubDetailsResponse(
+		return new ClubDetailsInfo(
 			club.getClubId(),
 			club.getClubName(),
 			club.getClubDescription(),
