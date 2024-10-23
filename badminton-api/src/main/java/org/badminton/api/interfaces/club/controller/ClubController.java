@@ -10,7 +10,6 @@ import org.badminton.api.interfaces.club.dto.ClubDetailsResponse;
 import org.badminton.api.interfaces.club.dto.ClubUpdateRequest;
 import org.badminton.api.interfaces.club.dto.ClubUpdateResponse;
 import org.badminton.api.interfaces.oauth.dto.CustomOAuth2Member;
-import org.badminton.api.service.club.ClubService;
 import org.badminton.domain.domain.club.command.ClubUpdateCommand;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -39,7 +38,6 @@ public class ClubController {
 
 	private final ClubDtoMapper clubDtoMapper;
 
-	private final ClubService clubService;
 	private static final String DEFAULT_PAGE_VALUE = "0";
 	private static final String DEFAULT_SIZE_VALUE = "9";
 	private static final String DEFAULT_SORT_BY_VALUE = "clubId";
