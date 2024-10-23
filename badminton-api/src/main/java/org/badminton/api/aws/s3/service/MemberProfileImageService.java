@@ -3,7 +3,7 @@ package org.badminton.api.aws.s3.service;
 import java.util.UUID;
 
 import org.badminton.api.aws.s3.model.dto.ImageUploadRequest;
-import org.badminton.api.member.service.MemberService;
+import org.badminton.api.application.member.MemberService;
 import org.springframework.stereotype.Service;
 
 import com.amazonaws.services.s3.AmazonS3;
@@ -11,25 +11,25 @@ import com.amazonaws.services.s3.AmazonS3;
 @Service
 public class MemberProfileImageService extends AbstractFileUploadService {
 
-	private Long currentMemberId;
+    private Long currentMemberId;
 
-	public MemberProfileImageService(AmazonS3 s3Client, MemberService memberService) {
-		super(s3Client);
-	}
+    public MemberProfileImageService(AmazonS3 s3Client, MemberService memberService) {
+        super(s3Client);
+    }
 
-	public String uploadFile(ImageUploadRequest file, Long memberId) {
-		this.currentMemberId = memberId;
-		return super.uploadFile(file);
+    public String uploadFile(ImageUploadRequest file, Long memberId) {
+        this.currentMemberId = memberId;
+        return super.uploadFile(file);
 
-	}
+    }
 
-	@Override
-	public String makeFileName(String originalFilename) {
-		if (this.currentMemberId == null) {
-			throw new IllegalStateException("Member ID is not set. Make sure to call uploadFile method first.");
-		}
-		String[] originFile = originalFilename.split("\\.");
-		String extension = originFile[originFile.length - 1];
-		return "member-profile/" + UUID.randomUUID() + "." + extension;
-	}
+    @Override
+    public String makeFileName(String originalFilename) {
+        if (this.currentMemberId == null) {
+            throw new IllegalStateException("Member ID is not set. Make sure to call uploadFile method first.");
+        }
+        String[] originFile = originalFilename.split("\\.");
+        String extension = originFile[originFile.length - 1];
+        return "member-profile/" + UUID.randomUUID() + "." + extension;
+    }
 }
