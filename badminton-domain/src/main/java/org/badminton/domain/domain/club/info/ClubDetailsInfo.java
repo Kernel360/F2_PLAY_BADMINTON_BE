@@ -18,17 +18,18 @@ public record ClubDetailsInfo(
 	boolean isClubMember
 ) {
 
-	public static ClubDetailsInfo fromClubEntityAndMemberCountByTier(Club club,
+	public static ClubDetailsInfo fromClubEntityAndMemberCountByTier(ClubSummaryInfo clubSummaryInfo,
 		Map<MemberTier, Long> memberCountByTier,
 		boolean isClubMember, int clubMembersCount) {
 		return new ClubDetailsInfo(
-			club.getClubId(),
-			club.getClubName(),
-			club.getClubDescription(),
-			club.getClubImage(),
-			ClubMemberCountByTier.ofClubMemberCountResponse(memberCountByTier),
-			clubMembersCount,
-			club.getCreatedAt(),
-			isClubMember);
+				clubSummaryInfo.clubId(),
+				clubSummaryInfo.clubName(),
+				clubSummaryInfo.clubDescription(),
+				clubSummaryInfo.clubImage(),
+				ClubMemberCountByTier.ofClubMemberCountResponse(memberCountByTier),
+				clubMembersCount,
+				clubSummaryInfo.createdAt(),
+				isClubMember
+		);
 	}
 }

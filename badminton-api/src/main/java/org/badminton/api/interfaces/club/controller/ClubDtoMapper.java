@@ -12,10 +12,7 @@ import org.badminton.api.interfaces.club.dto.ClubUpdateResponse;
 import org.badminton.domain.domain.club.Club;
 import org.badminton.domain.domain.club.command.ClubCreateCommand;
 import org.badminton.domain.domain.club.command.ClubUpdateCommand;
-import org.badminton.domain.domain.club.info.ClubCardInfo;
-import org.badminton.domain.domain.club.info.ClubDeleteInfo;
-import org.badminton.domain.domain.club.info.ClubDetailsInfo;
-import org.badminton.domain.domain.club.info.ClubUpdateInfo;
+import org.badminton.domain.domain.club.info.*;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
@@ -40,11 +37,11 @@ public interface ClubDtoMapper {
 
 	ClubCreateCommand of(ClubCreateRequest clubCreateRequest);
 
-	ClubCreateResponse of(Club created);
-
 	ClubUpdateCommand of(ClubUpdateRequest clubUpdateRequest);
 
 	ClubUpdateResponse of(ClubUpdateInfo clubUpdateInfo);
 
 	ClubDeleteResponse of(ClubDeleteInfo club);
+
+    ClubCreateResponse of(ClubCreateInfo created);
 }

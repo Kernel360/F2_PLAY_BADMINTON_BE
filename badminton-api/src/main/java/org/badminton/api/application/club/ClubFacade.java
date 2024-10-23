@@ -10,10 +10,7 @@ import org.badminton.domain.domain.club.Club;
 import org.badminton.domain.domain.club.ClubService;
 import org.badminton.domain.domain.club.command.ClubCreateCommand;
 import org.badminton.domain.domain.club.command.ClubUpdateCommand;
-import org.badminton.domain.domain.club.info.ClubCardInfo;
-import org.badminton.domain.domain.club.info.ClubDeleteInfo;
-import org.badminton.domain.domain.club.info.ClubDetailsInfo;
-import org.badminton.domain.domain.club.info.ClubUpdateInfo;
+import org.badminton.domain.domain.club.info.*;
 import org.badminton.domain.domain.clubmember.ClubMemberService;
 import org.badminton.domain.domain.clubmember.entity.ClubMemberRole;
 import org.badminton.domain.domain.league.LeagueRecordService;
@@ -42,15 +39,11 @@ public class ClubFacade {
 	}
 
 	public ClubDetailsInfo readClub(Long clubId, CustomOAuth2Member clubMember) {
-
 		Long memberId = clubMember.getMemberId();
-		if (Objects.isNull(memberId)) {
-			throw new MemberNotExistException(clubId);
-		}
-		Club club = clubService.readClub(clubId, memberId);
+		var club = clubService.readClub(clubId);
 		Map<MemberTier, Long> memberCountByTier = club.getClubMemberCountByTier();
 		boolean isClubMember = clubMemberService.checkIfMemberBelongsToClub(memberId, clubId);
-		int clubMembersCount = club.getClubMembers().size();
+		int clubMembersCount = club.clubMembers().size();
 		return ClubDetailsInfo.fromClubEntityAndMemberCountByTier(club, memberCountByTier, isClubMember,
 			clubMembersCount);
 	}
@@ -60,13 +53,13 @@ public class ClubFacade {
 		return clubService.searchClubs(keyword, pageable);
 	}
 
-	public Club createClub(ClubCreateCommand createRequest, Long memberId) {
+	public ClubCreateInfo createClub(ClubCreateCommand createCommand, Long memberId) {
 		clubMemberService.checkMyOwnClub(memberId);
-		var club = clubService.createClub(createRequest);
+		var clubCreateInfo = clubService.createClub(createCommand);
 		var member = memberService.getMemberByMemberId(memberId);
-		var clubMember = clubMemberService.createClubMember(club, member, ClubMemberRole.ROLE_OWNER);
+		var clubMember = clubMemberService.createClubMember(clubCreateInfo, member, ClubMemberRole.ROLE_OWNER);
 		leagueRecordService.initScore(clubMember);
-		return club;
+		return clubCreateInfo;
 	}
 
 	public ClubUpdateInfo updateClubInfo(ClubUpdateCommand clubUpdateCommand, Long clubId) {

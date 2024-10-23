@@ -2,9 +2,7 @@ package org.badminton.domain.domain.club;
 
 import org.badminton.domain.domain.club.command.ClubCreateCommand;
 import org.badminton.domain.domain.club.command.ClubUpdateCommand;
-import org.badminton.domain.domain.club.info.ClubCardInfo;
-import org.badminton.domain.domain.club.info.ClubDeleteInfo;
-import org.badminton.domain.domain.club.info.ClubUpdateInfo;
+import org.badminton.domain.domain.club.info.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -36,16 +34,18 @@ public class ClubServiceImpl implements ClubService {
 	}
 
 	@Override
-	public Club readClub(Long clubId, Long memberId) {
-		return clubReader.readClub(clubId);
+	public ClubSummaryInfo readClub(Long clubId) {
+		var club = clubReader.readClub(clubId);
+		return ClubSummaryInfo.toClubSummaryInfo(club);
 	}
 
 	@Override
-	public Club createClub(ClubCreateCommand clubCreateCommand) {
+	public ClubCreateInfo createClub(ClubCreateCommand clubCreateCommand) {
 		Club club = new Club(clubCreateCommand.clubName(),
 			clubCreateCommand.clubDescription(),
 			clubCreateCommand.clubImage());
-		return clubStore.store(club);
+		var createResponse = clubStore.store(club);
+		return ClubCreateInfo.toClubCreateInfo(createResponse);
 	}
 
 	@Override

@@ -2,7 +2,7 @@ package org.badminton.domain.domain.clubmember;
 
 import java.util.List;
 
-import org.badminton.domain.domain.club.Club;
+import org.badminton.domain.domain.club.info.ClubCreateInfo;
 import org.badminton.domain.domain.clubmember.entity.ClubMemberEntity;
 import org.badminton.domain.domain.clubmember.entity.ClubMemberRole;
 import org.badminton.domain.domain.member.entity.MemberEntity;
@@ -29,8 +29,8 @@ public class ClubMemberServiceImpl implements ClubMemberService {
 	}
 
 	@Override
-	public ClubMemberEntity createClubMember(Club club, MemberEntity member, ClubMemberRole role) {
-		return clubMemberStore.createClubMember(club, member, role);
+	public ClubMemberEntity createClubMember(ClubCreateInfo clubCreateInfo, MemberEntity member, ClubMemberRole role) {
+		return clubMemberStore.createClubMember(clubCreateInfo, member, role);
 	}
 
 	@Override

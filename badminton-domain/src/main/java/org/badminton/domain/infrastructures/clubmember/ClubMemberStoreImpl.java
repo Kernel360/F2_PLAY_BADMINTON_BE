@@ -1,6 +1,7 @@
 package org.badminton.domain.infrastructures.clubmember;
 
 import org.badminton.domain.domain.club.Club;
+import org.badminton.domain.domain.club.info.ClubCreateInfo;
 import org.badminton.domain.domain.clubmember.ClubMemberStore;
 import org.badminton.domain.domain.clubmember.entity.ClubMemberEntity;
 import org.badminton.domain.domain.clubmember.entity.ClubMemberRole;
@@ -17,7 +18,8 @@ public class ClubMemberStoreImpl implements ClubMemberStore {
 	private final ClubMemberRepository clubMemberRepository;
 
 	@Override
-	public ClubMemberEntity createClubMember(Club club, MemberEntity member, ClubMemberRole role) {
+	public ClubMemberEntity createClubMember(ClubCreateInfo clubCreateInfo, MemberEntity member, ClubMemberRole role) {
+		var club = new Club(clubCreateInfo);
 		var clubMember = new ClubMemberEntity(club, member, role);
 		return clubMemberRepository.save(clubMember);
 	}
