@@ -10,8 +10,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "Unified member response")
 public record MemberMyPageResponse(
-	@Schema(description = "Member ID", example = "1")
-	Long memberId,
+	@Schema(description = "Member Token", example = "token")
+	String memberToken,
 
 	@Schema(description = "Member name", example = "김철수")
 	String name,
@@ -32,7 +32,7 @@ public record MemberMyPageResponse(
 		ClubMember clubMember,
 		LeagueRecord leagueRecord) {
 		return new MemberMyPageResponse(
-			member.getId(),
+			member.getMemberToken(),
 			member.getName(),
 			member.getEmail(),
 			member.getProfileImage(),
@@ -43,7 +43,7 @@ public record MemberMyPageResponse(
 
 	public static MemberMyPageResponse fromMemberEntity(Member member) {
 		return new MemberMyPageResponse(
-			member.getId(),
+			member.getMemberToken(),
 			member.getName(),
 			member.getEmail(),
 			member.getProfileImage(),

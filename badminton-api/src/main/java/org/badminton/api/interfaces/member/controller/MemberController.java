@@ -6,7 +6,13 @@ import org.badminton.api.application.auth.AuthService;
 import org.badminton.api.application.member.MemberFacade;
 import org.badminton.api.aws.s3.model.dto.ImageUploadRequest;
 import org.badminton.api.aws.s3.service.MemberProfileImageService;
+import org.badminton.api.common.exception.member.ImageFileNotFoundException;
+import org.badminton.api.common.response.CommonResponse;
 import org.badminton.api.interfaces.match.dto.MatchResultResponse;
+import org.badminton.api.interfaces.member.MemberDtoMapper;
+import org.badminton.api.interfaces.member.dto.MemberDeleteResponse;
+import org.badminton.api.interfaces.member.dto.MemberIsClubMemberResponse;
+import org.badminton.api.interfaces.member.dto.MemberMyPageResponse;
 import org.badminton.api.interfaces.member.dto.MemberUpdateRequest;
 import org.badminton.api.interfaces.oauth.dto.CustomOAuth2Member;
 import org.badminton.api.service.match.MatchResultService;
@@ -48,6 +54,7 @@ public class MemberController {
 	private final MemberProfileImageService memberProfileImageService;
 	private final MatchResultService matchResultService;
 	private final MemberFacade memberFacade;
+	private final MemberDtoMapper memberDtoMapper;
 
 	@Operation(
 		summary = "프로필 사진을 수정합니다",
@@ -61,10 +68,11 @@ public class MemberController {
 		tags = {"Member"}
 	)
 	@PutMapping("/profileImage")
-	public ResponseEntity<MemberUpdateInfo> updateProfileImage(
+	public CommonResponse<MemberUpdateInfo> updateProfileImage(
 		@Valid @RequestBody MemberUpdateRequest request,
 		@AuthenticationPrincipal CustomOAuth2Member member) {
-		return ResponseEntity.ok(memberFacade.updateProfileImage(member.getMemberToken(), request.profileImageUrl()));
+		return CommonResponse.success(
+			memberFacade.updateProfileImage(member.getMemberToken(), request.profileImageUrl()));
 	}
 
 	@Operation(
@@ -73,9 +81,10 @@ public class MemberController {
 		tags = {"Member"}
 	)
 	@GetMapping("/myPage")
-	public ResponseEntity<MemberMyPageInfo> getMemberInfo(@AuthenticationPrincipal CustomOAuth2Member member) {
-
-		return ResponseEntity.ok(memberFacade.getMemberMyPageInfo(member.getMemberToken()));
+	public CommonResponse<MemberMyPageResponse> getMemberInfo(@AuthenticationPrincipal CustomOAuth2Member member) {
+		MemberMyPageInfo memberMyPageInfo = memberFacade.getMemberMyPageInfo(member.getMemberToken());
+		MemberMyPageResponse memberMyPageResponse = memberDtoMapper.of(memberMyPageInfo);
+		return CommonResponse.success(memberMyPageResponse);
 	}
 
 	@Operation(
@@ -84,26 +93,28 @@ public class MemberController {
 		tags = {"Member"}
 	)
 	@GetMapping("/is-club-member")
-	public ResponseEntity<MemberIsClubMemberInfo> getMemberIsClubMember(
+	public CommonResponse<MemberIsClubMemberResponse> getMemberIsClubMember(
 		@AuthenticationPrincipal CustomOAuth2Member member) {
 		String memberToken = member.getMemberToken();
-		return ResponseEntity.ok(memberFacade.getMemberIsClubMember(memberToken));
+		MemberIsClubMemberInfo memberIsClubMemberInfo = memberFacade.getMemberIsClubMember(memberToken);
+		MemberIsClubMemberResponse memberIsClubMemberResponse = memberDtoMapper.of(memberIsClubMemberInfo);
+		return CommonResponse.success(memberIsClubMemberResponse);
 	}
 
 	@GetMapping("/matchesRecord")
 	@Operation(summary = "동호회 회원 경기 조회",
 		description = "동호회 회원 경기 조회.",
 		tags = {"Member"})
-	public ResponseEntity<List<MatchResultResponse>> readMemberLeagueRecord(
+	public CommonResponse<List<MatchResultResponse>> readMemberLeagueRecord(
 		@AuthenticationPrincipal CustomOAuth2Member member
 	) {
 		ClubMember clubMember = clubMemberRepository.findByDeletedFalseAndMemberMemberToken(
 			member.getMemberToken()).orElse(null);
 		if (clubMember == null) {
-			return ResponseEntity.ok(null);
+			return CommonResponse.success(null);
 		}
 		Long clubMemberId = clubMember.getClubMemberId();
-		return ResponseEntity.ok(matchResultService.getAllMatchResultsByClubMember(clubMemberId));
+		return CommonResponse.success(matchResultService.getAllMatchResultsByClubMember(clubMemberId));
 	}
 
 	@Operation(
@@ -122,11 +133,11 @@ public class MemberController {
 		tags = {"Member"}
 	)
 	@PostMapping("/logout")
-	public ResponseEntity<String> logout(HttpServletResponse response,
+	public CommonResponse<String> logout(HttpServletResponse response,
 		@AuthenticationPrincipal CustomOAuth2Member member) {
 		log.info("Logout request received");
 		authService.logoutMember(member.getMemberToken(), response);
-		return ResponseEntity.ok("Logged out successfully");
+		return CommonResponse.success("Logged out successfully");
 	}
 
 	@Operation(
@@ -142,11 +153,14 @@ public class MemberController {
 		)
 	)
 	@PostMapping("/profileImage")
-	public ResponseEntity<String> uploadProfileImage(
-		@RequestPart(value = "multipartFile") MultipartFile multipartFile,
+	public CommonResponse<String> uploadProfileImage(
+		@RequestPart(value = "multipartFile", required = false) MultipartFile multipartFile,
 		@AuthenticationPrincipal CustomOAuth2Member member) {
+		if (multipartFile == null || multipartFile.isEmpty()) {
+			throw new ImageFileNotFoundException();
+		}
 		ImageUploadRequest request = new ImageUploadRequest(multipartFile);
-		return ResponseEntity.ok(memberProfileImageService.uploadFile(request, member.getMemberToken()));
+		return CommonResponse.success(memberProfileImageService.uploadFile(request, member.getMemberToken()));
 	}
 
 	@Operation(
@@ -155,10 +169,11 @@ public class MemberController {
 		tags = {"Member"}
 	)
 	@DeleteMapping
-	public ResponseEntity<MemberDeleteInfo> deleteMember(HttpServletRequest request, HttpServletResponse response,
+	public CommonResponse<MemberDeleteResponse> deleteMember(HttpServletRequest request, HttpServletResponse response,
 		@AuthenticationPrincipal CustomOAuth2Member member) {
 		MemberDeleteInfo deleteResponse = authService.deleteMember(member, request, response);
-		return ResponseEntity.ok(deleteResponse);
+		MemberDeleteResponse memberDeleteResponse = memberDtoMapper.of(deleteResponse);
+		return CommonResponse.success(memberDeleteResponse);
 	}
 }
 
