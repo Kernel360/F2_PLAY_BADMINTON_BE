@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.badminton.domain.common.exception.club.ClubNotExistException;
 import org.badminton.domain.common.exception.clubmember.ClubMemberDuplicateException;
 import org.badminton.domain.domain.club.Club;
+import org.badminton.domain.domain.club.ClubReader;
 import org.badminton.domain.domain.club.info.ClubCreateInfo;
 import org.badminton.domain.domain.clubmember.ClubMemberReader;
 import org.badminton.domain.domain.clubmember.ClubMemberStore;
@@ -21,38 +21,28 @@ import org.badminton.domain.domain.clubmember.info.ClubMemberJoinInfo;
 import org.badminton.domain.domain.clubmember.info.ClubMemberWithdrawInfo;
 import org.badminton.domain.domain.member.MemberReader;
 import org.badminton.domain.domain.member.entity.Member;
-import org.badminton.domain.infrastructures.club.ClubRepository;
 import org.springframework.stereotype.Service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class ClubMemberServiceImpl implements ClubMemberService {
 
-	private final ClubRepository clubRepository;
+	private final ClubReader clubReader;
 	private final MemberReader memberReader;
 	private final ClubMemberReader clubMemberReader;
 	private final ClubMemberStore clubMemberStore;
-	private final ClubMemberPenaltyStrategy expelStrategy;
-	private final ClubMemberPenaltyStrategy banStrategy;
-
-	public ClubMemberServiceImpl(ClubRepository clubRepository, MemberReader memberReader,
-		ClubMemberReader clubMemberReader, ClubMemberStore clubMemberStore) {
-		this.clubRepository = clubRepository;
-		this.memberReader = memberReader;
-		this.clubMemberReader = clubMemberReader;
-		this.clubMemberStore = clubMemberStore;
-		this.expelStrategy = new ExpelStrategy(clubMemberStore);
-		this.banStrategy = new BanStrategy(clubMemberStore);
-	}
+	private final ClubMemberPenaltyStrategy expelStrategy = new ExpelStrategy(clubMemberStore);
+	private final ClubMemberPenaltyStrategy banStrategy = new BanStrategy(clubMemberStore);
 
 	@Override
 	public ClubMemberJoinInfo joinClub(
 		String memberToken, Long clubId) {
 
-		Club club = clubRepository.findByClubIdAndIsClubDeletedFalse(clubId)
-			.orElseThrow(() -> new ClubNotExistException(clubId));
+		Club club = clubReader.readClub(clubId);
 
 		Member member = memberReader.getMember(memberToken);
 
