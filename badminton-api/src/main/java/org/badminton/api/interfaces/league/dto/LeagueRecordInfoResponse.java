@@ -1,6 +1,6 @@
 package org.badminton.api.interfaces.league.dto;
 
-import org.badminton.domain.domain.league.entity.LeagueRecordEntity;
+import org.badminton.domain.domain.league.entity.LeagueRecord;
 
 public record LeagueRecordInfoResponse(
         int winCount,
@@ -8,12 +8,12 @@ public record LeagueRecordInfoResponse(
         int drawCount,
         int matchCount
 ) {
-    public static LeagueRecordInfoResponse entityToLeagueRecordInfoResponse(LeagueRecordEntity leagueRecordEntity) {
+    public static LeagueRecordInfoResponse entityToLeagueRecordInfoResponse(LeagueRecord leagueRecord) {
         return new LeagueRecordInfoResponse(
-                leagueRecordEntity.getWinCount(),
-                leagueRecordEntity.getLoseCount(),
-                leagueRecordEntity.getDrawCount(),
-                leagueRecordEntity.getMatchCount()
+                leagueRecord.getWinCount(),
+                leagueRecord.getLoseCount(),
+                leagueRecord.getDrawCount(),
+                leagueRecord.getMatchCount()
         );
     }
 

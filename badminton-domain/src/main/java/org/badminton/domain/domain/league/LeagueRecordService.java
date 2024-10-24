@@ -1,7 +1,7 @@
 package org.badminton.domain.domain.league;
 
-import org.badminton.domain.domain.clubmember.entity.ClubMemberEntity;
+import org.badminton.domain.domain.member.entity.Member;
 
 public interface LeagueRecordService {
-	void initScore(ClubMemberEntity clubMember);
+	void initScore(Member member);
 }

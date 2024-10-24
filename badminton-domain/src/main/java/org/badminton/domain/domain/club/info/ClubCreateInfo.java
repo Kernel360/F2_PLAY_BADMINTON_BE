@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.badminton.domain.domain.club.Club;
-import org.badminton.domain.domain.clubmember.entity.ClubMemberEntity;
+import org.badminton.domain.domain.clubmember.entity.ClubMember;
 
 public record ClubCreateInfo(
 	Long clubId,
@@ -12,20 +12,20 @@ public record ClubCreateInfo(
 	String clubDescription,
 	String clubImage,
 	boolean isClubDeleted,
-	List<ClubMemberEntity> clubMembers,
+	List<ClubMember> clubMembers,
 	LocalDateTime createdAt,
 	LocalDateTime modifiedAt
 ) {
 	public static ClubCreateInfo toClubCreateInfo(Club club) {
 		return new ClubCreateInfo(
-				club.getClubId(),
-				club.getClubName(),
-				club.getClubDescription(),
-				club.getClubImage(),
-				club.isClubDeleted(),
-				club.getClubMembers(),
-				club.getCreatedAt(),
-				club.getModifiedAt());
+			club.getClubId(),
+			club.getClubName(),
+			club.getClubDescription(),
+			club.getClubImage(),
+			club.isClubDeleted(),
+			club.getClubMembers(),
+			club.getCreatedAt(),
+			club.getModifiedAt());
 	}
 
 }

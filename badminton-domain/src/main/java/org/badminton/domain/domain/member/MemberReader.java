@@ -1,7 +1,7 @@
 package org.badminton.domain.domain.member;
 
-import org.badminton.domain.domain.member.entity.MemberEntity;
+import org.badminton.domain.domain.member.entity.Member;
 
 public interface MemberReader {
-	MemberEntity getMemberByMemberId(Long memberId);
+	Member getMember(String memberToken);
 }

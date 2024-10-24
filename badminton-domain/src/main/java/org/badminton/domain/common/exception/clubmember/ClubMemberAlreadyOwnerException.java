@@ -5,8 +5,8 @@ import org.badminton.domain.common.exception.BadmintonException;
 
 public class ClubMemberAlreadyOwnerException extends BadmintonException {
 
-	public ClubMemberAlreadyOwnerException(Long memberId) {
-		super(ErrorCode.CLUB_MEMBER_ALREADY_OWNER, "[동호회 회원 아이디: " + memberId + "]");
+	public ClubMemberAlreadyOwnerException(String memberToken) {
+		super(ErrorCode.CLUB_MEMBER_ALREADY_OWNER, "[동호회 회원 아이디: " + memberToken + "]");
 	}
 
 	public ClubMemberAlreadyOwnerException(Long clubMemberId, Exception e) {

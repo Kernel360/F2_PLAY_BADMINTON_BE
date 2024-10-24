@@ -2,7 +2,7 @@ package org.badminton.domain.infrastructures.match;
 
 import java.util.List;
 import org.badminton.domain.common.enums.MatchType;
-import org.badminton.domain.domain.league.entity.LeagueEntity;
+import org.badminton.domain.domain.league.entity.League;
 import org.badminton.domain.domain.league.entity.LeagueParticipantEntity;
 import org.badminton.domain.domain.match.command.MatchCommand;
 import org.badminton.domain.domain.match.info.MatchInfo;
@@ -17,7 +17,7 @@ public interface MatchProgress {
 
     SetScoreDetails getMatchDetails(Long matchId);
 
-    List<MatchInfo.Main> makeMatches(LeagueEntity league, List<LeagueParticipantEntity> leagueParticipantList);
+    List<MatchInfo.Main> makeMatches(League league, List<LeagueParticipantEntity> leagueParticipantList);
 
     SetInfo.Main updateSetScore(Long matchId, int setIndex, MatchCommand.UpdateSetScore updateSetScoreCommand);
 

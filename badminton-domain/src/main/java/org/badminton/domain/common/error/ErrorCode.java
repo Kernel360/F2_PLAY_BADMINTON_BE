@@ -40,6 +40,7 @@ public enum ErrorCode {
 	MEMBER_NOT_JOINED_CLUB(404, "해당하는 회원은 동호회에 가입하지 않았습니다."),
 	CLUB_MEMBER_NOT_EXIST(404, "해당하는 회원은 해당 동호회에 아직 가입하지 않았습니다."),
 	MATCH_DETAILS_NOT_EXIST(404, "해당하는 게임의 상세 정보가 아직 초기화되지 않았습니다."),
+	IMAGE_FILE_NOT_FOUND(404, "파일의 형식이 잘못되었습니다."),
 
 	// 409 Errors
 	CONFLICT(409, "리소스 충돌이 발생했습니다."),

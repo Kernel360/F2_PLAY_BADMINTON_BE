@@ -34,13 +34,11 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/v1/clubs")
 public class ClubController {
 
-	private final ClubFacade clubFacade;
-
-	private final ClubDtoMapper clubDtoMapper;
-
 	private static final String DEFAULT_PAGE_VALUE = "0";
 	private static final String DEFAULT_SIZE_VALUE = "9";
 	private static final String DEFAULT_SORT_BY_VALUE = "clubId";
+	private final ClubFacade clubFacade;
+	private final ClubDtoMapper clubDtoMapper;
 
 	@GetMapping("/{clubId}")
 	@Operation(summary = "동호회 조회",
@@ -57,14 +55,14 @@ public class ClubController {
 	@Operation(summary = "동호회 수정",
 		description = """
 			새로운 동호회를 수정합니다. 다음 조건을 만족해야 합니다:
-						
+			
 			1. 동호회 이름:
 			   - 필수 입력
 			   - 2자 이상 20자 이하
-						
+			
 			2. 동호회 소개:
 			   - 2자 이상 1000자 이하
-						
+			
 			3. 동호회 이미지 URL:
 			   - 호스트: badminton-team.s3.ap-northeast-2.amazonaws.com
 			   - 경로: /club-banner/로 시작
@@ -86,10 +84,10 @@ public class ClubController {
 			1. 동호회 이름:
 			   - 필수 입력
 			   - 2자 이상 20자 이하
-						
+			
 			2. 동호회 소개:
 			   - 2자 이상 1000자 이하
-						
+			
 			3. 동호회 이미지 URL:
 			   - 호스트: badminton-team.s3.ap-northeast-2.amazonaws.com
 			   - 경로: /club-banner/로 시작
@@ -99,9 +97,9 @@ public class ClubController {
 	)
 	public CommonResponse<ClubCreateResponse> createClub(@Valid @RequestBody ClubCreateRequest clubCreateRequest,
 		@AuthenticationPrincipal CustomOAuth2Member member) {
-		Long memberId = member.getMemberId();
+		String memberToken = member.getMemberToken();
 		var clubCreateCommand = clubDtoMapper.of(clubCreateRequest);
-		var created = clubFacade.createClub(clubCreateCommand, memberId);
+		var created = clubFacade.createClub(clubCreateCommand, memberToken);
 		ClubCreateResponse response = clubDtoMapper.of(created);
 		return CommonResponse.success(response);
 	}

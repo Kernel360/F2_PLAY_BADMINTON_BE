@@ -7,7 +7,7 @@ import org.badminton.domain.common.enums.MatchType;
 import org.badminton.domain.common.exception.match.MatchDetailsNotExistException;
 import org.badminton.domain.common.exception.match.MatchDuplicateException;
 import org.badminton.domain.common.exception.match.MatchNotExistException;
-import org.badminton.domain.domain.league.entity.LeagueEntity;
+import org.badminton.domain.domain.league.entity.League;
 import org.badminton.domain.domain.league.entity.LeagueParticipantEntity;
 import org.badminton.domain.domain.league.vo.Team;
 import org.badminton.domain.domain.match.command.MatchCommand;
@@ -47,7 +47,7 @@ public class DoublesMatchProgress implements MatchProgress {
     }
 
     @Override
-    public List<MatchInfo.Main> makeMatches(LeagueEntity league, List<LeagueParticipantEntity> leagueParticipantList) {
+    public List<MatchInfo.Main> makeMatches(League league, List<LeagueParticipantEntity> leagueParticipantList) {
         List<DoublesMatchEntity> doublesMatches = makeDoublesMatches(leagueParticipantList, league);
         return doublesMatches
                 .stream()
@@ -104,7 +104,7 @@ public class DoublesMatchProgress implements MatchProgress {
     }
 
     private List<DoublesMatchEntity> makeDoublesMatches(List<LeagueParticipantEntity> leagueParticipantList,
-                                                        LeagueEntity league) {
+                                                        League league) {
 
         List<DoublesMatchEntity> doublesMatches = new ArrayList<>();
         for (int i = 0; i < leagueParticipantList.size() - 3; i += 4) {

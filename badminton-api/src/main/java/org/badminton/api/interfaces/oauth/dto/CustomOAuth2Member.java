@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.badminton.api.interfaces.member.dto.MemberResponse;
+import org.badminton.domain.domain.member.info.MemberInfo;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -48,7 +49,7 @@ public class CustomOAuth2Member implements OAuth2User {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<GrantedAuthority> authorities = new HashSet<>();
-        authorities.add(new SimpleGrantedAuthority("ROLE_" + memberResponse.getAuthorization()));
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + memberResponse.authorization()));
         for (Map.Entry<Long, String> entry : clubRoles.entrySet()) {
             String role = entry.getValue().startsWith("ROLE_") ? entry.getValue() : "ROLE_" + entry.getValue();
             authorities.add(new SimpleGrantedAuthority(entry.getKey() + ":" + role));
@@ -58,27 +59,27 @@ public class CustomOAuth2Member implements OAuth2User {
 
     @Override
     public String getName() {
-        return memberResponse.getName();
+        return memberResponse.name();
     }
 
     public String getProviderId() {
-        return memberResponse.getProviderId();
+        return memberResponse.providerId();
     }
 
     public String getAuthorization() {
-        return memberResponse.getAuthorization();
+        return memberResponse.authorization();
     }
 
-    public Long getMemberId() {
-        return memberResponse.getMemberId();
+    public String getMemberToken() {
+        return memberResponse.memberToken();
     }
 
     public String getEmail() {
-        return memberResponse.getEmail();
+        return memberResponse.email();
     }
 
     public String getProfileImage() {
-        return memberResponse.getProfileImage();
+        return memberResponse.profileImage();
     }
 
 }

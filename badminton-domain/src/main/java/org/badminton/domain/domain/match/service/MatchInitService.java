@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.badminton.domain.common.enums.MatchType;
 import org.badminton.domain.common.exception.league.InvalidPlayerCountException;
 import org.badminton.domain.common.exception.league.LeagueNotExistException;
-import org.badminton.domain.domain.league.entity.LeagueEntity;
+import org.badminton.domain.domain.league.entity.League;
 import org.badminton.domain.domain.league.entity.LeagueParticipantEntity;
 import org.badminton.domain.domain.league.enums.LeagueStatus;
 import org.badminton.domain.domain.match.info.MatchInfo;
@@ -31,7 +31,7 @@ public class MatchInitService {
 
     public List<MatchInfo.Main> getAllMatchesInLeague(Long clubId, Long leagueId) {
 
-        LeagueEntity league = checkIfLeaguePresent(clubId, leagueId);
+        League league = checkIfLeaguePresent(clubId, leagueId);
         MatchType matchType = league.getMatchType();
 
         MatchProgress matchProgress = createMatchProgress(matchType);
@@ -41,7 +41,7 @@ public class MatchInitService {
 
     public List<SetInfo.Main> getAllSetsScoreInLeague(Long clubId, Long leagueId) {
 
-        LeagueEntity league = checkIfLeaguePresent(clubId, leagueId);
+        League league = checkIfLeaguePresent(clubId, leagueId);
         MatchType matchType = league.getMatchType();
 
         MatchProgress matchProgress = createMatchProgress(matchType);
@@ -50,7 +50,7 @@ public class MatchInitService {
     }
 
     public MatchInfo.SetScoreDetails getMatchDetailsInLeague(Long clubId, Long leagueId, Long matchId) {
-        LeagueEntity league = checkIfLeaguePresent(clubId, leagueId);
+        League league = checkIfLeaguePresent(clubId, leagueId);
         MatchType matchType = league.getMatchType();
 
         MatchProgress matchProgress = createMatchProgress(matchType);
@@ -68,7 +68,7 @@ public class MatchInitService {
         if (leagueParticipantList.isEmpty()) {
             throw new InvalidPlayerCountException(leagueId, 0);
         }
-        LeagueEntity league = leagueParticipantList.get(0).getLeague();
+        League league = leagueParticipantList.get(0).getLeague();
         checkPlayerCount(league, leagueParticipantList.size());
         checkLeagueRecruitingStatus(league);
 
@@ -82,14 +82,14 @@ public class MatchInitService {
     }
 
     // TODO: 예외 체이닝 걸 수 있음.
-    private void checkLeagueRecruitingStatus(LeagueEntity league) {
+    private void checkLeagueRecruitingStatus(League league) {
         if (league.getLeagueStatus() != LeagueStatus.COMPLETED) {
             league.cancelLeague();
             throw new InvalidPlayerCountException(league.getLeagueId(), league.getRecruitingClosedAt());
         }
     }
 
-    private void checkPlayerCount(LeagueEntity league, int playerCount) {
+    private void checkPlayerCount(League league, int playerCount) {
         if (league.getPlayerLimitCount() != playerCount) {
             throw new InvalidPlayerCountException(league.getLeagueId(), playerCount);
         }
@@ -103,7 +103,7 @@ public class MatchInitService {
         };
     }
 
-    private LeagueEntity checkIfLeaguePresent(Long clubId, Long leagueId) {
+    private League checkIfLeaguePresent(Long clubId, Long leagueId) {
         return leagueRepository.findById(leagueId)
                 .orElseThrow(() -> new LeagueNotExistException(clubId, leagueId));
     }
