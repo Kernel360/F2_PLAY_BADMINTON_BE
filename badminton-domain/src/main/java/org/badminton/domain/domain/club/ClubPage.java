@@ -2,8 +2,8 @@ package org.badminton.domain.domain.club;
 
 import java.util.Map;
 
-import org.badminton.domain.common.enums.MemberTier;
 import org.badminton.domain.domain.club.info.ClubCardInfo;
+import org.badminton.domain.domain.member.entity.Member;
 import org.springframework.data.domain.Page;
 
 import lombok.Builder;
@@ -18,7 +18,7 @@ public class ClubPage {
 
 		return this.club.map(club -> {
 
-			Map<MemberTier, Long> tierCounts = club.getClubMemberCountByTier();
+			Map<Member.MemberTier, Long> tierCounts = club.getClubMemberCountByTier();
 
 			return ClubCardInfo.clubEntityToClubsCardResponse(club, tierCounts);
 

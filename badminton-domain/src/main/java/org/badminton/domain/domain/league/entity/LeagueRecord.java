@@ -1,7 +1,8 @@
 package org.badminton.domain.domain.league.entity;
 
-import org.badminton.domain.domain.clubmember.entity.ClubMemberEntity;
+import org.badminton.domain.domain.clubmember.entity.ClubMember;
 import org.badminton.domain.common.BaseTimeEntity;
+import org.badminton.domain.domain.member.entity.Member;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -21,7 +22,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "league_record")
-public class LeagueRecordEntity extends BaseTimeEntity {
+public class LeagueRecord extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,11 +37,11 @@ public class LeagueRecordEntity extends BaseTimeEntity {
     private int matchCount;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "clubMemberId")
-    private ClubMemberEntity clubMember;
+    @JoinColumn(name = "memberId")
+    private Member member;
 
-    public LeagueRecordEntity(ClubMemberEntity clubMember) {
-        this.clubMember = clubMember;
+    public LeagueRecord(Member member) {
+        this.member = member;
         this.winCount = 0;
         this.loseCount = 0;
         this.drawCount = 0;

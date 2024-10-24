@@ -2,12 +2,19 @@ package org.badminton.domain.domain.clubmember;
 
 import java.util.List;
 
-import org.badminton.domain.domain.clubmember.entity.ClubMemberEntity;
+import org.badminton.domain.domain.clubmember.entity.ClubMember;
 
 public interface ClubMemberReader {
-	boolean checkIsClubMember(Long memberId, Long clubId);
+	ClubMember getClubMemberByMemberToken(String memberToken);
+	ClubMember getClubMember(Long clubMemberId);
+	List<ClubMember> getClubMembersByMemberToken(String memberToken);
+	boolean isExist(String memberToken);
+	boolean existsMemberInClub(String memberToken, Long clubId);
+	List<ClubMember> getAllClubMemberByClubId(Long clubId);
 
-	void checkIsClubOwner(Long memberId);
+	boolean checkIsClubMember(String memberToken, Long clubId);
 
-	List<ClubMemberEntity> getAllMember(Long clubId);
+	void checkIsClubOwner(String memberToken);
+
+	List<ClubMember> getAllMember(Long clubId);
 }

@@ -2,12 +2,13 @@ package org.badminton.domain.domain.league.entity;
 
 import java.time.LocalDateTime;
 
+import org.badminton.domain.domain.club.entity.ClubEntity;
 import org.badminton.domain.common.BaseTimeEntity;
 import org.badminton.domain.common.enums.MatchGenerationType;
 import org.badminton.domain.common.enums.MatchType;
-import org.badminton.domain.common.enums.MemberTier;
 import org.badminton.domain.domain.club.Club;
 import org.badminton.domain.domain.league.enums.LeagueStatus;
+import org.badminton.domain.domain.member.entity.Member;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -29,7 +30,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "league")
-public class LeagueEntity extends BaseTimeEntity {
+public class League extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,7 +43,7 @@ public class LeagueEntity extends BaseTimeEntity {
 	private String leagueLocation;
 
 	@Enumerated(EnumType.STRING)
-	private MemberTier requiredTier;
+	private Member.MemberTier requiredTier;
 
 	@Enumerated(EnumType.STRING)
 	private LeagueStatus leagueStatus;
@@ -63,8 +64,8 @@ public class LeagueEntity extends BaseTimeEntity {
 	@JoinColumn(name = "clubId")
 	private Club club;
 
-	public LeagueEntity(String leagueName, String description, String leagueLocation, LocalDateTime leagueAt,
-		MemberTier tierLimit, LocalDateTime recruitingClosedAt, int playerLimitCount,
+	public League(String leagueName, String description, String leagueLocation, LocalDateTime leagueAt,
+		Member.MemberTier tierLimit, LocalDateTime recruitingClosedAt, int playerLimitCount,
 		MatchType matchType, MatchGenerationType matchGenerationType, Club club) {
 		this.leagueName = leagueName;
 		this.description = description;
@@ -79,7 +80,8 @@ public class LeagueEntity extends BaseTimeEntity {
 		this.club = club;
 	}
 
-	public void updateLeague(String leagueName, String description, String leagueLocation, MemberTier requiredTier,
+	public void updateLeague(String leagueName, String description, String leagueLocation,
+		Member.MemberTier requiredTier,
 		LocalDateTime leagueAt,
 		LocalDateTime closedAt, int playerLimitCount, MatchType matchType,
 		MatchGenerationType matchGenerationType) {

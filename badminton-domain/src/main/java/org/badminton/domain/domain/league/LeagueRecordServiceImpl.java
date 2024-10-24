@@ -1,6 +1,6 @@
 package org.badminton.domain.domain.league;
 
-import org.badminton.domain.domain.clubmember.entity.ClubMemberEntity;
+import org.badminton.domain.domain.member.entity.Member;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -13,7 +13,7 @@ public class LeagueRecordServiceImpl implements LeagueRecordService {
 	private final LeagueRecordStore leagueRecordStore;
 
 	@Override
-	public void initScore(ClubMemberEntity clubMember) {
-		leagueRecordStore.initScore(clubMember);
+	public void initScore(Member member) {
+		leagueRecordStore.initScore(member);
 	}
 }

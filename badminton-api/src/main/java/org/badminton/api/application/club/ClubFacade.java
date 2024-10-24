@@ -1,20 +1,18 @@
 package org.badminton.api.application.club;
 
 import java.util.Map;
-import java.util.Objects;
 
-import org.badminton.api.common.exception.member.MemberNotExistException;
 import org.badminton.api.interfaces.oauth.dto.CustomOAuth2Member;
-import org.badminton.domain.common.enums.MemberTier;
-import org.badminton.domain.domain.club.Club;
 import org.badminton.domain.domain.club.ClubService;
 import org.badminton.domain.domain.club.command.ClubCreateCommand;
 import org.badminton.domain.domain.club.command.ClubUpdateCommand;
-import org.badminton.domain.domain.club.info.*;
-import org.badminton.domain.domain.clubmember.ClubMemberService;
-import org.badminton.domain.domain.clubmember.entity.ClubMemberRole;
-import org.badminton.domain.domain.league.LeagueRecordService;
-import org.badminton.domain.domain.member.MemberService;
+import org.badminton.domain.domain.club.info.ClubCardInfo;
+import org.badminton.domain.domain.club.info.ClubCreateInfo;
+import org.badminton.domain.domain.club.info.ClubDeleteInfo;
+import org.badminton.domain.domain.club.info.ClubDetailsInfo;
+import org.badminton.domain.domain.club.info.ClubUpdateInfo;
+import org.badminton.domain.domain.clubmember.service.ClubMemberService;
+import org.badminton.domain.domain.member.entity.Member;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -30,8 +28,6 @@ import lombok.extern.slf4j.Slf4j;
 public class ClubFacade {
 	private final ClubService clubService;
 	private final ClubMemberService clubMemberService;
-	private final MemberService memberService;
-	private final LeagueRecordService leagueRecordService;
 
 	public Page<ClubCardInfo> readAllClubs(int page, int size, String sort) {
 		Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
@@ -39,10 +35,10 @@ public class ClubFacade {
 	}
 
 	public ClubDetailsInfo readClub(Long clubId, CustomOAuth2Member clubMember) {
-		Long memberId = clubMember.getMemberId();
+		String memberToken = clubMember.getMemberToken();
 		var club = clubService.readClub(clubId);
-		Map<MemberTier, Long> memberCountByTier = club.getClubMemberCountByTier();
-		boolean isClubMember = clubMemberService.checkIfMemberBelongsToClub(memberId, clubId);
+		Map<Member.MemberTier, Long> memberCountByTier = club.getClubMemberCountByTier();
+		boolean isClubMember = clubMemberService.checkIfMemberBelongsToClub(memberToken, clubId);
 		int clubMembersCount = club.clubMembers().size();
 		return ClubDetailsInfo.fromClubEntityAndMemberCountByTier(club, memberCountByTier, isClubMember,
 			clubMembersCount);
@@ -53,12 +49,10 @@ public class ClubFacade {
 		return clubService.searchClubs(keyword, pageable);
 	}
 
-	public ClubCreateInfo createClub(ClubCreateCommand createCommand, Long memberId) {
-		clubMemberService.checkMyOwnClub(memberId);
+	public ClubCreateInfo createClub(ClubCreateCommand createCommand, String memberToken) {
+		clubMemberService.checkMyOwnClub(memberToken);
 		var clubCreateInfo = clubService.createClub(createCommand);
-		var member = memberService.getMemberByMemberId(memberId);
-		var clubMember = clubMemberService.createClubMember(clubCreateInfo, member, ClubMemberRole.ROLE_OWNER);
-		leagueRecordService.initScore(clubMember);
+		clubMemberService.createClubJoinInfo(memberToken, clubCreateInfo);
 		return clubCreateInfo;
 	}
 

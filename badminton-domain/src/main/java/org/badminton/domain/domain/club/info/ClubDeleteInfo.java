@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.badminton.domain.domain.club.Club;
-import org.badminton.domain.domain.clubmember.entity.ClubMemberEntity;
+import org.badminton.domain.domain.clubmember.entity.ClubMember;
 
 public record ClubDeleteInfo(
 	Long clubId,
@@ -12,7 +12,7 @@ public record ClubDeleteInfo(
 	String clubDescription,
 	String clubImage,
 	boolean isClubDeleted,
-	List<ClubMemberEntity> clubMembers,
+	List<ClubMember> clubMembers,
 	LocalDateTime createdAt,
 	LocalDateTime modifiedAt
 ) {

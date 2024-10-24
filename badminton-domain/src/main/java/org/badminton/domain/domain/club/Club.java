@@ -1,18 +1,14 @@
 package org.badminton.domain.domain.club;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.badminton.domain.common.BaseTimeEntity;
-import org.badminton.domain.common.enums.MemberTier;
-import org.badminton.domain.domain.club.command.ClubCreateCommand;
 import org.badminton.domain.domain.club.command.ClubUpdateCommand;
 import org.badminton.domain.domain.club.info.ClubCreateInfo;
-import org.badminton.domain.domain.clubmember.entity.ClubMemberEntity;
+import org.badminton.domain.domain.clubmember.entity.ClubMember;
+import org.badminton.domain.domain.member.entity.Member;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -47,7 +43,7 @@ public class Club extends BaseTimeEntity {
 	private boolean isClubDeleted;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "club")
-	private List<ClubMemberEntity> clubMembers = new ArrayList<>();
+	private List<ClubMember> clubMembers = new ArrayList<>();
 
 	public Club(String clubName, String clubDescription, String clubImage) {
 		super();
@@ -57,7 +53,7 @@ public class Club extends BaseTimeEntity {
 		isClubDeleted = false;
 	}
 
-	public Club(ClubCreateInfo clubCreateInfo){
+	public Club(ClubCreateInfo clubCreateInfo) {
 		this.clubId = clubCreateInfo.clubId();
 		this.clubDescription = clubCreateInfo.clubDescription();
 		this.clubName = clubCreateInfo.clubName();
@@ -70,7 +66,8 @@ public class Club extends BaseTimeEntity {
 		this.clubDescription = clubUpdateCommand.clubDescription();
 		this.clubImage = clubUpdateCommand.clubImage();
 	}
-	public Map<MemberTier, Long> getClubMemberCountByTier() {
+
+	public Map<Member.MemberTier, Long> getClubMemberCountByTier() {
 		return getMemberTierLongMap(clubMembers);
 	}
 

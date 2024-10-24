@@ -9,7 +9,8 @@ import jakarta.validation.ConstraintValidatorContext;
 public class ClubImageValidatorImpl implements ConstraintValidator<ClubImageValidator, String> {
 
 	private static final String S3_DOMAIN = "d36om9pjoifd2y.cloudfront.net";
-	private static final Pattern IMAGE_PATTERN = Pattern.compile(".*\\.(png|jpg|jpeg|gif|avif)$",
+	private static final Pattern IMAGE_PATTERN = Pattern.compile(
+		".*\\.(png|jpg|jpeg|gif|avif|svg|webp|bmp|ico|tiff|tif|heic|heif|raw|cr2|nef|arw|dng|psd|ai|eps|pdf|jfif|jpe|svgz|xbm|pgm|pbm|ppm|pnm|webm|apng)$",
 		Pattern.CASE_INSENSITIVE);
 
 	@Override
