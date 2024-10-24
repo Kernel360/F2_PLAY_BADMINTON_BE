@@ -24,10 +24,10 @@ public record MemberResponse(
 	@Schema(description = "oAuth 제공 이미지", example = "1070449979547641023123")
 	String profileImage
 ) {
-	public static MemberResponse fromMemberInfo(MemberInfo info) {
-		return new MemberResponse(info.memberToken(), info.authorization(), info.name(),
-			info.email(),
-			info.providerId(), info.profileImage());
+	public static MemberResponse fromMemberInfo(MemberInfo memberInfo) {
+		return new MemberResponse(memberInfo.memberToken(), memberInfo.authorization(), memberInfo.name(),
+			memberInfo.email(),
+			memberInfo.providerId(), memberInfo.profileImage());
 	}
 }
 
