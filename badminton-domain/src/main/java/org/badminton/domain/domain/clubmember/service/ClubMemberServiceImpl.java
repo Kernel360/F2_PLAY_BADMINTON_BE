@@ -35,8 +35,6 @@ public class ClubMemberServiceImpl implements ClubMemberService {
 	private final MemberReader memberReader;
 	private final ClubMemberReader clubMemberReader;
 	private final ClubMemberStore clubMemberStore;
-	private final ClubMemberPenaltyStrategy expelStrategy = new ExpelStrategy(clubMemberStore);
-	private final ClubMemberPenaltyStrategy banStrategy = new BanStrategy(clubMemberStore);
 
 	@Override
 	public ClubMemberJoinInfo joinClub(
@@ -98,12 +96,15 @@ public class ClubMemberServiceImpl implements ClubMemberService {
 
 	@Override
 	public ClubMemberBanRecordInfo expelClubMember(ClubMemberExpelCommand request, Long clubMemberId) {
+		ExpelStrategy expelStrategy = new ExpelStrategy(clubMemberStore);
+
 		ClubMember clubMember = getClubMember(clubMemberId);
 		return expelStrategy.execute(clubMember, request);
 	}
 
 	@Override
 	public ClubMemberBanRecordInfo banClubMember(ClubMemberBanCommand request, Long clubMemberId) {
+		BanStrategy banStrategy = new BanStrategy(clubMemberStore);
 		ClubMember clubMember = getClubMember(clubMemberId);
 		return banStrategy.execute(clubMember, request);
 	}
