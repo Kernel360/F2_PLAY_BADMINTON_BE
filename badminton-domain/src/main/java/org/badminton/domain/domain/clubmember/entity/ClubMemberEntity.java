@@ -3,9 +3,9 @@ package org.badminton.domain.domain.clubmember.entity;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.badminton.domain.domain.club.entity.ClubEntity;
 import org.badminton.domain.common.BaseTimeEntity;
 import org.badminton.domain.common.enums.MemberTier;
+import org.badminton.domain.domain.club.Club;
 import org.badminton.domain.domain.league.entity.LeagueRecordEntity;
 import org.badminton.domain.domain.member.entity.MemberEntity;
 
@@ -32,67 +32,67 @@ import lombok.NoArgsConstructor;
 @Getter
 public class ClubMemberEntity extends BaseTimeEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long clubMemberId;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long clubMemberId;
 
-    private boolean deleted;
+	private boolean deleted;
 
-    private boolean banned;
+	private boolean banned;
 
-    @Enumerated(EnumType.STRING)
-    private ClubMemberRole role;
+	@Enumerated(EnumType.STRING)
+	private ClubMemberRole role;
 
-    @Enumerated(EnumType.STRING)
-    private MemberTier tier;
+	@Enumerated(EnumType.STRING)
+	private MemberTier tier;
 
-    @ManyToOne
-    @JoinColumn(name = "clubId")
-    private ClubEntity club;
+	@ManyToOne
+	@JoinColumn(name = "clubId")
+	private Club club;
 
-    @ManyToOne
-    @JoinColumn(name = "memberId")
-    private MemberEntity member;
+	@ManyToOne
+	@JoinColumn(name = "memberId")
+	private MemberEntity member;
 
-    @OneToOne(mappedBy = "clubMember", fetch = FetchType.LAZY)
-    private LeagueRecordEntity leagueRecord;
+	@OneToOne(mappedBy = "clubMember", fetch = FetchType.LAZY)
+	private LeagueRecordEntity leagueRecord;
 
-    @OneToMany(mappedBy = "clubMember", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ClubMemberBanRecordEntity> banHistory = new ArrayList<>();
+	@OneToMany(mappedBy = "clubMember", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<ClubMemberBanRecordEntity> banHistory = new ArrayList<>();
 
-    public ClubMemberEntity(ClubEntity club, MemberEntity member, ClubMemberRole role) {
-        this.club = club;
-        this.member = member;
-        this.role = role;
-        this.deleted = false;
-        this.banned = false;
-        this.tier = MemberTier.BRONZE;
-    }
+	public ClubMemberEntity(Club club, MemberEntity member, ClubMemberRole role) {
+		this.club = club;
+		this.member = member;
+		this.role = role;
+		this.deleted = false;
+		this.banned = false;
+		this.tier = MemberTier.BRONZE;
+	}
 
-    public void updateClubMemberRole(ClubMemberRole role) {
-        this.role = role;
-    }
+	public void updateClubMemberRole(ClubMemberRole role) {
+		this.role = role;
+	}
 
-    public void deleteClubMember() {
-        this.deleted = true;
-    }
+	public void deleteClubMember() {
+		this.deleted = true;
+	}
 
-    public void withdrawal() {
-        this.deleted = true;
-    }
+	public void withdrawal() {
+		this.deleted = true;
+	}
 
-    public void expel() {
-        this.deleted = true;
-        this.banned = true;
-    }
+	public void expel() {
+		this.deleted = true;
+		this.banned = true;
+	}
 
-    public void addBanRecord(ClubMemberBanRecordEntity clubMemberBanRecordEntity) {
-        this.banHistory.add(clubMemberBanRecordEntity);
-        this.banned = true;
-    }
+	public void addBanRecord(ClubMemberBanRecordEntity clubMemberBanRecordEntity) {
+		this.banHistory.add(clubMemberBanRecordEntity);
+		this.banned = true;
+	}
 
-    public void updateTier(MemberTier tier) {
-        this.tier = tier;
-    }
+	public void updateTier(MemberTier tier) {
+		this.tier = tier;
+	}
 
 }
